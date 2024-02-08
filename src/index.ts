@@ -66,15 +66,15 @@ const _GeoJSONGeometryCollectionBaseSchema = z.object({
     type: z.literal("GeometryCollection"),
 });
 
+export const GeoJSONGeometryCollectionSchema = _GeoJSONGeometryCollectionBaseSchema.extend({
+    geometry: z.lazy(() => z.array(GeoJSONGeometrySchema)),
+}) as unknown as ZodType<GeoJSONGeometry>; // For some reason the recursion causes incorrect types, but it does work
+
 export type GeoJSONGeometry =
     | z.infer<typeof _GeoJSONSimpleGeometrySchema>
     | (z.infer<typeof _GeoJSONGeometryCollectionBaseSchema> & {
           geometries: GeoJSONGeometry[];
       });
-
-export const GeoJSONGeometryCollectionSchema = _GeoJSONGeometryCollectionBaseSchema.extend({
-    geometry: z.lazy(() => z.array(GeoJSONGeometrySchema)),
-}) as unknown as ZodType<GeoJSONGeometry>; // For some reason the recursion causes incorrect types, but it does work
 
 export const GeoJSONGeometrySchema = _GeoJSONSimpleGeometrySchema.or(GeoJSONGeometryCollectionSchema);
 

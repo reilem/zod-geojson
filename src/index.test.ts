@@ -94,6 +94,34 @@ describe("zod-geojson", () => {
             expectThrow(() => GeoJSONBBoxSchema.parse([1, 2, 3, 4, 5, 6, 7, 8]));
         });
     });
+
+    // TODO: Remaining tests
+
+    describe("GeoJSONPointSchema", () => {});
+
+    describe("GeoJSONLineStringSchema", () => {});
+
+    describe("GeoJSONMultiPointSchema", () => {});
+
+    describe("GeoJSONPolygonSchema", () => {});
+
+    describe("GeoJSONMultiLineStringSchema", () => {});
+
+    describe("GeoJSONMultiPolygonSchema", () => {});
+
+    describe("GeoJSONGeometryCollectionSchema", () => {});
+
+    describe("GeoJSONGeometrySchema", () => {});
+
+    describe("GeoJSONGeometry type", () => {});
+
+    describe("GeoJSONFeatureSchema", () => {});
+
+    describe("GeoJSONFeatureCollectionSchema", () => {});
+
+    describe("GeoJSONSchema", () => {});
+
+    describe("GeoJSON type", () => {});
 });
 
 function expectThrow(func: () => unknown) {
