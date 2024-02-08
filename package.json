@@ -1,0 +1,28 @@
+{
+  "name": "zod-geojson",
+  "version": "1.0.0",
+  "description": "Zod schemas for GeoJSON",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TODO"
+  },
+  "author": "Reinert Lemmens",
+  "license": "MIT",
+  "keywords": [
+    "zod",
+    "geojson",
+    "schema"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest --run",
+    "build": "tsc --build --clean && tsc",
+    "typecheck": "tsc -p tsconfig.base.json"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "typescript": "~5.3.3",
+    "vitest": "^1.2.2",
+    "zod": "^3.22.4"
+  }
+}
