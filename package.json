@@ -16,8 +16,8 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest --run",
-    "build": "tsc --build --clean && tsc",
-    "typecheck": "tsc -p tsconfig.base.json"
+    "build": "tsc --build --clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

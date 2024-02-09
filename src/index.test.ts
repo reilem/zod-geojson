@@ -22,7 +22,7 @@ describe("zod-geojson", () => {
         });
 
         test("does not allow 1D positions", () => {
-            expectThrow(() => GeoJSONPositionSchema.parse([1]));
+            expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
         });
     });
 
@@ -36,23 +36,15 @@ describe("zod-geojson", () => {
             "MultiPolygon",
             "GeometryCollection",
         ].forEach((type) =>
-            test(`allows ${type} geojson geometry type`, () =>
-                expect(GeoJSONGeometryTypeSchema.parse(type)).toEqual(type)),
+            test(`allows ${type} geojson geometry type`, () => {
+                expect(GeoJSONGeometryTypeSchema.parse(type)).toEqual(type);
+                expect(GeoJSONTypeSchema.parse(type)).toEqual(type);
+            }),
         );
     });
 
     describe("GeoJSONTypeSchema", () => {
-        [
-            "Point",
-            "MultiPoint",
-            "LineString",
-            "MultiLineString",
-            "Polygon",
-            "MultiPolygon",
-            "GeometryCollection",
-            "Feature",
-            "FeatureCollection",
-        ].forEach((type) =>
+        ["Feature", "FeatureCollection"].forEach((type) =>
             test(`allows ${type} geojson type`, () => expect(GeoJSONTypeSchema.parse(type)).toEqual(type)),
         );
     });
@@ -60,38 +52,32 @@ describe("zod-geojson", () => {
     describe("GeoJSON2DBBoxSchema", () => {
         test("allows 2D bbox", () => {
             expect(GeoJSON2DBBoxSchema.parse([0, 0, 1, 1])).toEqual([0, 0, 1, 1]);
+            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1])).toEqual([0, 0, 1, 1]);
         });
 
         test("does not allow 3D bbox", () => {
-            expectThrow(() => GeoJSON2DBBoxSchema.parse([0, 0, 1, 1, 2, 2]));
+            expect(() => GeoJSON2DBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toThrow(ZodError);
         });
     });
 
     describe("GeoJSON3DBBoxSchema", () => {
         test("allows 3D bbox", () => {
             expect(GeoJSON3DBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toEqual([0, 0, 1, 1, 2, 2]);
+            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toEqual([0, 0, 1, 1, 2, 2]);
         });
 
         test("does not allow 2D bbox", () => {
-            expectThrow(() => GeoJSON3DBBoxSchema.parse([0, 0, 1, 1]));
+            expect(() => GeoJSON3DBBoxSchema.parse([0, 0, 1, 1])).toThrow(ZodError);
         });
     });
 
     describe("GeoJSONBBoxSchema", () => {
-        test("allows 2D bbox", () => {
-            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1])).toEqual([0, 0, 1, 1]);
-        });
-
-        test("allows 3D bbox", () => {
-            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toEqual([0, 0, 1, 1, 2, 2]);
-        });
-
         test("does not allow 1D bbox", () => {
-            expectThrow(() => GeoJSONBBoxSchema.parse([0]));
+            expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(ZodError);
         });
 
         test("does not allow 4D bbox", () => {
-            expectThrow(() => GeoJSONBBoxSchema.parse([1, 2, 3, 4, 5, 6, 7, 8]));
+            expect(() => GeoJSONBBoxSchema.parse([1, 2, 3, 4, 5, 6, 7, 8])).toThrow(ZodError);
         });
     });
 
@@ -123,12 +109,3 @@ describe("zod-geojson", () => {
 
     describe("GeoJSON type", () => {});
 });
-
-function expectThrow(func: () => unknown) {
-    try {
-        const result = func();
-        expect.unreachable(`Should have thrown an error, but got: ${result}`);
-    } catch (e) {
-        expect(e).toBeInstanceOf(ZodError);
-    }
-}
