@@ -4,6 +4,7 @@ import { z, ZodType } from "zod";
 // GeoJSON positions and coordinates (see 3.1.1)
 // Array: [longitude/easting, latitude/northing, altitude (optional), ...extra elements are unspecified and ambiguous]
 export const GeoJSONPositionSchema = z.array(z.number()).min(2);
+export type GeoJSONPosition = z.infer<typeof GeoJSONPositionSchema>;
 
 // GeoJSON types and Geometry type (see 1.4)
 export const GeoJSONGeometryTypeSchema = z.enum([
@@ -15,12 +16,15 @@ export const GeoJSONGeometryTypeSchema = z.enum([
     "MultiPolygon",
     "GeometryCollection",
 ]);
+export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;
 
 export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection"]).or(GeoJSONGeometryTypeSchema);
+export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;
 
-export const GeoJSON2DBBoxSchema = z.array(z.number()).min(4).max(4);
-export const GeoJSON3DBBoxSchema = z.array(z.number()).min(6).max(6);
+export const GeoJSON2DBBoxSchema = z.array(z.number()).length(4);
+export const GeoJSON3DBBoxSchema = z.array(z.number()).length(6);
 export const GeoJSONBBoxSchema = GeoJSON2DBBoxSchema.or(GeoJSON3DBBoxSchema);
+export type GeoJSONBbox = z.infer<typeof GeoJSONBBoxSchema>;
 
 const GeoJSONBaseSchema = z.object({
     bbox: GeoJSONBBoxSchema.optional(),
@@ -30,31 +34,37 @@ export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Point"),
     coordinates: GeoJSONPositionSchema,
 }).passthrough();
+export type GeoJSONPoint = z.infer<typeof GeoJSONPointSchema>;
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("LineString"),
     coordinates: z.array(GeoJSONPositionSchema).min(2),
 }).passthrough();
+export type GeoJSONLineString = z.infer<typeof GeoJSONLineStringSchema>;
 
 export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiPoint"),
     coordinates: z.array(GeoJSONPositionSchema),
 }).passthrough();
+export type GeoJSONMultiPoint = z.infer<typeof GeoJSONMultiPointSchema>;
 
 export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Polygon"),
     coordinates: z.array(z.array(GeoJSONPositionSchema).min(4)),
 }).passthrough();
+export type GeoJSONPolygon = z.infer<typeof GeoJSONPolygonSchema>;
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiLineString"),
     coordinates: z.array(GeoJSONLineStringSchema.shape.coordinates),
 }).passthrough();
+export type GeoJSONMultiLineString = z.infer<typeof GeoJSONMultiLineStringSchema>;
 
 export const GeoJSONMultiPolygonSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiPolygon"),
     coordinates: z.array(GeoJSONPolygonSchema.shape.coordinates),
 }).passthrough();
+export type GeoJSONMultiPolygon = z.infer<typeof GeoJSONMultiPolygonSchema>;
 
 const _GeoJSONSimpleGeometrySchema = GeoJSONPointSchema.or(GeoJSONLineStringSchema)
     .or(GeoJSONMultiPointSchema)

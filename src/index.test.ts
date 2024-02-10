@@ -1,33 +1,59 @@
-import { expect, test, describe } from "vitest";
-import { ZodError } from "zod";
+import { expect, it, describe } from "vitest";
+import { ZodError, ZodSchema } from "zod";
 import {
     GeoJSON2DBBoxSchema,
     GeoJSON3DBBoxSchema,
+    GeoJSONBbox,
     GeoJSONBBoxSchema,
+    GeoJSONGeometrySchema,
+    GeoJSONGeometryType,
     GeoJSONGeometryTypeSchema,
+    GeoJSONPoint,
+    GeoJSONPointSchema,
+    GeoJSONPosition,
     GeoJSONPositionSchema,
+    GeoJSONSchema,
+    GeoJSONType,
     GeoJSONTypeSchema,
 } from "./index";
 
+function passGeoJSONSchemaTest(specificSchema: ZodSchema, value: unknown): void {
+    expect(specificSchema.parse(value)).toEqual(value);
+    expect(GeoJSONGeometrySchema.parse(value)).toEqual(value);
+    expect(GeoJSONSchema.parse(value)).toEqual(value);
+}
+
+function failGeoJSONSchemaTest(specificSchema: ZodSchema, value: unknown): void {
+    expect(() => specificSchema.parse(value)).toThrow(ZodError);
+    expect(() => GeoJSONGeometrySchema.parse(value)).toThrow(ZodError);
+    expect(() => GeoJSONSchema.parse(value)).toThrow(ZodError);
+}
+
 describe("zod-geojson", () => {
-    describe("GeoJSONPositionSchema", () => {
-        test("allows 2D positions", () => {
-            expect(GeoJSONPositionSchema.parse([0, 0])).toEqual([0, 0]);
+    const bbox2D: GeoJSONBbox = [0, 0, 1, 1];
+    const bbox3D: GeoJSONBbox = [0, 0, 1, 1, 2, 2];
+
+    describe("GeoJSONPosition", () => {
+        it("allows 2D positions", () => {
+            const position2D: GeoJSONPosition = [0, 0];
+            expect(GeoJSONPositionSchema.parse(position2D)).toEqual(position2D);
         });
-        test("allows 3D positions", () => {
-            expect(GeoJSONPositionSchema.parse([1, 2, 3])).toEqual([1, 2, 3]);
+        it("allows 3D positions", () => {
+            const position3D: GeoJSONPosition = [1, 2, 3];
+            expect(GeoJSONPositionSchema.parse(position3D)).toEqual(position3D);
         });
-        test("allows unknown 4D positions", () => {
-            expect(GeoJSONPositionSchema.parse([1, 2, 3, 4])).toEqual([1, 2, 3, 4]);
+        it("allows unknown 4D positions", () => {
+            const position4D: GeoJSONPosition = [1, 2, 3, 4];
+            expect(GeoJSONPositionSchema.parse(position4D)).toEqual(position4D);
         });
 
-        test("does not allow 1D positions", () => {
+        it("does not allow 1D positions", () => {
             expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
         });
     });
 
-    describe("GeoJSONGeometryTypeSchema", () => {
-        [
+    describe("GeoJSONGeometryType", () => {
+        const geoJsonGeometryTypes: GeoJSONGeometryType[] = [
             "Point",
             "MultiPoint",
             "LineString",
@@ -35,77 +61,107 @@ describe("zod-geojson", () => {
             "Polygon",
             "MultiPolygon",
             "GeometryCollection",
-        ].forEach((type) =>
-            test(`allows ${type} geojson geometry type`, () => {
+        ];
+
+        geoJsonGeometryTypes.forEach((type) =>
+            it(`allows ${type} geojson geometry type`, () => {
                 expect(GeoJSONGeometryTypeSchema.parse(type)).toEqual(type);
                 expect(GeoJSONTypeSchema.parse(type)).toEqual(type);
             }),
         );
     });
 
-    describe("GeoJSONTypeSchema", () => {
-        ["Feature", "FeatureCollection"].forEach((type) =>
-            test(`allows ${type} geojson type`, () => expect(GeoJSONTypeSchema.parse(type)).toEqual(type)),
+    describe("GeoJSONType", () => {
+        const geoJsonTypes: GeoJSONType[] = ["Feature", "FeatureCollection"];
+        geoJsonTypes.forEach((type) =>
+            it(`allows ${type} geojson type`, () => expect(GeoJSONTypeSchema.parse(type)).toEqual(type)),
         );
     });
 
-    describe("GeoJSON2DBBoxSchema", () => {
-        test("allows 2D bbox", () => {
-            expect(GeoJSON2DBBoxSchema.parse([0, 0, 1, 1])).toEqual([0, 0, 1, 1]);
-            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1])).toEqual([0, 0, 1, 1]);
+    describe("GeoJSON2DBBox", () => {
+        it("allows 2D bbox", () => {
+            expect(GeoJSON2DBBoxSchema.parse(bbox2D)).toEqual(bbox2D);
+            expect(GeoJSONBBoxSchema.parse(bbox2D)).toEqual(bbox2D);
         });
 
-        test("does not allow 3D bbox", () => {
-            expect(() => GeoJSON2DBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toThrow(ZodError);
-        });
-    });
-
-    describe("GeoJSON3DBBoxSchema", () => {
-        test("allows 3D bbox", () => {
-            expect(GeoJSON3DBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toEqual([0, 0, 1, 1, 2, 2]);
-            expect(GeoJSONBBoxSchema.parse([0, 0, 1, 1, 2, 2])).toEqual([0, 0, 1, 1, 2, 2]);
-        });
-
-        test("does not allow 2D bbox", () => {
-            expect(() => GeoJSON3DBBoxSchema.parse([0, 0, 1, 1])).toThrow(ZodError);
+        it("does not allow 3D bbox", () => {
+            expect(() => GeoJSON2DBBoxSchema.parse(bbox3D)).toThrow(ZodError);
         });
     });
 
-    describe("GeoJSONBBoxSchema", () => {
-        test("does not allow 1D bbox", () => {
+    describe("GeoJSON3DBBox", () => {
+        it("allows 3D bbox", () => {
+            expect(GeoJSON3DBBoxSchema.parse(bbox3D)).toEqual(bbox3D);
+            expect(GeoJSONBBoxSchema.parse(bbox3D)).toEqual(bbox3D);
+        });
+
+        it("does not allow 2D bbox", () => {
+            expect(() => GeoJSON3DBBoxSchema.parse(bbox2D)).toThrow(ZodError);
+        });
+    });
+
+    describe("GeoJSONBBox", () => {
+        it("does not allow 1D bbox", () => {
             expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(ZodError);
         });
 
-        test("does not allow 4D bbox", () => {
+        it("does not allow 4D bbox", () => {
             expect(() => GeoJSONBBoxSchema.parse([1, 2, 3, 4, 5, 6, 7, 8])).toThrow(ZodError);
         });
     });
 
-    // TODO: Remaining tests
+    describe("GeoJSONPoint", () => {
+        const baseGeoJsonPoint: GeoJSONPoint = {
+            type: "Point",
+            coordinates: [1.0, 2.0],
+        };
 
-    describe("GeoJSONPointSchema", () => {});
+        it("allows a basic geojson point", () => {
+            passGeoJSONSchemaTest(GeoJSONPointSchema, baseGeoJsonPoint);
+        });
 
-    describe("GeoJSONLineStringSchema", () => {});
+        it("allow a geojson point with bbox", () => {
+            const geoJsonPointWithBbox: GeoJSONPoint = {
+                ...baseGeoJsonPoint,
+                bbox: bbox2D,
+            };
+            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithBbox);
+        });
 
-    describe("GeoJSONMultiPointSchema", () => {});
+        it("does not allow a geojson point with invalid bbox", () => {
+            const geoJsonPointWithInvalidBbox: GeoJSONPoint = {
+                ...baseGeoJsonPoint,
+                bbox: [],
+            };
+            failGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithInvalidBbox);
+        });
 
-    describe("GeoJSONPolygonSchema", () => {});
+        it("does not allow a geojson point with invalid coordinates", () => {
+            const geoJsonPointWithInvalidCoordinates = {
+                ...baseGeoJsonPoint,
+                coordinates: ["3ght45y34", 39284],
+            };
+            failGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithInvalidCoordinates);
+        });
+    });
 
-    describe("GeoJSONMultiLineStringSchema", () => {});
+    describe("GeoJSONLineString", () => {});
 
-    describe("GeoJSONMultiPolygonSchema", () => {});
+    describe("GeoJSONMultiPoint", () => {});
 
-    describe("GeoJSONGeometryCollectionSchema", () => {});
+    describe("GeoJSONPolygon", () => {});
 
-    describe("GeoJSONGeometrySchema", () => {});
+    describe("GeoJSONMultiLineString", () => {});
 
-    describe("GeoJSONGeometry type", () => {});
+    describe("GeoJSONMultiPolygon", () => {});
 
-    describe("GeoJSONFeatureSchema", () => {});
+    describe("GeoJSONGeometryCollection", () => {});
 
-    describe("GeoJSONFeatureCollectionSchema", () => {});
+    describe("GeoJSONGeometry", () => {});
 
-    describe("GeoJSONSchema", () => {});
+    describe("GeoJSONFeature", () => {});
 
-    describe("GeoJSON type", () => {});
+    describe("GeoJSONFeatureCollection", () => {});
+
+    describe("GeoJSON", () => {});
 });
