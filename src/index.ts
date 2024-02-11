@@ -1,6 +1,7 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
 import { z, ZodType } from "zod";
 
+// TODO: Specify the allowed values for the positions, must use WGS 84
 // GeoJSON positions and coordinates (see 3.1.1)
 // Array: [longitude/easting, latitude/northing, altitude (optional), ...extra elements are unspecified and ambiguous]
 export const GeoJSONPositionSchema = z.array(z.number()).min(2);
@@ -30,6 +31,10 @@ const GeoJSONBaseSchema = z.object({
     bbox: GeoJSONBBoxSchema.optional(),
 });
 
+// TODO: Refine that all positions have the same dimension
+// TODO: Refine that bbox length matches the dimension of the position
+// TODO: Refine that the bbox is valid for the given positions & geometry
+
 export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Point"),
     coordinates: GeoJSONPositionSchema,
@@ -48,6 +53,7 @@ export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
 }).passthrough();
 export type GeoJSONMultiPoint = z.infer<typeof GeoJSONMultiPointSchema>;
 
+// TODO: Refine that all line strings are linear rings (first and last position are the same)
 export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Polygon"),
     coordinates: z.array(z.array(GeoJSONPositionSchema).min(4)),
@@ -60,6 +66,7 @@ export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
 }).passthrough();
 export type GeoJSONMultiLineString = z.infer<typeof GeoJSONMultiLineStringSchema>;
 
+// TODO: Refine that all line strings are linear rings (first and last position are the same)
 export const GeoJSONMultiPolygonSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiPolygon"),
     coordinates: z.array(GeoJSONPolygonSchema.shape.coordinates),
@@ -85,6 +92,8 @@ export type GeoJSONGeometry =
     | (z.infer<typeof _GeoJSONGeometryCollectionBaseSchema> & {
           geometries: GeoJSONGeometry[];
       });
+
+// TODO: Refine "GeoJSON Types Are Not Extensible" section 7 of the spec
 
 export const GeoJSONGeometrySchema = _GeoJSONSimpleGeometrySchema.or(GeoJSONGeometryCollectionSchema);
 

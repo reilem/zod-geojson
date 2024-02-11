@@ -8,8 +8,14 @@ import {
     GeoJSONGeometrySchema,
     GeoJSONGeometryType,
     GeoJSONGeometryTypeSchema,
+    GeoJSONLineString,
+    GeoJSONLineStringSchema,
+    GeoJSONMultiPoint,
+    GeoJSONMultiPointSchema,
     GeoJSONPoint,
     GeoJSONPointSchema,
+    GeoJSONPolygon,
+    GeoJSONPolygonSchema,
     GeoJSONPosition,
     GeoJSONPositionSchema,
     GeoJSONSchema,
@@ -111,57 +117,229 @@ describe("zod-geojson", () => {
     });
 
     describe("GeoJSONPoint", () => {
-        const baseGeoJsonPoint: GeoJSONPoint = {
+        const basicGeoJsonPoint: GeoJSONPoint = {
             type: "Point",
             coordinates: [1.0, 2.0],
         };
 
         it("allows a basic geojson point", () => {
-            passGeoJSONSchemaTest(GeoJSONPointSchema, baseGeoJsonPoint);
+            passGeoJSONSchemaTest(GeoJSONPointSchema, basicGeoJsonPoint);
         });
 
-        it("allow a geojson point with bbox", () => {
-            const geoJsonPointWithBbox: GeoJSONPoint = {
-                ...baseGeoJsonPoint,
-                bbox: bbox2D,
-            };
-            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithBbox);
+        it("allows a 3D geojson point", () => {
+            passGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                coordinates: [1.0, 2.0, 3.0],
+            });
         });
 
-        it("does not allow a geojson point with invalid bbox", () => {
-            const geoJsonPointWithInvalidBbox: GeoJSONPoint = {
-                ...baseGeoJsonPoint,
-                bbox: [],
-            };
-            failGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithInvalidBbox);
+        it("allows a 6D geojson point", () => {
+            passGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                coordinates: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            });
+        });
+
+        it("allows a geojson point with valid bbox", () => {
+            passGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                bbox: [1.0, 2.0, 1.0, 2.0],
+            });
+        });
+
+        it("does not allow a geojson point with incorrect bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                bbox: [30, 10, 20, 100],
+            });
+        });
+
+        it("does not allow a geojson point with invalid bbox dimensions", () => {
+            failGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                bbox: [1.0, 2.0, 0.0, 1.0, 2.0, 0.0],
+            });
+        });
+
+        it("does not allow a geojson point with badly formatted bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                bbox: ["hello"],
+            });
         });
 
         it("does not allow a geojson point with invalid coordinates", () => {
-            const geoJsonPointWithInvalidCoordinates = {
-                ...baseGeoJsonPoint,
+            failGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
                 coordinates: ["3ght45y34", 39284],
-            };
-            failGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithInvalidCoordinates);
+            });
         });
     });
 
-    describe("GeoJSONLineString", () => {});
+    describe("GeoJSONLineString", () => {
+        const basicGeoJsonLineString: GeoJSONLineString = {
+            type: "LineString",
+            coordinates: [
+                [1.0, 2.0],
+                [3.0, 4.0],
+            ],
+        };
 
-    describe("GeoJSONMultiPoint", () => {});
+        it("allows a basic geojson line string", () => {
+            passGeoJSONSchemaTest(GeoJSONLineStringSchema, basicGeoJsonLineString);
+        });
 
-    describe("GeoJSONPolygon", () => {});
+        it("allows a long 3D geojson line string", () => {
+            passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                coordinates: [
+                    [0.0, 0.0, 0.0],
+                    [1.0, 1.0, 1.0],
+                    [2.0, 2.0, 2.0],
+                    [3.0, 3.0, 3.0],
+                    [4.0, 4.0, 4.0],
+                    [5.0, 5.0, 5.0],
+                ],
+            });
+        });
 
-    describe("GeoJSONMultiLineString", () => {});
+        it("allows line string with valid bbox", () => {
+            passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                bbox: [1.0, 2.0, 3.0, 4.0],
+            });
+        });
 
-    describe("GeoJSONMultiPolygon", () => {});
+        it("does not allow line string with bad position dimensions", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                coordinates: [
+                    [0, 0],
+                    [1, 2, 3],
+                    [4, 5, 6, 7],
+                ],
+            });
+        });
+
+        it("does not allow line string with incorrect bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                bbox: [30, 10, 20, 100],
+            });
+        });
+
+        it("does not allow line string with invalid bbox dimensions", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                bbox: [1.0, 2.0, 0.0, 3.0, 4.0, 0.0],
+            });
+        });
+
+        it("does not allow line string with badly formatted bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                bbox: ["badformat"],
+            });
+        });
+
+        it("does not allow line string with invalid coordinates", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                coordinates: [2.0],
+            });
+        });
+    });
+
+    // TODO: Fail tests for bad dimensions, incorrect bbox, invalid bbox dimensions, badly formatted bbox
+    describe("GeoJSONMultiPoint", () => {
+        const basicGeoJsonMultiPoint: GeoJSONMultiPoint = {
+            type: "MultiPoint",
+            coordinates: [
+                [0.0, 0.0],
+                [-3.0, 4.0],
+                [8.0, -2.0],
+            ],
+        };
+
+        it("allows a basic geojson multi point", () => {
+            passGeoJSONSchemaTest(GeoJSONMultiPointSchema, basicGeoJsonMultiPoint);
+        });
+
+        it("allows a geojson multi point with bbox", () => {
+            const geoJsonMultiPointWithBbox = {
+                ...basicGeoJsonMultiPoint,
+                bbox: bbox2D,
+            };
+            passGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithBbox);
+        });
+
+        it("does not allow a geojson multi point with invalid bbox", () => {
+            const geoJsonMultiPointWithInvalidBbox = {
+                ...basicGeoJsonMultiPoint,
+                bbox: [],
+            };
+            failGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithInvalidBbox);
+        });
+
+        it("does not allow a geojson multi point with invalid coordinates", () => {
+            const geoJsonMultiPointWithInvalidCoordinates = {
+                ...basicGeoJsonMultiPoint,
+                coordinates: [[[2.0]]],
+            };
+            failGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithInvalidCoordinates);
+        });
+    });
+
+    // TODO: Fail tests for bad dimensions, no linear rings, incorrect bbox, invalid bbox dimensions, badly formatted bbox
+    describe("GeoJSONPolygon", () => {
+        const basicGeoJsonPolygon: GeoJSONPolygon = {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [0.0, 0.0],
+                    [1.0, 0.0],
+                    [1.0, 1.0],
+                    [0.0, 1.0],
+                    [0.0, 0.0],
+                ],
+            ],
+        };
+
+        it("allows a basic geojson polygon", () => {
+            passGeoJSONSchemaTest(GeoJSONPolygonSchema, basicGeoJsonPolygon);
+        });
+
+        it("allows a geojson polygon with bbox", () => {
+            const geoJsonPolygonWithBbox = {
+                ...basicGeoJsonPolygon,
+                bbox: bbox2D,
+            };
+            passGeoJSONSchemaTest(GeoJSONPolygonSchema, geoJsonPolygonWithBbox);
+        });
+
+        it("allows a geojson polygon with a hole", () => {});
+
+        it("does not allow a geojson polygon with invalid bbox", () => {});
+        it("does not allow a geojson polygon with invalid coordinates", () => {});
+    });
+
+    describe("GeoJSONMultiLineString", () => {
+        it("allows a basic geojson multi line string", () => {});
+        it("allows a geojson multi line string with bbox", () => {});
+        it("does not allow a geojson multi line string with invalid bbox", () => {});
+        it("does not allow a geojson multi line string with invalid coordinates", () => {});
+    });
+
+    describe("GeoJSONMultiPolygon", () => {
+        it("allows a basic geojson multi-polygon", () => {});
+        it("allows a geojson multi-polygon with bbox", () => {});
+        it("does not allow a geojson multi-polygon with invalid bbox", () => {});
+        it("does not allow a geojson multi-polygon with invalid coordinates", () => {});
+    });
 
     describe("GeoJSONGeometryCollection", () => {});
-
-    describe("GeoJSONGeometry", () => {});
 
     describe("GeoJSONFeature", () => {});
 
     describe("GeoJSONFeatureCollection", () => {});
-
-    describe("GeoJSON", () => {});
 });
