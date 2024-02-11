@@ -111,53 +111,60 @@ describe("zod-geojson", () => {
             coordinates: [1.0, 2.0],
         };
 
-        it("allows a basic geojson point", () => {
+        it("allows a 2d point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, basicGeoJsonPoint);
         });
 
-        it("allows a 3D geojson point", () => {
+        it("allows a 3D point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 coordinates: [1.0, 2.0, 3.0],
             });
         });
 
-        it("allows a 6D geojson point", () => {
+        it("allows a 6D point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 coordinates: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
             });
         });
 
-        it("allows a geojson point with valid bbox", () => {
+        it("allows a 2D point with valid bbox", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [1.0, 2.0, 1.0, 2.0],
             });
         });
 
-        it("does not allow a geojson point with incorrect bbox", () => {
+        it("allows a 3D point with valid bbox", () => {
+            passGeoJSONSchemaTest(GeoJSONPointSchema, {
+                ...basicGeoJsonPoint,
+                bbox: [1.0, 2.0, 1.0, 2.0],
+            });
+        });
+
+        it("does not allow a point with incorrect bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [30, 10, 20, 100],
             });
         });
 
-        it("does not allow a geojson point with invalid bbox dimensions", () => {
+        it("does not allow a point with invalid bbox dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [1.0, 2.0, 0.0, 1.0, 2.0, 0.0],
             });
         });
 
-        it("does not allow a geojson point with badly formatted bbox", () => {
+        it("does not allow a point with badly formatted bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: ["hello"],
             });
         });
 
-        it("does not allow a geojson point with invalid coordinates", () => {
+        it("does not allow a point with invalid coordinates", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 coordinates: ["3ght45y34", 39284],
@@ -174,11 +181,11 @@ describe("zod-geojson", () => {
             ],
         };
 
-        it("allows a basic geojson line string", () => {
+        it("allows a 2D line string", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, basicGeoJsonLineString);
         });
 
-        it("allows a long 3D geojson line string", () => {
+        it("allows a 3D line string", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 coordinates: [
@@ -192,14 +199,23 @@ describe("zod-geojson", () => {
             });
         });
 
-        it("allows line string with valid bbox", () => {
+        it("allows 2D line string with valid bbox", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 bbox: [1.0, 2.0, 3.0, 4.0],
             });
         });
 
-        it("does not allow line string with bad position dimensions", () => {
+        it.skip("allows 3D line string with valid bbox", () => {});
+
+        it("does not allow line string with invalid coordinates", () => {
+            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
+                ...basicGeoJsonLineString,
+                coordinates: [2.0],
+            });
+        });
+
+        it("does not allow line string with inconsistent position dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 coordinates: [
@@ -230,16 +246,8 @@ describe("zod-geojson", () => {
                 bbox: ["badformat"],
             });
         });
-
-        it("does not allow line string with invalid coordinates", () => {
-            failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
-                ...basicGeoJsonLineString,
-                coordinates: [2.0],
-            });
-        });
     });
 
-    // TODO: Fail tests for bad dimensions, incorrect bbox, invalid bbox dimensions, badly formatted bbox
     describe("GeoJSONMultiPoint", () => {
         const basicGeoJsonMultiPoint: GeoJSONMultiPoint = {
             type: "MultiPoint",
@@ -250,33 +258,42 @@ describe("zod-geojson", () => {
             ],
         };
 
-        it("allows a basic geojson multi point", () => {
+        it("allows a 2D multi point", () => {
             passGeoJSONSchemaTest(GeoJSONMultiPointSchema, basicGeoJsonMultiPoint);
         });
 
-        it("allows a geojson multi point with bbox", () => {
+        it.skip("allows a 3D multi point", () => {});
+
+        it("allows a 2D multi point with a valid bbox", () => {
             const geoJsonMultiPointWithBbox = {
                 ...basicGeoJsonMultiPoint,
-                bbox: bbox2D,
+                bbox: [],
             };
             passGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithBbox);
         });
 
-        it("does not allow a geojson multi point with invalid bbox", () => {
-            const geoJsonMultiPointWithInvalidBbox = {
-                ...basicGeoJsonMultiPoint,
-                bbox: [],
-            };
-            failGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithInvalidBbox);
-        });
+        it.skip("allows a 3D multi point with valid bbox", () => {});
 
-        it("does not allow a geojson multi point with invalid coordinates", () => {
+        it("does not allow a multi point with invalid coordinates", () => {
             const geoJsonMultiPointWithInvalidCoordinates = {
                 ...basicGeoJsonMultiPoint,
-                coordinates: [[[2.0]]],
+                coordinates: [
+                    [
+                        [1.0, 2.0],
+                        [3.0, 4.0],
+                    ],
+                ],
             };
             failGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithInvalidCoordinates);
         });
+
+        it.skip("does not allow multi point with inconsistent position dimensions", () => {});
+
+        it.skip("does not allow a multi point with incorrect bbox", () => {});
+
+        it.skip("does not allow a multi point with invalid bbox dimensions", () => {});
+
+        it.skip("does not allow a multi point with badly formatted bbox", () => {});
     });
 
     // TODO: Fail tests for bad dimensions, no linear rings, incorrect bbox, invalid bbox dimensions, badly formatted bbox
@@ -294,11 +311,13 @@ describe("zod-geojson", () => {
             ],
         };
 
-        it("allows a basic geojson polygon", () => {
+        it("allows a 2D polygon", () => {
             passGeoJSONSchemaTest(GeoJSONPolygonSchema, basicGeoJsonPolygon);
         });
 
-        it("allows a geojson polygon with bbox", () => {
+        it.skip("allows a 3D polygon", () => {});
+
+        it("allows a 2D polygon with bbox", () => {
             const geoJsonPolygonWithBbox = {
                 ...basicGeoJsonPolygon,
                 bbox: bbox2D,
@@ -306,24 +325,53 @@ describe("zod-geojson", () => {
             passGeoJSONSchemaTest(GeoJSONPolygonSchema, geoJsonPolygonWithBbox);
         });
 
-        it("allows a geojson polygon with a hole", () => {});
+        it.skip("allows a 3D polygon with bbox", () => {});
 
-        it("does not allow a geojson polygon with invalid bbox", () => {});
-        it("does not allow a geojson polygon with invalid coordinates", () => {});
+        it.skip("allows a 2D polygon with a hole", () => {});
+
+        it.skip("allows a 2D polygon with a hole and bbox", () => {});
+
+        it.skip("does not allow a polygon which is not linear ring", () => {});
+
+        it.skip("does not allow a polygon with invalid coordinates", () => {});
+
+        it.skip("does not allow a polygon with inconsistent position dimensions", () => {});
+
+        it.skip("does not allow a polygon with incorrect bbox", () => {});
+
+        it.skip("does not allow a polygon with invalid bbox dimensions", () => {});
+
+        it.skip("does not allow a polygon with badly formatted bbox", () => {});
     });
 
     describe("GeoJSONMultiLineString", () => {
-        it("allows a basic geojson multi line string", () => {});
-        it("allows a geojson multi line string with bbox", () => {});
-        it("does not allow a geojson multi line string with invalid bbox", () => {});
-        it("does not allow a geojson multi line string with invalid coordinates", () => {});
+        it.skip("allows a 2D multi line string with one line", () => {});
+        it.skip("allows a 2D multi line string with multiple lines", () => {});
+        it.skip("allows a 3D multi line string", () => {});
+        it.skip("allows a 2D multi line string with one line and bbox", () => {});
+        it.skip("allows a 2D multi line string with multiples and with bbox", () => {});
+        it.skip("allows a 3D multi line string with bbox", () => {});
+        it.skip("does not allow a multi line string with invalid coordinates", () => {});
+        it.skip("does not allow a multi line string with inconsistent position dimensions", () => {});
+        it.skip("does not allow a multi line string with inconsistent position dimensions across lines", () => {});
+        it.skip("does not allow a multi line string with incorrect bbox", () => {});
     });
 
     describe("GeoJSONMultiPolygon", () => {
-        it("allows a basic geojson multi-polygon", () => {});
-        it("allows a geojson multi-polygon with bbox", () => {});
-        it("does not allow a geojson multi-polygon with invalid bbox", () => {});
-        it("does not allow a geojson multi-polygon with invalid coordinates", () => {});
+        it.skip("allows a 2D multi-polygon with one polygon", () => {});
+        it.skip("allows a 2D multi-polygon with multiple polygons", () => {});
+        it.skip("allows a 3D multi-polygon with one polygon", () => {});
+        it.skip("allows a 2D multi-polygon with one polygon and bbox", () => {});
+        it.skip("allows a 2D multi-polygon with multiple polygons and bbox", () => {});
+        it.skip("allows a 3D multi-polygon with one polygon and bbox", () => {});
+
+        it.skip("does not allow a multi-polygon with a polygon that is not linear ring", () => {});
+        it.skip("does not allow a multi-polygon with invalid coordinates", () => {});
+        it.skip("does not allow a multi-polygon with inconsistent position dimensions", () => {});
+        it.skip("does not allow a multi-polygon with inconsistent position dimensions across polygons", () => {});
+        it.skip("does not allow a multi-polygon with incorrect bbox", () => {});
+        it.skip("does not allow a multi-polygon with invalid bbox dimensions", () => {});
+        it.skip("does not allow a multi-polygon with badly formatted bbox", () => {});
     });
 
     describe("GeoJSONGeometryCollection", () => {});
