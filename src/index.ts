@@ -22,9 +22,9 @@ export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;
 export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection"]).or(GeoJSONGeometryTypeSchema);
 export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;
 
-export const GeoJSON2DBBoxSchema = z.array(z.number()).length(4);
-export const GeoJSON3DBBoxSchema = z.array(z.number()).length(6);
-export const GeoJSONBBoxSchema = GeoJSON2DBBoxSchema.or(GeoJSON3DBBoxSchema);
+export const GeoJSONBBoxSchema = z
+    .array(z.number())
+    .refine((bbox) => bbox.length % 2 === 0, "Bounding box must have an even number of elements");
 export type GeoJSONBbox = z.infer<typeof GeoJSONBBoxSchema>;
 
 const GeoJSONBaseSchema = z.object({
