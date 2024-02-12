@@ -84,8 +84,8 @@ const _GeoJSONGeometryCollectionBaseSchema = z.object({
 });
 
 export const GeoJSONGeometryCollectionSchema = _GeoJSONGeometryCollectionBaseSchema.extend({
-    geometry: z.lazy(() => z.array(GeoJSONGeometrySchema)),
-}) as unknown as ZodType<GeoJSONGeometry>; // For some reason the recursion causes incorrect types, but it does work
+    geometries: z.lazy(() => z.array(GeoJSONGeometrySchema)),
+}); // For some reason the recursion causes incorrect types, but it does work
 
 export type GeoJSONGeometry =
     | z.infer<typeof _GeoJSONSimpleGeometrySchema>
@@ -95,7 +95,9 @@ export type GeoJSONGeometry =
 
 // TODO: Refine "GeoJSON Types Are Not Extensible" section 7 of the spec
 
-export const GeoJSONGeometrySchema = _GeoJSONSimpleGeometrySchema.or(GeoJSONGeometryCollectionSchema);
+export const GeoJSONGeometrySchema: ZodType<GeoJSONGeometry> = _GeoJSONSimpleGeometrySchema.or(
+    GeoJSONGeometryCollectionSchema,
+);
 
 export const GeoJSONFeatureSchema = z.object({
     id: z.string().or(z.number()).nullable(),
