@@ -3,6 +3,8 @@ import { ZodError, ZodSchema } from "zod";
 import {
     GeoJSONBbox,
     GeoJSONBBoxSchema,
+    GeoJSONGeometryCollection,
+    GeoJSONGeometryCollectionSchema,
     GeoJSONGeometrySchema,
     GeoJSONGeometryType,
     GeoJSONGeometryTypeSchema,
@@ -36,6 +38,8 @@ function failGeoJSONSchemaTest(specificSchema: ZodSchema, value: unknown): void 
     expect(() => GeoJSONGeometrySchema.parse(value)).toThrow(ZodError);
     expect(() => GeoJSONSchema.parse(value)).toThrow(ZodError);
 }
+
+// TODO: Consider splitting
 
 describe("zod-geojson", () => {
     const bbox2D: GeoJSONBbox = [0, 0, 1, 1];
@@ -919,7 +923,19 @@ describe("zod-geojson", () => {
     });
 
     describe("GeoJSONGeometryCollection", () => {
-        it.skip("allows a geometry collection with one geometry", () => {});
+        const singleGeometryCollection2D: GeoJSONGeometryCollection = {
+            type: "GeometryCollection",
+            geometries: [
+                {
+                    type: "Point",
+                    coordinates: [0.0, 0.0],
+                },
+            ],
+        };
+
+        it("allows a geometry collection with one geometry", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, singleGeometryCollection2D);
+        });
         it.skip("allows a geometry collection with multiple geometries", () => {});
         it.skip("allows a geometry collection with multiple geometries of different types", () => {});
         it.skip("allows a geometry collection with nested geometry collection", () => {});
