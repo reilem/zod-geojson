@@ -73,6 +73,8 @@ describe("zod-geojson", () => {
                 expect(GeoJSONTypeSchema.parse(type)).toEqual(type);
             }),
         );
+
+        it.skip("does not allow an invalid geojson geometry type", () => {});
     });
 
     describe("GeoJSONType", () => {
@@ -80,6 +82,8 @@ describe("zod-geojson", () => {
         geoJsonTypes.forEach((type) =>
             it(`allows ${type} geojson type`, () => expect(GeoJSONTypeSchema.parse(type)).toEqual(type)),
         );
+
+        it.skip("does not allow an invalid geojson type", () => {});
     });
 
     describe("GeoJSONBBox", () => {
@@ -114,56 +118,55 @@ describe("zod-geojson", () => {
         it("allows a 2d point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, basicGeoJsonPoint);
         });
-
         it("allows a 3D point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 coordinates: [1.0, 2.0, 3.0],
             });
         });
-
         it("allows a 6D point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 coordinates: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
             });
         });
-
         it("allows a 2D point with valid bbox", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [1.0, 2.0, 1.0, 2.0],
             });
         });
-
         it("allows a 3D point with valid bbox", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [1.0, 2.0, 1.0, 2.0],
             });
         });
+        it.skip("allows a point and preserves extra keys", () => {});
 
+        it.skip("does not allow a point without coordinates", () => {});
+        it.skip("does not allow a point with the geometry key", () => {});
+        it.skip("does not allow a point with the property key", () => {});
+        it.skip("does not allow a point with the features key", () => {});
+        it.skip("does not allow a point with the geometries key", () => {});
         it("does not allow a point with incorrect bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [30, 10, 20, 100],
             });
         });
-
         it("does not allow a point with invalid bbox dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: [1.0, 2.0, 0.0, 1.0, 2.0, 0.0],
             });
         });
-
         it("does not allow a point with badly formatted bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
                 bbox: ["hello"],
             });
         });
-
         it("does not allow a point with invalid coordinates", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
                 ...basicGeoJsonPoint,
@@ -184,7 +187,6 @@ describe("zod-geojson", () => {
         it("allows a 2D line string", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, basicGeoJsonLineString);
         });
-
         it("allows a 3D line string", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
@@ -198,23 +200,26 @@ describe("zod-geojson", () => {
                 ],
             });
         });
-
         it("allows 2D line string with valid bbox", () => {
             passGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 bbox: [1.0, 2.0, 3.0, 4.0],
             });
         });
-
         it.skip("allows 3D line string with valid bbox", () => {});
+        it.skip("allows a line string and preserves extra keys", () => {});
 
+        it.skip("does not allow a line string without coordinates", () => {});
+        it.skip("does not allow a line string with the geometry key", () => {});
+        it.skip("does not allow a line string with the property key", () => {});
+        it.skip("does not allow a line string with the features key", () => {});
+        it.skip("does not allow a line string with the geometries key", () => {});
         it("does not allow line string with invalid coordinates", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 coordinates: [2.0],
             });
         });
-
         it("does not allow line string with inconsistent position dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
@@ -225,21 +230,18 @@ describe("zod-geojson", () => {
                 ],
             });
         });
-
         it("does not allow line string with incorrect bbox", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 bbox: [30, 10, 20, 100],
             });
         });
-
         it("does not allow line string with invalid bbox dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
                 bbox: [1.0, 2.0, 0.0, 3.0, 4.0, 0.0],
             });
         });
-
         it("does not allow line string with badly formatted bbox", () => {
             failGeoJSONSchemaTest(GeoJSONLineStringSchema, {
                 ...basicGeoJsonLineString,
@@ -258,23 +260,26 @@ describe("zod-geojson", () => {
             ],
         };
 
-        it("allows a 2D multi point", () => {
+        it("allows a 2D multi-point", () => {
             passGeoJSONSchemaTest(GeoJSONMultiPointSchema, basicGeoJsonMultiPoint);
         });
-
-        it.skip("allows a 3D multi point", () => {});
-
-        it("allows a 2D multi point with a valid bbox", () => {
+        it.skip("allows a 3D multi-point", () => {});
+        it("allows a 2D multi-point with a valid bbox", () => {
             const geoJsonMultiPointWithBbox = {
                 ...basicGeoJsonMultiPoint,
                 bbox: [],
             };
             passGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithBbox);
         });
+        it.skip("allows a 3D multi-point with valid bbox", () => {});
+        it.skip("allows a multi point and preserves extra keys", () => {});
 
-        it.skip("allows a 3D multi point with valid bbox", () => {});
-
-        it("does not allow a multi point with invalid coordinates", () => {
+        it.skip("does not allow a multi-point without coordinates", () => {});
+        it.skip("does not allow a multi-point with the geometry key", () => {});
+        it.skip("does not allow a multi-point with the property key", () => {});
+        it.skip("does not allow a multi-point with the features key", () => {});
+        it.skip("does not allow a multi-point with the geometries key", () => {});
+        it("does not allow a multi-point with invalid coordinates", () => {
             const geoJsonMultiPointWithInvalidCoordinates = {
                 ...basicGeoJsonMultiPoint,
                 coordinates: [
@@ -286,17 +291,12 @@ describe("zod-geojson", () => {
             };
             failGeoJSONSchemaTest(GeoJSONMultiPointSchema, geoJsonMultiPointWithInvalidCoordinates);
         });
-
-        it.skip("does not allow multi point with inconsistent position dimensions", () => {});
-
-        it.skip("does not allow a multi point with incorrect bbox", () => {});
-
-        it.skip("does not allow a multi point with invalid bbox dimensions", () => {});
-
-        it.skip("does not allow a multi point with badly formatted bbox", () => {});
+        it.skip("does not allow multi-point with inconsistent position dimensions", () => {});
+        it.skip("does not allow a multi-point with incorrect bbox", () => {});
+        it.skip("does not allow a multi-point with invalid bbox dimensions", () => {});
+        it.skip("does not allow a multi-point with badly formatted bbox", () => {});
     });
 
-    // TODO: Fail tests for bad dimensions, no linear rings, incorrect bbox, invalid bbox dimensions, badly formatted bbox
     describe("GeoJSONPolygon", () => {
         const basicGeoJsonPolygon: GeoJSONPolygon = {
             type: "Polygon",
@@ -314,9 +314,7 @@ describe("zod-geojson", () => {
         it("allows a 2D polygon", () => {
             passGeoJSONSchemaTest(GeoJSONPolygonSchema, basicGeoJsonPolygon);
         });
-
         it.skip("allows a 3D polygon", () => {});
-
         it("allows a 2D polygon with bbox", () => {
             const geoJsonPolygonWithBbox = {
                 ...basicGeoJsonPolygon,
@@ -324,37 +322,42 @@ describe("zod-geojson", () => {
             };
             passGeoJSONSchemaTest(GeoJSONPolygonSchema, geoJsonPolygonWithBbox);
         });
-
         it.skip("allows a 3D polygon with bbox", () => {});
-
         it.skip("allows a 2D polygon with a hole", () => {});
-
         it.skip("allows a 2D polygon with a hole and bbox", () => {});
+        it.skip("allows a polygon and preserves extra keys", () => {});
 
+        it.skip("does not allow a polygon without coordinates", () => {});
+        it.skip("does not allow a polygon with the geometry key", () => {});
+        it.skip("does not allow a polygon with the property key", () => {});
+        it.skip("does not allow a polygon with the features key", () => {});
+        it.skip("does not allow a polygon with the geometries key", () => {});
         it.skip("does not allow a polygon which is not linear ring", () => {});
-
         it.skip("does not allow a polygon with invalid coordinates", () => {});
-
         it.skip("does not allow a polygon with inconsistent position dimensions", () => {});
-
         it.skip("does not allow a polygon with incorrect bbox", () => {});
-
         it.skip("does not allow a polygon with invalid bbox dimensions", () => {});
-
         it.skip("does not allow a polygon with badly formatted bbox", () => {});
     });
 
     describe("GeoJSONMultiLineString", () => {
-        it.skip("allows a 2D multi line string with one line", () => {});
-        it.skip("allows a 2D multi line string with multiple lines", () => {});
-        it.skip("allows a 3D multi line string", () => {});
-        it.skip("allows a 2D multi line string with one line and bbox", () => {});
-        it.skip("allows a 2D multi line string with multiples and with bbox", () => {});
-        it.skip("allows a 3D multi line string with bbox", () => {});
-        it.skip("does not allow a multi line string with invalid coordinates", () => {});
-        it.skip("does not allow a multi line string with inconsistent position dimensions", () => {});
-        it.skip("does not allow a multi line string with inconsistent position dimensions across lines", () => {});
-        it.skip("does not allow a multi line string with incorrect bbox", () => {});
+        it.skip("allows a 2D multi-line string with one line", () => {});
+        it.skip("allows a 2D multi-line string with multiple lines", () => {});
+        it.skip("allows a 3D multi-line string", () => {});
+        it.skip("allows a 2D multi-line string with one line and bbox", () => {});
+        it.skip("allows a 2D multi-line string with multiples and with bbox", () => {});
+        it.skip("allows a 3D multi-line string with bbox", () => {});
+        it.skip("allows a multi-line string and preserves extra keys", () => {});
+
+        it.skip("does not allow a multi-line string without coordinates", () => {});
+        it.skip("does not allow a multi-line string with the geometry key", () => {});
+        it.skip("does not allow a multi-line string with the property key", () => {});
+        it.skip("does not allow a multi-line string with the features key", () => {});
+        it.skip("does not allow a multi-line string with the geometries key", () => {});
+        it.skip("does not allow a multi-line string with invalid coordinates", () => {});
+        it.skip("does not allow a multi-line string with inconsistent position dimensions", () => {});
+        it.skip("does not allow a multi-line string with inconsistent position dimensions across lines", () => {});
+        it.skip("does not allow a multi-line string with incorrect bbox", () => {});
     });
 
     describe("GeoJSONMultiPolygon", () => {
@@ -364,7 +367,13 @@ describe("zod-geojson", () => {
         it.skip("allows a 2D multi-polygon with one polygon and bbox", () => {});
         it.skip("allows a 2D multi-polygon with multiple polygons and bbox", () => {});
         it.skip("allows a 3D multi-polygon with one polygon and bbox", () => {});
+        it.skip("allows a multi-polygon and preserves extra keys", () => {});
 
+        it.skip("does not allow a multi-polygon without coordinates", () => {});
+        it.skip("does not allow a multi-polygon with the geometry key", () => {});
+        it.skip("does not allow a multi-polygon with the property key", () => {});
+        it.skip("does not allow a multi-polygon with the features key", () => {});
+        it.skip("does not allow a multi-polygon with the geometries key", () => {});
         it.skip("does not allow a multi-polygon with a polygon that is not linear ring", () => {});
         it.skip("does not allow a multi-polygon with invalid coordinates", () => {});
         it.skip("does not allow a multi-polygon with inconsistent position dimensions", () => {});
@@ -374,9 +383,59 @@ describe("zod-geojson", () => {
         it.skip("does not allow a multi-polygon with badly formatted bbox", () => {});
     });
 
-    describe("GeoJSONGeometryCollection", () => {});
+    describe("GeoJSONGeometryCollection", () => {
+        it.skip("allows a geometry collection with one geometry", () => {});
+        it.skip("allows a geometry collection with multiple geometries", () => {});
+        it.skip("allows a geometry collection with multiple geometries of different types", () => {});
+        it.skip("allows a geometry collection with nested geometry collection", () => {});
+        it.skip("allows a geometry collection and preserves extra keys", () => {});
 
-    describe("GeoJSONFeature", () => {});
+        it.skip("does not allow a geometry collection without geometries", () => {});
+        it.skip("does not allow a geometry collection with the coordinates key", () => {});
+        it.skip("does not allow a geometry collection with the features key", () => {});
+        it.skip("does not allow a geometry collection with the geometry key", () => {});
+        it.skip("does not allow a geometry collection with the properties key", () => {});
+        it.skip("does not allow a geometry collection containing geometries with invalid types", () => {});
+        it.skip("does not allow a geometry collection containing geometries with inconsistent position dimensions", () => {});
+        it.skip("does not allow a geometry collection containing geometries with invalid coordinates", () => {});
+        it.skip("does not allow a geometry collection containing geometries with incorrect bbox", () => {});
+        it.skip("does not allow a geometry collection containing geometries with invalid bbox dimensions", () => {});
+        it.skip("does not allow a geometry collection containing geometries with badly formatted bbox", () => {});
+    });
 
-    describe("GeoJSONFeatureCollection", () => {});
+    describe("GeoJSONFeature", () => {
+        it.skip("allows a feature with a 2D point geometry", () => {});
+        it.skip("allows a feature with a 3D point geometry", () => {});
+        it.skip("allows a feature with a 2D polygon geometry", () => {});
+        it.skip("allows a feature with a 3D polygon geometry and valid bbox", () => {});
+        it.skip("allows a feature with an id", () => {});
+        it.skip("allows a feature and preserves extra keys", () => {});
+
+        it.skip("does not allow a feature without properties", () => {});
+        it.skip("does not allow a feature without geometry", () => {});
+        it.skip("does not allow a feature with the coordinates key", () => {});
+        it.skip("does not allow a feature with the features key", () => {});
+        it.skip("does not allow a feature with the geometries key", () => {});
+        it.skip("does not allow a feature with a polygon geometry", () => {});
+    });
+
+    describe("GeoJSONFeatureCollection", () => {
+        it.skip("allows a feature collection with one feature", () => {});
+        it.skip("allows a feature collection with multiple features", () => {});
+        it.skip("allows a feature collection and preserves extra keys", () => {});
+
+        it.skip("does not allow a feature collection without features", () => {});
+        it.skip("does not allow a feature collection with the coordinates key", () => {});
+        it.skip("does not allow a feature collection with the geometry key", () => {});
+        it.skip("does not allow a feature collection with the properties key", () => {});
+        it.skip("does not allow a feature collection with the geometries key", () => {});
+    });
+
+    describe("GeoJSONSchema", () => {
+        it.skip("allows a basic geometry", () => {});
+        it.skip("allows a basic feature", () => {});
+        it.skip("allows a basic feature collection", () => {});
+
+        it.skip("does not allow a geojson with invalid type", () => {});
+    });
 });
