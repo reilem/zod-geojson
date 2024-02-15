@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
-import { GeoJSONFeatureCollection, GeoJSONFeatureCollectionSchema } from "../src";
+import { multiGeoJsonFeatureCollection, singleGeoJsonFeatureCollection } from "../examples/feature_collection";
+import { GeoJSONFeatureCollectionSchema } from "../src";
 
 function passGeoJSONFeatureCollectionSchemaTest(object: unknown) {
     expect(GeoJSONFeatureCollectionSchema.parse(object)).toEqual(object);
@@ -10,73 +11,35 @@ function failGeoJSONFeatureCollectionSchemaTest(object: unknown) {
 }
 
 describe("GeoJSONFeatureCollection", () => {
-    const singleFeatureCollection: GeoJSONFeatureCollection = {
-        type: "FeatureCollection",
-        features: [
-            {
-                type: "Feature",
-                properties: {},
-                geometry: {
-                    type: "Point",
-                    coordinates: [0.0, 0.0],
-                },
-            },
-        ],
-    };
-    const multiFeatureCollection: GeoJSONFeatureCollection = {
-        type: "FeatureCollection",
-        features: [
-            {
-                type: "Feature",
-                properties: {},
-                geometry: {
-                    type: "Point",
-                    coordinates: [0.0, 0.0],
-                },
-            },
-            {
-                type: "Feature",
-                properties: {},
-                geometry: {
-                    type: "LineString",
-                    coordinates: [
-                        [5.0, 5.0],
-                        [10.0, 10.0],
-                    ],
-                },
-            },
-        ],
-    };
-
     it("allows a feature collection with one feature", () => {
-        passGeoJSONFeatureCollectionSchemaTest(singleFeatureCollection);
+        passGeoJSONFeatureCollectionSchemaTest(singleGeoJsonFeatureCollection);
     });
     it("allows a feature collection with multiple features", () => {
-        passGeoJSONFeatureCollectionSchemaTest(multiFeatureCollection);
+        passGeoJSONFeatureCollectionSchemaTest(multiGeoJsonFeatureCollection);
     });
     it("allows a feature collection and preserves extra keys", () => {
         passGeoJSONFeatureCollectionSchemaTest({
-            ...singleFeatureCollection,
+            ...singleGeoJsonFeatureCollection,
             color: "#00FF00",
         });
     });
     it("allows a feature collection with empty features array", () => {
-        passGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, features: [] });
+        passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, features: [] });
     });
 
     it("does not allow a feature collection without features key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ type: "FeatureCollection" });
     });
     it.skip("does not allow a feature collection with the coordinates key", () => {
-        failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, coordinates: [] });
+        failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, coordinates: [] });
     });
     it("does not allow a feature collection with the geometry key", () => {
-        failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, geometry: {} });
+        failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, geometry: {} });
     });
     it("does not allow a feature collection with the properties key", () => {
-        failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, properties: {} });
+        failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, properties: {} });
     });
     it("does not allow a feature collection with the geometries key", () => {
-        failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, geometries: [] });
+        failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, geometries: [] });
     });
 });
