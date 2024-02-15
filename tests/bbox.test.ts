@@ -20,12 +20,20 @@ describe("GeoJSONBBox", () => {
         expect(() => GeoJSONBBoxSchema.parse([])).toThrow(ZodError);
     });
 
-    it("does not allow an invalid bbox", () => {
+    it("does not allow a bbox with 1 position", () => {
         expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(ZodError);
     });
 
+    it("does not allow a bbox with 2 positions", () => {
+        expect(() => GeoJSONBBoxSchema.parse([0, 0])).toThrow(ZodError);
+    });
+
+    it("does not allow a bbox with 3 positions", () => {
+        expect(() => GeoJSONBBoxSchema.parse([0, 0, 0])).toThrow(ZodError);
+    });
+
     it("does not allow an uneven bbox", () => {
-        expect(() => GeoJSONBBoxSchema.parse([0.0, 3.0, -1.0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0.0, 3.0, -1.0, 2.0, 5.0])).toThrow(ZodError);
     });
 
     it("does not allow a badly formatted bbox", () => {

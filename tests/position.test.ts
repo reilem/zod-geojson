@@ -19,4 +19,8 @@ describe("GeoJSONPosition", () => {
     it("does not allow 1D positions", () => {
         expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
     });
+
+    it("does not allow empty positions", () => {
+        expect(() => GeoJSONPositionSchema.parse([])).toThrow(ZodError);
+    });
 });

@@ -1,10 +1,12 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
 import { z, ZodType } from "zod";
 
+const MIN_POSITION = 2 as const;
+
 // TODO: Specify the allowed values for the positions, must use WGS 84
 // GeoJSON positions and coordinates (see 3.1.1)
 // Array: [longitude/easting, latitude/northing, altitude (optional), ...extra elements are unspecified and ambiguous]
-export const GeoJSONPositionSchema = z.array(z.number()).min(2);
+export const GeoJSONPositionSchema = z.array(z.number()).min(MIN_POSITION);
 export type GeoJSONPosition = z.infer<typeof GeoJSONPositionSchema>;
 
 // GeoJSON types and Geometry type (see 1.4)
@@ -24,6 +26,7 @@ export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;
 
 export const GeoJSONBBoxSchema = z
     .array(z.number())
+    .min(MIN_POSITION * 2)
     .refine((bbox) => bbox.length % 2 === 0, "Bounding box must have an even number of elements");
 export type GeoJSONBbox = z.infer<typeof GeoJSONBBoxSchema>;
 
