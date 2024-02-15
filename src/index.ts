@@ -37,11 +37,30 @@ const GeoJSONBaseSchema = z.object({
 // TODO: Refine that all positions have the same dimension
 // TODO: Refine that bbox length matches the dimension of the position
 // TODO: Refine that the bbox is valid for the given positions & geometry
+function validGeometryKeys(geometry: Record<string, unknown>): boolean {
+    return (
+        !("geometry" in geometry) &&
+        !("properties" in geometry) &&
+        !("features" in geometry) &&
+        !("geometries" in geometry)
+    );
+}
+
+// TODO: needs to work for multiple dimensions
+function validPointBbox(geometry: { bbox?: number[]; coordinates: number[] }): boolean {
+    if (!geometry.bbox) return true;
+    const [minX, minY, maxX, maxY] = geometry.bbox;
+    const x = geometry.coordinates[0];
+    const y = geometry.coordinates[1];
+    return minX === x && minY === y && maxX === x && maxY === y;
+}
 
 export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Point"),
     coordinates: GeoJSONPositionSchema,
-}).passthrough();
+})
+    .passthrough()
+    .refine((point) => validGeometryKeys(point) && validPointBbox(point));
 export type GeoJSONPoint = z.infer<typeof GeoJSONPointSchema>;
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
