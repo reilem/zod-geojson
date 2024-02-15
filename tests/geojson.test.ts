@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
-import { geoJsonPoint3D } from "../examples/point";
+import { geoJsonPoint3D } from "../examples/geometry/point";
 import { GeoJSONFeature, GeoJSONFeatureCollection, GeoJSONSchema } from "../src";
 
 describe("GeoJSONSchema", () => {

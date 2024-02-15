@@ -1,5 +1,10 @@
 import { describe, it } from "vitest";
-import { geoJsonPoint2D, geoJsonPoint2DWithBbox, geoJsonPoint3D, geoJsonPoint3DWithBbox } from "../../examples/point";
+import {
+    geoJsonPoint2D,
+    geoJsonPoint2DWithBbox,
+    geoJsonPoint3D,
+    geoJsonPoint3DWithBbox,
+} from "../../examples/geometry/point";
 import { GeoJSONPointSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 

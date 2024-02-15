@@ -1,5 +1,12 @@
 import { describe, it } from "vitest";
-import { GeoJSONMultiPoint, GeoJSONMultiPointSchema } from "../../src";
+import {
+    geoJsonMultiPoint2D,
+    geoJsonMultiPoint2DWithBbox,
+    geoJsonMultiPoint3D,
+    geoJsonMultiPoint3DWithBbox,
+} from "../../examples/geometry/multi_point";
+import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
+import { GeoJSONMultiPointSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPointTest(value: unknown): void {
@@ -11,44 +18,21 @@ function failGeoJSONMultiPointTest(value: unknown): void {
 }
 
 describe("GeoJSONMultiPoint", () => {
-    const basic2DGeoJsonMultiPoint: GeoJSONMultiPoint = {
-        type: "MultiPoint",
-        coordinates: [
-            [0.0, 0.0],
-            [-3.0, 4.0],
-            [8.0, -2.0],
-        ],
-    };
-    const basic3DGeoJsonMultiPoint: GeoJSONMultiPoint = {
-        type: "MultiPoint",
-        coordinates: [
-            [0.0, 0.0, 0.0],
-            [-3.0, 4.0, 5.0],
-            [8.0, -2.0, 1.0],
-        ],
-    };
-
     it("allows a 2D multi-point", () => {
-        passGeoJSONMultiPointTest(basic2DGeoJsonMultiPoint);
+        passGeoJSONMultiPointTest(geoJsonMultiPoint2D);
     });
     it("allows a 3D multi-point", () => {
-        passGeoJSONMultiPointTest(basic3DGeoJsonMultiPoint);
+        passGeoJSONMultiPointTest(geoJsonMultiPoint3D);
     });
     it("allows a 2D multi-point with a valid bbox", () => {
-        passGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
-            bbox: [-3.0, -2.0, 8.0, 4.0],
-        });
+        passGeoJSONMultiPointTest(geoJsonMultiPoint2DWithBbox);
     });
     it("allows a 3D multi-point with valid bbox", () => {
-        passGeoJSONMultiPointTest({
-            ...basic3DGeoJsonMultiPoint,
-            bbox: [-3.0, -2.0, 0.0, 8.0, 4.0, 5.0],
-        });
+        passGeoJSONMultiPointTest(geoJsonMultiPoint3DWithBbox);
     });
     it("allows a multi point and preserves extra keys", () => {
         passGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
+            ...geoJsonMultiPoint2D,
             extraKey: "extra",
         });
     });
@@ -57,20 +41,20 @@ describe("GeoJSONMultiPoint", () => {
         failGeoJSONMultiPointTest({ type: "MultiPoint" });
     });
     it("does not allow a multi-point with the geometry key", () => {
-        failGeoJSONMultiPointTest({ ...basic2DGeoJsonMultiPoint, geometry: {} });
+        failGeoJSONMultiPointTest({ ...geoJsonMultiPoint2D, geometry: {} });
     });
     it("does not allow a multi-point with the properties key", () => {
-        failGeoJSONMultiPointTest({ ...basic2DGeoJsonMultiPoint, properties: {} });
+        failGeoJSONMultiPointTest({ ...geoJsonMultiPoint2D, properties: {} });
     });
     it("does not allow a multi-point with the features key", () => {
-        failGeoJSONMultiPointTest({ ...basic2DGeoJsonMultiPoint, features: [] });
+        failGeoJSONMultiPointTest({ ...geoJsonMultiPoint2D, features: [] });
     });
     it("does not allow a multi-point with the geometries key", () => {
-        failGeoJSONMultiPointTest({ ...basic2DGeoJsonMultiPoint, geometries: [] });
+        failGeoJSONMultiPointTest({ ...geoJsonMultiPoint2D, geometries: [] });
     });
     it("does not allow a multi-point with invalid coordinates", () => {
         const geoJsonMultiPointWithInvalidCoordinates = {
-            ...basic2DGeoJsonMultiPoint,
+            ...geoJsonMultiPoint2D,
             coordinates: [
                 // Too deeply nested
                 [
@@ -83,29 +67,25 @@ describe("GeoJSONMultiPoint", () => {
     });
     it("does not allow multi-point with inconsistent position dimensions", () => {
         failGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
-            coordinates: [
-                [0.0, 1.0],
-                [2.0, 3.0, 4.0],
-                [5.0, 6.0, 7.0, 8.0],
-            ],
+            ...geoJsonMultiPoint2D,
+            coordinates: [geoJsonPoint2D, geoJsonPoint3D, [5.0, 6.0, 7.0, 8.0]],
         });
     });
     it("does not allow a multi-point with incorrect bbox", () => {
         failGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
+            ...geoJsonMultiPoint2D,
             bbox: [30, 10, 20, 100],
         });
     });
     it("does not allow a multi-point with invalid bbox dimensions", () => {
         failGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
+            ...geoJsonMultiPoint2D,
             bbox: [1.0, 2.0, 0.0, 1.0, 2.0, 0.0],
         });
     });
     it("does not allow a multi-point with badly formatted bbox", () => {
         failGeoJSONMultiPointTest({
-            ...basic2DGeoJsonMultiPoint,
+            ...geoJsonMultiPoint2D,
             bbox: ["hello"],
         });
     });

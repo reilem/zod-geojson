@@ -1,5 +1,14 @@
 import { describe, it } from "vitest";
-import { GeoJSONMultiPolygon, GeoJSONMultiPolygonSchema } from "../../src";
+import {
+    multiGeoJsonMultiPolygon2D,
+    multiGeoJsonMultiPolygon2DWithBbox,
+    singleGeoJsonMultiPolygon2D,
+    singleGeoJsonMultiPolygon2DWithBbox,
+    singleGeoJsonMultiPolygon3D,
+    singleGeoJsonMultiPolygon3DWithBbox,
+} from "../../examples/geometry/multi_polygon";
+import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
+import { GeoJSONMultiPolygonSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
@@ -11,54 +20,6 @@ function failGeoJSONMultiPolygonTest(value: unknown): void {
 }
 
 describe("GeoJSONMultiPolygon", () => {
-    const singleGeoJsonMultiPolygon2D: GeoJSONMultiPolygon = {
-        type: "MultiPolygon",
-        coordinates: [
-            [
-                [
-                    [0.0, 1.0],
-                    [2.0, 2.0],
-                    [0.0, 2.0],
-                    [0.0, 1.0],
-                ],
-            ],
-        ],
-    };
-    const multiGeoJsonMultiPolygon2D: GeoJSONMultiPolygon = {
-        type: "MultiPolygon",
-        coordinates: [
-            [
-                [
-                    [0.0, 1.0],
-                    [2.0, 2.0],
-                    [0.0, 2.0],
-                    [0.0, 1.0],
-                ],
-            ],
-            [
-                [
-                    [5.0, 5.0],
-                    [7.5, 7.5],
-                    [5.0, 7.5],
-                    [5.0, 5.0],
-                ],
-            ],
-        ],
-    };
-    const singleGeoJsonMultiPolygon3D: GeoJSONMultiPolygon = {
-        type: "MultiPolygon",
-        coordinates: [
-            [
-                [
-                    [0.0, 1.0, 0.0],
-                    [2.0, 2.0, 1.0],
-                    [0.0, 2.0, 1.0],
-                    [0.0, 1.0, 0.0],
-                ],
-            ],
-        ],
-    };
-
     it("allows a 2D multi-polygon with one polygon", () => {
         passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon2D);
     });
@@ -69,22 +30,13 @@ describe("GeoJSONMultiPolygon", () => {
         passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon3D);
     });
     it("allows a 2D multi-polygon with one polygon and bbox", () => {
-        passGeoJSONMultiPolygonTest({
-            ...singleGeoJsonMultiPolygon2D,
-            bbox: [0.0, 1.0, 2.0, 2.0],
-        });
+        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon2DWithBbox);
     });
     it("allows a 2D multi-polygon with multiple polygons and bbox", () => {
-        passGeoJSONMultiPolygonTest({
-            ...multiGeoJsonMultiPolygon2D,
-            bbox: [0.0, 1.0, 7.5, 7.5],
-        });
+        passGeoJSONMultiPolygonTest(multiGeoJsonMultiPolygon2DWithBbox);
     });
     it("allows a 3D multi-polygon with one polygon and bbox", () => {
-        passGeoJSONMultiPolygonTest({
-            ...singleGeoJsonMultiPolygon3D,
-            bbox: [0.0, 1.0, 0.0, 2.0, 2.0, 1.0],
-        });
+        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBbox);
     });
     it("allows a multi-polygon and preserves extra keys", () => {
         passGeoJSONMultiPolygonTest({
@@ -169,24 +121,7 @@ describe("GeoJSONMultiPolygon", () => {
     it("does not allow a multi-polygon with inconsistent position dimensions across polygons", () => {
         failGeoJSONMultiPolygonTest({
             ...singleGeoJsonMultiPolygon2D,
-            coordinates: [
-                [
-                    [
-                        [0.0, 1.0],
-                        [2.0, 2.0],
-                        [0.0, 2.0],
-                        [0.0, 1.0],
-                    ],
-                ],
-                [
-                    [
-                        [5.0, 5.0],
-                        [7.5, 7.5, 0.0],
-                        [5.0, 7.5],
-                        [5.0, 5.0],
-                    ],
-                ],
-            ],
+            coordinates: [geoJsonPolygon2D, geoJsonPolygon3D],
         });
     });
     it("does not allow a multi-polygon with incorrect bbox", () => {

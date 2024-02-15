@@ -79,7 +79,7 @@ const _GeoJSONSimpleGeometrySchema = GeoJSONPointSchema.or(GeoJSONLineStringSche
     .or(GeoJSONMultiLineStringSchema)
     .or(GeoJSONMultiPolygonSchema);
 
-const _GeoJSONGeometryCollectionBaseSchema = z.object({
+const _GeoJSONGeometryCollectionBaseSchema = GeoJSONBaseSchema.extend({
     type: z.literal("GeometryCollection"),
 });
 
