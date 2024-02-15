@@ -99,16 +99,20 @@ export const GeoJSONGeometrySchema = _GeoJSONSimpleGeometrySchema.or(GeoJSONGeom
 export type GeoJSONGeometry = z.infer<typeof GeoJSONGeometrySchema>;
 
 export const GeoJSONFeatureSchema = z.object({
-    id: z.string().or(z.number()).nullable(),
+    id: z.string().or(z.number()).optional(),
     type: z.literal("Feature"),
     geometry: GeoJSONGeometrySchema.nullable(),
     properties: z.object({}).passthrough().nullable(),
 });
 
+export type GeoJSONFeature = z.infer<typeof GeoJSONFeatureSchema>;
+
 export const GeoJSONFeatureCollectionSchema = z.object({
     type: z.literal("FeatureCollection"),
     features: z.array(GeoJSONFeatureSchema),
 });
+
+export type GeoJSONFeatureCollection = z.infer<typeof GeoJSONFeatureCollectionSchema>;
 
 export const GeoJSONSchema = GeoJSONGeometrySchema.or(GeoJSONFeatureSchema).or(GeoJSONFeatureCollectionSchema);
 

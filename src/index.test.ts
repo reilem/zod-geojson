@@ -1,8 +1,13 @@
 import { expect, it, describe } from "vitest";
 import { ZodError, ZodSchema } from "zod";
+import { geoJsonPoint2D, geoJsonPoint2DWithBbox, geoJsonPoint3D, geoJsonPoint3DWithBbox } from "../examples/point";
 import {
     GeoJSONBbox,
     GeoJSONBBoxSchema,
+    GeoJSONFeature,
+    GeoJSONFeatureCollection,
+    GeoJSONFeatureCollectionSchema,
+    GeoJSONFeatureSchema,
     GeoJSONGeometryCollection,
     GeoJSONGeometryCollectionSchema,
     GeoJSONGeometrySchema,
@@ -16,7 +21,6 @@ import {
     GeoJSONMultiPointSchema,
     GeoJSONMultiPolygon,
     GeoJSONMultiPolygonSchema,
-    GeoJSONPoint,
     GeoJSONPointSchema,
     GeoJSONPolygon,
     GeoJSONPolygonSchema,
@@ -122,41 +126,27 @@ describe("zod-geojson", () => {
     });
 
     describe("GeoJSONPoint", () => {
-        const basicGeoJsonPoint: GeoJSONPoint = {
-            type: "Point",
-            coordinates: [1.0, 2.0],
-        };
-
         it("allows a 2d point", () => {
-            passGeoJSONSchemaTest(GeoJSONPointSchema, basicGeoJsonPoint);
+            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPoint2D);
         });
         it("allows a 3D point", () => {
-            passGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
-                coordinates: [1.0, 2.0, 3.0],
-            });
+            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPoint3D);
         });
         it("allows a 6D point", () => {
             passGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 coordinates: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
             });
         });
         it("allows a 2D point with valid bbox", () => {
-            passGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
-                bbox: [1.0, 2.0, 1.0, 2.0],
-            });
+            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPoint2DWithBbox);
         });
         it("allows a 3D point with valid bbox", () => {
-            passGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
-                bbox: [1.0, 2.0, 1.0, 2.0],
-            });
+            passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPoint3DWithBbox);
         });
         it("allows a point and preserves extra keys", () => {
             const geoJsonPointWithExtraKeys = {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 extraKey: "extra",
             };
             passGeoJSONSchemaTest(GeoJSONPointSchema, geoJsonPointWithExtraKeys);
@@ -166,44 +156,44 @@ describe("zod-geojson", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, { type: "Point" });
         });
         it("does not allow a point with the geometry key", () => {
-            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...basicGeoJsonPoint, geometry: {} });
+            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...geoJsonPoint2D, geometry: {} });
         });
         it("does not allow a point with the properties key", () => {
-            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...basicGeoJsonPoint, properties: {} });
+            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...geoJsonPoint2D, properties: {} });
         });
         it("does not allow a point with the features key", () => {
-            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...basicGeoJsonPoint, features: [] });
+            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...geoJsonPoint2D, features: [] });
         });
         it("does not allow a point with the geometries key", () => {
-            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...basicGeoJsonPoint, geometries: [] });
+            failGeoJSONSchemaTest(GeoJSONPointSchema, { ...geoJsonPoint2D, geometries: [] });
         });
         it("does not allow a point with incorrect bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 bbox: [30, 10, 20, 100],
             });
         });
         it("does not allow a point with invalid bbox dimensions", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 bbox: [1.0, 2.0, 0.0, 1.0, 2.0, 0.0],
             });
         });
         it("does not allow a point with badly formatted bbox", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 bbox: ["hello"],
             });
         });
         it("does not allow a point with invalid coordinates", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 coordinates: ["3ght45y34", 39284],
             });
         });
         it("does not allow a point with empty coordinates", () => {
             failGeoJSONSchemaTest(GeoJSONPointSchema, {
-                ...basicGeoJsonPoint,
+                ...geoJsonPoint2D,
                 coordinates: [],
             });
         });
@@ -1141,38 +1131,297 @@ describe("zod-geojson", () => {
     });
 
     describe("GeoJSONFeature", () => {
-        it.skip("allows a feature with a 2D point geometry", () => {});
-        it.skip("allows a feature with a 3D point geometry", () => {});
-        it.skip("allows a feature with a 2D polygon geometry", () => {});
-        it.skip("allows a feature with a 3D polygon geometry and valid bbox", () => {});
-        it.skip("allows a feature with an id", () => {});
-        it.skip("allows a feature and preserves extra keys", () => {});
+        function passGeoJSONFeatureSchemaTest(object: unknown) {
+            expect(GeoJSONFeatureSchema.parse(object)).toEqual(object);
+        }
+        function failGeoJSONFeatureSchemaTest(object: unknown) {
+            expect(() => GeoJSONFeatureSchema.parse(object)).toThrow(ZodError);
+        }
 
-        it.skip("does not allow a feature without properties", () => {});
-        it.skip("does not allow a feature without geometry", () => {});
-        it.skip("does not allow a feature with the coordinates key", () => {});
-        it.skip("does not allow a feature with the features key", () => {});
-        it.skip("does not allow a feature with the geometries key", () => {});
-        it.skip("does not allow a feature with a polygon geometry", () => {});
+        const point2DFeature: GeoJSONFeature = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Point",
+                coordinates: [0.0, 2.0],
+            },
+        };
+        const point3DFeature: GeoJSONFeature = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Point",
+                coordinates: [0.0, 2.0, 3.0],
+            },
+        };
+        const polygon2DFeature: GeoJSONFeature = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        [0.0, 0.0],
+                        [0.0, 10.0],
+                        [10.0, 10.0],
+                        [0.0, 0.0],
+                    ],
+                ],
+            },
+        };
+        const polygon3DFeature: GeoJSONFeature = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        [0.0, 0.0, 0.0],
+                        [0.0, 10.0, 5.0],
+                        [10.0, 10.0, 8.0],
+                        [0.0, 0.0, 0.0],
+                    ],
+                ],
+            },
+        };
+
+        it("allows a feature with a 2D point geometry", () => {
+            passGeoJSONFeatureSchemaTest(point2DFeature);
+        });
+        it("allows a feature with a 3D point geometry", () => {
+            passGeoJSONFeatureSchemaTest(point3DFeature);
+        });
+        it("allows a feature with a 2D polygon geometry", () => {
+            passGeoJSONFeatureSchemaTest(polygon2DFeature);
+        });
+        it("allows a feature with a 3D polygon geometry and valid bbox", () => {
+            passGeoJSONFeatureSchemaTest(polygon3DFeature);
+        });
+        it("allows a feature with a string id", () => {
+            passGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                id: "unique-id",
+            });
+        });
+        it("allows a feature with a number id", () => {
+            passGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                id: 98765,
+            });
+        });
+        it("allows a feature and preserves extra keys", () => {
+            passGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                color: "#FF00FF",
+            });
+        });
+        it("allows a feature with null geometry", () => {
+            passGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                geometry: null,
+            });
+        });
+        it("allows a feature with null properties", () => {
+            passGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                properties: null,
+            });
+        });
+
+        it("does not allow a feature without properties", () => {
+            failGeoJSONFeatureSchemaTest({
+                type: "Feature",
+                geometry: {
+                    type: "Point",
+                    coordinates: [0.0, 2.0],
+                },
+            });
+        });
+        it("does not allow a feature without geometry", () => {
+            failGeoJSONFeatureSchemaTest({
+                type: "Feature",
+                properties: {},
+            });
+        });
+        it("does not allow a feature with the coordinates key", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                coordinates: [],
+            });
+        });
+        it("does not allow a feature with the features key", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                features: [],
+            });
+        });
+        it("does not allow a feature with the geometries key", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                geometries: [],
+            });
+        });
+        it("does not allow a feature with a geometry with invalid type", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                geometry: {
+                    type: "BadType",
+                    coordinates: [0.0, 2.0],
+                },
+            });
+        });
+        it("does not allow a feature with a geometry with inconsistent position dimensions", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                geometry: {
+                    type: "MultiPoint",
+                    coordinates: [
+                        [50.0, 10.0],
+                        [0.0, 2.0, 3.0],
+                    ],
+                },
+            });
+        });
+        it("does not allow a feature with a geometry with invalid coordinates", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...point2DFeature,
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [[[[[0.0, 10.0]]]]],
+                },
+            });
+        });
+        it("does not allow a feature with a geometry with incorrect bbox", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...polygon2DFeature,
+                geometry: {
+                    ...point2DFeature.geometry,
+                    bbox: [0.0, 0.0, 10.0, 10.0],
+                },
+            });
+        });
+        it("does not allow a feature with a geometry with invalid bbox dimensions", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...polygon2DFeature,
+                geometry: {
+                    ...point2DFeature.geometry,
+                    bbox: [0.0, 0.0, 0.0, 10.0, 10.0, 0.0],
+                },
+            });
+        });
+        it("does not allow a feature with a geometry with badly formatted bbox", () => {
+            failGeoJSONFeatureSchemaTest({
+                ...polygon2DFeature,
+                geometry: {
+                    ...point2DFeature.geometry,
+                    bbox: ["bbox must not contain strings"],
+                },
+            });
+        });
     });
 
     describe("GeoJSONFeatureCollection", () => {
-        it.skip("allows a feature collection with one feature", () => {});
-        it.skip("allows a feature collection with multiple features", () => {});
-        it.skip("allows a feature collection and preserves extra keys", () => {});
+        function passGeoJSONFeatureCollectionSchemaTest(object: unknown) {
+            expect(GeoJSONFeatureCollectionSchema.parse(object)).toEqual(object);
+        }
+        function failGeoJSONFeatureCollectionSchemaTest(object: unknown) {
+            expect(() => GeoJSONFeatureCollectionSchema.parse(object)).toThrow(ZodError);
+        }
 
-        it.skip("does not allow a feature collection without features", () => {});
-        it.skip("does not allow a feature collection with the coordinates key", () => {});
-        it.skip("does not allow a feature collection with the geometry key", () => {});
-        it.skip("does not allow a feature collection with the properties key", () => {});
-        it.skip("does not allow a feature collection with the geometries key", () => {});
+        const singleFeatureCollection: GeoJSONFeatureCollection = {
+            type: "FeatureCollection",
+            features: [
+                {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                        type: "Point",
+                        coordinates: [0.0, 0.0],
+                    },
+                },
+            ],
+        };
+        const multiFeatureCollection: GeoJSONFeatureCollection = {
+            type: "FeatureCollection",
+            features: [
+                {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                        type: "Point",
+                        coordinates: [0.0, 0.0],
+                    },
+                },
+                {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                        type: "LineString",
+                        coordinates: [
+                            [5.0, 5.0],
+                            [10.0, 10.0],
+                        ],
+                    },
+                },
+            ],
+        };
+
+        it("allows a feature collection with one feature", () => {
+            passGeoJSONFeatureCollectionSchemaTest(singleFeatureCollection);
+        });
+        it("allows a feature collection with multiple features", () => {
+            passGeoJSONFeatureCollectionSchemaTest(multiFeatureCollection);
+        });
+        it("allows a feature collection and preserves extra keys", () => {
+            passGeoJSONFeatureCollectionSchemaTest({
+                ...singleFeatureCollection,
+                color: "#00FF00",
+            });
+        });
+        it("allows a feature collection with empty features array", () => {
+            passGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, features: [] });
+        });
+
+        it("does not allow a feature collection without features key", () => {
+            failGeoJSONFeatureCollectionSchemaTest({ type: "FeatureCollection" });
+        });
+        it.skip("does not allow a feature collection with the coordinates key", () => {
+            failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, coordinates: [] });
+        });
+        it("does not allow a feature collection with the geometry key", () => {
+            failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, geometry: {} });
+        });
+        it("does not allow a feature collection with the properties key", () => {
+            failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, properties: {} });
+        });
+        it("does not allow a feature collection with the geometries key", () => {
+            failGeoJSONFeatureCollectionSchemaTest({ ...singleFeatureCollection, geometries: [] });
+        });
     });
 
     describe("GeoJSONSchema", () => {
-        it.skip("allows a basic geometry", () => {});
-        it.skip("allows a basic feature", () => {});
-        it.skip("allows a basic feature collection", () => {});
+        const feature: GeoJSONFeature = {
+            type: "Feature",
+            properties: {},
+            geometry: geoJsonPoint3D,
+        };
+        const featureCollection: GeoJSONFeatureCollection = {
+            type: "FeatureCollection",
+            features: [feature],
+        };
 
-        it.skip("does not allow a geojson with invalid type", () => {});
+        it("allows a basic geometry", () => {
+            expect(GeoJSONSchema.parse(geoJsonPoint3D)).toEqual(geoJsonPoint3D);
+        });
+        it("allows a basic feature", () => {
+            expect(GeoJSONSchema.parse(feature)).toEqual(feature);
+        });
+        it("allows a basic feature collection", () => {
+            expect(GeoJSONSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("does not allow a geojson with invalid type", () => {
+            expect(() => GeoJSONSchema.parse({ type: "SkippityBoop" })).toThrow(ZodError);
+        });
     });
 });
