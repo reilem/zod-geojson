@@ -932,26 +932,212 @@ describe("zod-geojson", () => {
                 },
             ],
         };
+        const multiGeometryCollection2D: GeoJSONGeometryCollection = {
+            type: "GeometryCollection",
+            geometries: [
+                {
+                    type: "Point",
+                    coordinates: [0.0, 0.0],
+                },
+                {
+                    type: "LineString",
+                    coordinates: [
+                        [0.0, 0.0],
+                        [10.0, 10.0],
+                    ],
+                },
+            ],
+        };
+        const multiGeometryCollection3D: GeoJSONGeometryCollection = {
+            type: "GeometryCollection",
+            geometries: [
+                {
+                    type: "Point",
+                    coordinates: [-3.0, 2.0, 0.0],
+                },
+                {
+                    type: "LineString",
+                    coordinates: [
+                        [-2.0, 5.0, 0.0],
+                        [2.0, 8.0, 10.0],
+                    ],
+                },
+            ],
+        };
 
-        it("allows a geometry collection with one geometry", () => {
+        it("allows a geometry collection with one 2D geometry", () => {
             passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, singleGeometryCollection2D);
         });
-        it.skip("allows a geometry collection with multiple geometries", () => {});
-        it.skip("allows a geometry collection with multiple geometries of different types", () => {});
-        it.skip("allows a geometry collection with nested geometry collection", () => {});
-        it.skip("allows a geometry collection and preserves extra keys", () => {});
+        it("allows a geometry collection with multiple 2D geometries", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, multiGeometryCollection2D);
+        });
+        it("allows a geometry collection with multiple 3D geometries", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, multiGeometryCollection3D);
+        });
+        it("allows a geometry collection with nested geometry collection", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...multiGeometryCollection2D,
+                geometries: [
+                    ...multiGeometryCollection2D.geometries,
+                    {
+                        type: "GeometryCollection",
+                        geometries: [
+                            {
+                                type: "Point",
+                                coordinates: [0.0, 0.0],
+                            },
+                        ],
+                    },
+                ],
+            });
+        });
+        it("allows a geometry collection with valid bbox", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...multiGeometryCollection2D,
+                bbox: [0.0, 0.0, 10.0, 10.0],
+            });
+        });
+        it("allows a geometry collection and preserves extra keys", () => {
+            passGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                extraKey: "extra",
+            });
+        });
 
-        it.skip("does not allow a geometry collection without geometries", () => {});
-        it.skip("does not allow a geometry collection with the coordinates key", () => {});
-        it.skip("does not allow a geometry collection with the features key", () => {});
-        it.skip("does not allow a geometry collection with the geometry key", () => {});
-        it.skip("does not allow a geometry collection with the properties key", () => {});
-        it.skip("does not allow a geometry collection containing geometries with invalid types", () => {});
-        it.skip("does not allow a geometry collection containing geometries with inconsistent position dimensions", () => {});
-        it.skip("does not allow a geometry collection containing geometries with invalid coordinates", () => {});
-        it.skip("does not allow a geometry collection containing geometries with incorrect bbox", () => {});
-        it.skip("does not allow a geometry collection containing geometries with invalid bbox dimensions", () => {});
-        it.skip("does not allow a geometry collection containing geometries with badly formatted bbox", () => {});
+        it("does not allow a geometry collection without geometries", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, { type: "GeometryCollection" });
+        });
+        it("does not allow a geometry collection with the coordinates key", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                coordinates: [],
+            });
+        });
+        it("does not allow a geometry collection with the features key", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                features: [],
+            });
+        });
+        it("does not allow a geometry collection with the geometry key", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometry: {},
+            });
+        });
+        it("does not allow a geometry collection with the properties key", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                properties: {},
+            });
+        });
+        it("does not allow a geometry collection with geometries with invalid types", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometries: [
+                    {
+                        type: "Point",
+                        coordinates: [0.0, 0.0],
+                    },
+                    {
+                        type: "BadType",
+                        coordinates: [0.0, 0.0],
+                    },
+                ],
+            });
+        });
+        it("does not allow a geometry collection with geometries with inconsistent position dimensions", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometries: [
+                    {
+                        type: "MultiPoint",
+                        coordinates: [
+                            [0.0, 5.0],
+                            [2.0, -2.0, 0.0],
+                        ],
+                    },
+                ],
+            });
+        });
+        it("does not allow a geometry collection with geometries with inconsistent position dimensions across geometries", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometries: [
+                    {
+                        type: "MultiPoint",
+                        coordinates: [
+                            [0.0, 5.0],
+                            [2.0, -2.0],
+                        ],
+                    },
+                    {
+                        type: "LineString",
+                        coordinates: [
+                            [0.0, 0.0, 0.0],
+                            [10.0, 10.0, 0.0],
+                        ],
+                    },
+                ],
+            });
+        });
+        it("does not allow a geometry collection with geometries with inconsistent position dimensions across geometry collections", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometries: [
+                    {
+                        type: "GeometryCollection",
+                        geometries: [
+                            {
+                                type: "Point",
+                                coordinates: [0.0, 0.0],
+                            },
+                        ],
+                    },
+                    {
+                        type: "GeometryCollection",
+                        geometries: [
+                            {
+                                type: "LineString",
+                                coordinates: [
+                                    [0.0, 0.0, 0.0],
+                                    [10.0, 10.0, 0.0],
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            });
+        });
+        it("does not allow a geometry collection with geometries with invalid coordinates", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                geometries: [
+                    {
+                        type: "LineString",
+                        coordinates: [0.0, 10.0, -2.0],
+                    },
+                ],
+            });
+        });
+        it("does not allow a geometry collection with geometries with incorrect bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                bbox: [-30, 10, -20, 100],
+            });
+        });
+        it("does not allow a geometry collection with geometries with invalid bbox dimensions", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...multiGeometryCollection2D,
+                bbox: [0.0, 0.0, 0.0, 10.0, 10.0, 0.0],
+            });
+        });
+        it("does not allow a geometry collection with geometries with badly formatted bbox", () => {
+            failGeoJSONSchemaTest(GeoJSONGeometryCollectionSchema, {
+                ...singleGeometryCollection2D,
+                bbox: ["bbox cannot contain strings"],
+            });
+        });
     });
 
     describe("GeoJSONFeature", () => {
