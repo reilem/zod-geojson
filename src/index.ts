@@ -1,13 +1,8 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
 import { z, ZodType } from "zod";
-
-const MIN_POSITION = 2 as const;
-
-// TODO: Specify the allowed values for the positions, must use WGS 84
-// GeoJSON positions and coordinates (see 3.1.1)
-// Array: [longitude/easting, latitude/northing, altitude (optional), ...extra elements are unspecified and ambiguous]
-export const GeoJSONPositionSchema = z.array(z.number()).min(MIN_POSITION);
-export type GeoJSONPosition = z.infer<typeof GeoJSONPositionSchema>;
+import { GeoJSONBaseSchema } from "./geometry/_helper";
+import { GeoJSONPointSchema } from "./geometry/point";
+import { GeoJSONPositionSchema } from "./position";
 
 // GeoJSON types and Geometry type (see 1.4)
 export const GeoJSONGeometryTypeSchema = z.enum([
@@ -24,44 +19,9 @@ export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;
 export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection"]).or(GeoJSONGeometryTypeSchema);
 export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;
 
-export const GeoJSONBBoxSchema = z
-    .array(z.number())
-    .min(MIN_POSITION * 2)
-    .refine((bbox) => bbox.length % 2 === 0, "Bounding box must have an even number of elements");
-export type GeoJSONBbox = z.infer<typeof GeoJSONBBoxSchema>;
-
-const GeoJSONBaseSchema = z.object({
-    bbox: GeoJSONBBoxSchema.optional(),
-});
-
 // TODO: Refine that all positions have the same dimension
 // TODO: Refine that bbox length matches the dimension of the position
 // TODO: Refine that the bbox is valid for the given positions & geometry
-function validGeometryKeys(geometry: Record<string, unknown>): boolean {
-    return (
-        !("geometry" in geometry) &&
-        !("properties" in geometry) &&
-        !("features" in geometry) &&
-        !("geometries" in geometry)
-    );
-}
-
-// TODO: needs to work for multiple dimensions
-function validPointBbox(geometry: { bbox?: number[]; coordinates: number[] }): boolean {
-    if (!geometry.bbox) return true;
-    const [minX, minY, maxX, maxY] = geometry.bbox;
-    const x = geometry.coordinates[0];
-    const y = geometry.coordinates[1];
-    return minX === x && minY === y && maxX === x && maxY === y;
-}
-
-export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
-    type: z.literal("Point"),
-    coordinates: GeoJSONPositionSchema,
-})
-    .passthrough()
-    .refine((point) => validGeometryKeys(point) && validPointBbox(point));
-export type GeoJSONPoint = z.infer<typeof GeoJSONPointSchema>;
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("LineString"),

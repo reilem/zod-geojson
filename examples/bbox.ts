@@ -1,4 +1,4 @@
-import { GeoJSONBbox } from "../src";
+import { GeoJSONBbox } from "../src/bbox";
 
 export const bbox2D: GeoJSONBbox = [0.0, 0.0, 1.0, 1.0];
 

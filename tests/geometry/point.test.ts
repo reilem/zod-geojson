@@ -5,7 +5,7 @@ import {
     geoJsonPoint3D,
     geoJsonPoint3DWithBbox,
 } from "../../examples/geometry/point";
-import { GeoJSONPointSchema } from "../../src";
+import { GeoJSONPointSchema } from "../../src/geometry/point";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPointTest(value: unknown): void {

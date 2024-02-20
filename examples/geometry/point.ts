@@ -1,4 +1,4 @@
-import { GeoJSONPoint } from "../../src";
+import { GeoJSONPoint } from "../../src/geometry/point";
 
 export const geoJsonPoint2D: GeoJSONPoint = {
     type: "Point",

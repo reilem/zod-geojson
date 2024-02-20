@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
 import { bbox2D, bbox3D, bbox4D } from "../examples/bbox";
-import { GeoJSONBBoxSchema } from "../src";
+import { GeoJSONBBoxSchema } from "../src/bbox";
 
 describe("GeoJSONBBox", () => {
     it("allows 2D bbox", () => {
