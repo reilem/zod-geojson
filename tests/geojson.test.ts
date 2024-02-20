@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 import { geoJsonFeaturePolygon2D } from "../examples/feature";
 import { multiGeoJsonFeatureCollection } from "../examples/feature_collection";

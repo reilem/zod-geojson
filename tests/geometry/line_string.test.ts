@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, it } from "@jest/globals";
 import {
     geoJsonLineString2D,
     geoJsonLineString2DWithBbox,

@@ -1,4 +1,4 @@
-import { expect } from "vitest";
+import { expect } from "@jest/globals";
 import { ZodError, ZodSchema } from "zod";
 import { GeoJSONGeometrySchema, GeoJSONSchema } from "../../src";
 

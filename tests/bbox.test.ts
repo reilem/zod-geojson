@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 import { bbox2D, bbox3D, bbox4D } from "../examples/bbox";
 import { GeoJSONBBoxSchema } from "../src";
