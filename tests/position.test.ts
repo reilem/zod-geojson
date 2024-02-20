@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ZodError } from "zod";
-import { GeoJSONPosition, GeoJSONPositionSchema } from "../src/position";
+import { GeoJSONPosition, GeoJSONPositionSchema } from "../src";
 
 describe("GeoJSONPosition", () => {
     it("allows 2D positions", () => {

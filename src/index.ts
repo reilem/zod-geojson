@@ -1,23 +1,13 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
 import { z, ZodType } from "zod";
 import { GeoJSONBaseSchema } from "./geometry/_helper";
-import { GeoJSONPointSchema } from "./geometry/point";
+import { GeoJSONPointSchema } from "./geometry";
 import { GeoJSONPositionSchema } from "./position";
 
-// GeoJSON types and Geometry type (see 1.4)
-export const GeoJSONGeometryTypeSchema = z.enum([
-    "Point",
-    "MultiPoint",
-    "LineString",
-    "MultiLineString",
-    "Polygon",
-    "MultiPolygon",
-    "GeometryCollection",
-]);
-export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;
-
-export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection"]).or(GeoJSONGeometryTypeSchema);
-export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;
+export * from "./geometry";
+export * from "./bbox";
+export * from "./position";
+export * from "./type";
 
 // TODO: Refine that all positions have the same dimension
 // TODO: Refine that bbox length matches the dimension of the position
