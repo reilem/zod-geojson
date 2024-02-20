@@ -40,6 +40,12 @@ describe("GeoJSONFeature", () => {
             id: 98765,
         });
     });
+    it("allows a feature with a string id", () => {
+        passGeoJSONFeatureSchemaTest({
+            ...geoJsonFeaturePoint2D,
+            id: "98765",
+        });
+    });
     it("allows a feature and preserves extra keys", () => {
         passGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,

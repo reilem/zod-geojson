@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { GeoJSONBaseSchema, validGeometryKeys } from "./_helper";
-import { GeoJSONLineStringSchema } from "./line_string";
+import { GeoJSONLineStringCoordinatesSchema } from "./line_string";
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiLineString"),
-    coordinates: z.array(GeoJSONLineStringSchema.innerType().shape.coordinates),
+    coordinates: z.array(GeoJSONLineStringCoordinatesSchema),
 })
     .passthrough()
     .refine(validGeometryKeys);

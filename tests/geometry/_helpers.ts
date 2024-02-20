@@ -10,6 +10,6 @@ export function passGeoJSONGeometrySchemaTest(specificSchema: ZodSchema, value: 
 
 export function failGeoJSONGeometrySchemaTest(specificSchema: ZodSchema, value: unknown): void {
     expect(() => specificSchema.parse(value)).toThrow(ZodError);
-    expect(() => GeoJSONGeometrySchema.parse(value)).toThrow(Error);
-    expect(() => GeoJSONSchema.parse(value)).toThrow(Error);
+    expect(() => GeoJSONGeometrySchema.parse(value)).toThrow(ZodError);
+    expect(() => GeoJSONSchema.parse(value)).toThrow(ZodError);
 }
