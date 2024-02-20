@@ -3,12 +3,14 @@ import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import { GeoJSONBaseSchema, validGeometryKeys } from "./_helper";
 
-export function validPointBbox(geometry: { bbox?: number[]; coordinates: number[] }): boolean {
-    if (!geometry.bbox) return true;
-    const [minX, minY, maxX, maxY] = geometry.bbox;
-    const x = geometry.coordinates[0];
-    const y = geometry.coordinates[1];
-    return minX === x && minY === y && maxX === x && maxY === y;
+export function validPointBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[] }): boolean {
+    if (!bbox) return true;
+    const dimension = coordinates.length;
+    if (bbox.length !== dimension * 2) return false;
+    for (let i = 0; i < bbox.length; i++) {
+        if (bbox[i] !== coordinates[i % dimension]) return false;
+    }
+    return true;
 }
 
 export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
