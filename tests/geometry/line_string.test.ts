@@ -37,6 +37,9 @@ describe("GeoJSONLineString", () => {
         passGeoJSONLineStringTest(geoJsonLineStringWithExtraKeys);
     });
 
+    it("does not allow a line string with empty coordinates", () => {
+        failGeoJSONLineStringTest({ type: "LineString", coordinates: [] });
+    });
     it("does not allow a line string without coordinates key", () => {
         failGeoJSONLineStringTest({ type: "LineString" });
     });
@@ -74,10 +77,32 @@ describe("GeoJSONLineString", () => {
             ],
         });
     });
-    it("does not allow line string with incorrect bbox", () => {
+    it("does not allow a 2D line string with a non-overlapping bbox", () => {
+        // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONLineStringTest({
             ...geoJsonLineString2D,
             bbox: [30, 10, 20, 100],
+        });
+    });
+    it("does not allow a 2D line string with an intersecting bbox", () => {
+        // This bbox intersects with the expected bbox
+        failGeoJSONLineStringTest({
+            ...geoJsonLineString2D,
+            bbox: [0.0, 1.0, 2.0, 3.0],
+        });
+    });
+    it("does not allow a 2D line string with a circumscribed bbox", () => {
+        // This bbox completely encompasses the expected bbox
+        failGeoJSONLineStringTest({
+            ...geoJsonLineString2D,
+            bbox: [0.0, 1.0, 4.0, 5.0],
+        });
+    });
+    it("does not allow a 3D line string with an inscribed bbox", () => {
+        // This bbox is fully enclosed within the expected bbox
+        failGeoJSONLineStringTest({
+            ...geoJsonLineString3D,
+            bbox: [5.0, 3.0, 1.0, 15.0, 8.0, 1.5],
         });
     });
     it("does not allow line string with invalid bbox dimensions", () => {

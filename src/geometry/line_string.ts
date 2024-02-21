@@ -1,31 +1,46 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import {
+    bboxEquals,
     GeoJSONBaseSchema,
-    INVALID_BBOX_MESSAGE,
-    INVALID_DIMENSIONS_MESSAGE,
-    INVALID_KEYS_MESSAGE,
+    INVALID_BBOX_ISSUE,
+    INVALID_DIMENSIONS_ISSUE,
+    INVALID_KEYS_ISSUE,
     validGeometryKeys,
 } from "./_helper";
 
-function validLineStringPointDimensions({ coordinates }: { coordinates: number[][] }): boolean {
+function validLineStringDimensions({ coordinates }: { coordinates: number[][] }): boolean {
+    const coordinatesLen = coordinates.length;
     const dimension = coordinates[0].length;
-    for (let i = 1; i < coordinates.length; i++) {
+    for (let i = 1; i < coordinatesLen; i++) {
         if (coordinates[i].length !== dimension) return false;
     }
     return true;
 }
 
 function validLineStringBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[][] }): boolean {
-    if (bbox == null) return true;
+    if (!bbox) return true;
+
     const dimension = coordinates[0].length;
     if (bbox.length !== dimension * 2) return false;
-    for (let position of coordinates) {
+
+    const expectedBbox: number[] = [];
+    const coordinatesLen = coordinates.length;
+    for (let j = 0; j < coordinatesLen; j++) {
+        const position = coordinates[j];
         for (let i = 0; i < dimension; i++) {
-            if (position[i] < bbox[i] || position[i] > bbox[i + dimension]) return false;
+            const value = position[i];
+            const iMin = expectedBbox[i];
+            const iMax = expectedBbox[i + dimension];
+            if (iMin === undefined || value < iMin) {
+                expectedBbox[i] = value;
+            }
+            if (iMax === undefined || value > iMax) {
+                expectedBbox[i + dimension] = value;
+            }
         }
     }
-    return true;
+    return bboxEquals(bbox, expectedBbox);
 }
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
@@ -33,11 +48,25 @@ export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
     coordinates: z.array(GeoJSONPositionSchema).min(2),
 })
     .passthrough()
-    .refine(validGeometryKeys, INVALID_KEYS_MESSAGE)
-    .refine(validLineStringPointDimensions, INVALID_DIMENSIONS_MESSAGE)
-    .refine(validLineStringBbox, INVALID_BBOX_MESSAGE);
+    .superRefine((val, ctx) => {
+        if (!validGeometryKeys(val)) {
+            ctx.addIssue(INVALID_KEYS_ISSUE);
+            return;
+        }
 
-export const GeoJSONLineStringCoordinatesSchema = GeoJSONLineStringSchema.innerType().innerType().innerType()
-    .shape.coordinates;
+        // Skip remaining checks if coordinates empty
+        if (!val.coordinates.length) return;
+
+        if (!validLineStringDimensions(val)) {
+            ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
+            return;
+        }
+        if (!validLineStringBbox(val)) {
+            ctx.addIssue(INVALID_BBOX_ISSUE);
+            return;
+        }
+    });
+
+export const GeoJSONLineStringCoordinatesSchema = GeoJSONLineStringSchema.innerType().shape.coordinates;
 
 export type GeoJSONLineString = z.infer<typeof GeoJSONLineStringSchema>;
