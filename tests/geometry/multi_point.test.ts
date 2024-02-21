@@ -71,10 +71,32 @@ describe("GeoJSONMultiPoint", () => {
             coordinates: [geoJsonPoint2D, geoJsonPoint3D, [5.0, 6.0, 7.0, 8.0]],
         });
     });
-    it("does not allow a multi-point with incorrect bbox", () => {
+    it("does not allow a 2D multi point with a non-overlapping bbox", () => {
+        // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONMultiPointTest({
             ...geoJsonMultiPoint2D,
             bbox: [30, 10, 20, 100],
+        });
+    });
+    it("does not allow a 2D multi point with an intersecting bbox", () => {
+        // This bbox intersects with the expected bbox
+        failGeoJSONMultiPointTest({
+            ...geoJsonMultiPoint2D,
+            bbox: [-4.0, -3.0, 7.0, 3.0],
+        });
+    });
+    it("does not allow a 2D multi point with a circumscribed bbox", () => {
+        // This bbox completely encompasses the expected bbox
+        failGeoJSONMultiPointTest({
+            ...geoJsonMultiPoint2D,
+            bbox: [-4.0, -3.0, 9.0, 5.0],
+        });
+    });
+    it("does not allow a 3D multi point with an inscribed bbox", () => {
+        // This bbox is fully enclosed within the expected bbox
+        failGeoJSONMultiPointTest({
+            ...geoJsonMultiPoint3D,
+            bbox: [-2.0, -1.0, 1.0, 7.0, 3.0, 4.0],
         });
     });
     it("does not allow a multi-point with invalid bbox dimensions", () => {
