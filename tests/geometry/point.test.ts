@@ -43,6 +43,9 @@ describe("GeoJSONPoint", () => {
         passGeoJSONPointTest(geoJsonPointWithExtraKeys);
     });
 
+    it("does not allow a point with empty coordinates", () => {
+        failGeoJSONPointTest({ type: "Point", coordinates: [] });
+    });
     it("does not allow a point without coordinates", () => {
         failGeoJSONPointTest({ type: "Point" });
     });
@@ -58,10 +61,25 @@ describe("GeoJSONPoint", () => {
     it("does not allow a point with the geometries key", () => {
         failGeoJSONPointTest({ ...geoJsonPoint2D, geometries: [] });
     });
-    it("does not allow a point with incorrect bbox", () => {
+    it("does not allow a 2D point with a non-overlapping bbox", () => {
+        // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONPointTest({
             ...geoJsonPoint2D,
             bbox: [30, 10, 20, 100],
+        });
+    });
+    it("does not allow a 2D point with an intersecting bbox", () => {
+        // This bbox intersects with the expected bbox
+        failGeoJSONPointTest({
+            ...geoJsonPoint2D,
+            bbox: [1.0, 1.0, 2.0, 2.0],
+        });
+    });
+    it("does not allow a 3D point with a circumscribed bbox", () => {
+        // This bbox completely encompasses the expected bbox
+        failGeoJSONPointTest({
+            ...geoJsonPoint3D,
+            bbox: [0.0, 1.0, 9.0, 2.0, 3.0, 11.0],
         });
     });
     it("does not allow a point with invalid bbox dimensions", () => {

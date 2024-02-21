@@ -1,7 +1,7 @@
 // TODO: needs to work for multiple dimensions
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
-import { GeoJSONBaseSchema, INVALID_BBOX_MESSAGE, INVALID_KEYS_MESSAGE, validGeometryKeys } from "./_helper";
+import { GeoJSONBaseSchema, INVALID_BBOX_ISSUE, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
 
 function validPointBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[] }): boolean {
     if (!bbox) return true;
@@ -18,7 +18,16 @@ export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
     coordinates: GeoJSONPositionSchema,
 })
     .passthrough()
-    .refine(validGeometryKeys, INVALID_KEYS_MESSAGE)
-    .refine(validPointBbox, INVALID_BBOX_MESSAGE);
+    .superRefine((val, ctx) => {
+        if (!validGeometryKeys(val)) {
+            ctx.addIssue(INVALID_KEYS_ISSUE);
+        }
+        // Skip remaining checks if coordinates empty
+        if (!val.coordinates.length) return;
+
+        if (!validPointBbox(val)) {
+            ctx.addIssue(INVALID_BBOX_ISSUE);
+        }
+    });
 
 export type GeoJSONPoint = z.infer<typeof GeoJSONPointSchema>;
