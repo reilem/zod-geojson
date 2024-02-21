@@ -6,6 +6,7 @@ import {
     INVALID_BBOX_ISSUE,
     INVALID_DIMENSIONS_ISSUE,
     INVALID_KEYS_ISSUE,
+    updateBboxForPositions,
     validGeometryKeys,
 } from "./_helper";
 
@@ -25,21 +26,7 @@ function validLineStringBbox({ bbox, coordinates }: { bbox?: number[]; coordinat
     if (bbox.length !== dimension * 2) return false;
 
     const expectedBbox: number[] = [];
-    const coordinatesLen = coordinates.length;
-    for (let j = 0; j < coordinatesLen; j++) {
-        const position = coordinates[j];
-        for (let i = 0; i < dimension; i++) {
-            const value = position[i];
-            const iMin = expectedBbox[i];
-            const iMax = expectedBbox[i + dimension];
-            if (iMin === undefined || value < iMin) {
-                expectedBbox[i] = value;
-            }
-            if (iMax === undefined || value > iMax) {
-                expectedBbox[i + dimension] = value;
-            }
-        }
-    }
+    updateBboxForPositions(expectedBbox, coordinates);
     return bboxEquals(bbox, expectedBbox);
 }
 

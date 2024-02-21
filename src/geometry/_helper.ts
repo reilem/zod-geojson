@@ -21,6 +21,33 @@ export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
     return bbox1.every((value, index) => value === bbox2[index]);
 }
 
+/**
+ * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
+ */
+export function updateBboxForPositions(currentBbox: number[], positions: number[][]): void {
+    for (let i = 0; i < positions.length; i++) {
+        updateBboxForPosition(currentBbox, positions[i]);
+    }
+}
+
+/**
+ * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
+ */
+export function updateBboxForPosition(currentBbox: number[], position: number[]): void {
+    const dimension = position.length;
+    for (let i = 0; i < dimension; i++) {
+        const value = position[i];
+        const iMin = currentBbox[i];
+        const iMax = currentBbox[i + dimension];
+        if (iMin === undefined || value < iMin) {
+            currentBbox[i] = value;
+        }
+        if (iMax === undefined || value > iMax) {
+            currentBbox[i + dimension] = value;
+        }
+    }
+}
+
 export const INVALID_KEYS_ISSUE = {
     code: "custom" as const,
     message: 'GeoJSON geometry object cannot have "geometry", "properties", "features", or "geometries" keys',

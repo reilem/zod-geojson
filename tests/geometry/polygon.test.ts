@@ -47,8 +47,14 @@ describe("GeoJSONPolygon", () => {
             extraKey: "extra",
         });
     });
+    it("allows a polygon with empty coordinates", () => {
+        passGeoJSONPolygonTest({
+            ...geoJsonPolygon2D,
+            coordinates: [],
+        });
+    });
 
-    it("does not allow a polygon without coordinates", () => {
+    it("does not allow a polygon without coordinates key", () => {
         failGeoJSONPolygonTest({ type: "Polygon" });
     });
     it("does not allow a polygon with the geometry key", () => {
@@ -117,12 +123,35 @@ describe("GeoJSONPolygon", () => {
             ],
         });
     });
-    it("does not allow a polygon with incorrect bbox", () => {
+    it("does not allow a 2D polygon with a non-overlapping bbox", () => {
+        // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONPolygonTest({
             ...geoJsonPolygon2D,
             bbox: [30, 10, 20, 100],
         });
     });
+    it("does not allow a 2D polygon with an intersecting bbox", () => {
+        // This bbox intersects with the expected bbox
+        failGeoJSONPolygonTest({
+            ...geoJsonPolygon2D,
+            bbox: [-0.5, -0.5, 0.5, 0.5],
+        });
+    });
+    it("does not allow a 2D polygon with a circumscribed bbox", () => {
+        // This bbox completely encompasses the expected bbox
+        failGeoJSONPolygonTest({
+            ...geoJsonPolygon2D,
+            bbox: [-1.0, -1.0, 2.0, 2.0],
+        });
+    });
+    it("does not allow a 3D polygon with an inscribed bbox", () => {
+        // This bbox is fully enclosed within the expected bbox
+        failGeoJSONPolygonTest({
+            ...geoJsonPolygon3D,
+            bbox: [0.25, 0.25, 1.0, 1.25, 1.25, 1.0],
+        });
+    });
+
     it("does not allow a polygon with invalid bbox dimensions", () => {
         failGeoJSONPolygonTest({
             ...geoJsonPolygon2D,
