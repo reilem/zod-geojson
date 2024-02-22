@@ -1,15 +1,32 @@
 export function validDimensionsForPositionList({ coordinates }: { coordinates: number[][] }): boolean {
-    const coordinatesLen = coordinates.length;
     const dimension = coordinates[0].length;
-    for (let i = 1; i < coordinatesLen; i++) {
-        if (coordinates[i].length !== dimension) return false;
-    }
-    return true;
+    return sameDimensionsForPositions(dimension)(coordinates);
 }
 
 export function validDimensionsForPositionGrid({ coordinates }: { coordinates: number[][][] }): boolean {
     let dimension = coordinates[0][0].length;
-    return coordinates.every((ring) => ring.every((position) => position.length === dimension));
+    return sameDimensionsForPositionGrid(dimension)(coordinates);
+}
+
+export function validDimensionsForPositionGridList({ coordinates }: { coordinates: number[][][][] }): boolean {
+    let dimension = coordinates[0][0][0].length;
+    return sameDimensionsForPositionGrids(dimension)(coordinates);
+}
+
+function sameDimensionsForPosition(dimension: number): (position: number[]) => boolean {
+    return (position) => position.length === dimension;
+}
+
+function sameDimensionsForPositions(dimension: number): (positions: number[][]) => boolean {
+    return (positions) => positions.every(sameDimensionsForPosition(dimension));
+}
+
+function sameDimensionsForPositionGrid(dimension: number): (positionGrid: number[][][]) => boolean {
+    return (positionGrid) => positionGrid.every(sameDimensionsForPositions(dimension));
+}
+
+function sameDimensionsForPositionGrids(dimension: number): (positionGrids: number[][][][]) => boolean {
+    return (positionGrids) => positionGrids.every(sameDimensionsForPositionGrid(dimension));
 }
 
 export const INVALID_DIMENSIONS_ISSUE = {

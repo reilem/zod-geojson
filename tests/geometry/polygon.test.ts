@@ -151,7 +151,6 @@ describe("GeoJSONPolygon", () => {
             bbox: [0.25, 0.25, 1.0, 1.25, 1.25, 1.0],
         });
     });
-
     it("does not allow a polygon with invalid bbox dimensions", () => {
         failGeoJSONPolygonTest({
             ...geoJsonPolygon2D,

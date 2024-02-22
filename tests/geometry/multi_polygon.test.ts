@@ -127,10 +127,32 @@ describe("GeoJSONMultiPolygon", () => {
             coordinates: [geoJsonPolygon2D, geoJsonPolygon3D],
         });
     });
-    it("does not allow a multi-polygon with incorrect bbox", () => {
+    it("does not allow a 2D multi-polygon with a non-overlapping bbox", () => {
+        // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONMultiPolygonTest({
-            ...singleGeoJsonMultiPolygon2D,
+            ...multiGeoJsonMultiPolygon2D,
             bbox: [30, 10, 20, 100],
+        });
+    });
+    it("does not allow a 2D multi-polygon with an intersecting bbox", () => {
+        // This bbox intersects with the expected bbox
+        failGeoJSONMultiPolygonTest({
+            ...multiGeoJsonMultiPolygon2D,
+            bbox: [-1.0, -1.0, 9.0, 9.0],
+        });
+    });
+    it("does not allow a 2D multi-polygon with a circumscribed bbox", () => {
+        // This bbox completely encompasses the expected bbox
+        failGeoJSONMultiPolygonTest({
+            ...multiGeoJsonMultiPolygon2D,
+            bbox: [-1.0, -1.0, 11.0, 11.0],
+        });
+    });
+    it("does not allow a 3D multi-polygon with an inscribed bbox", () => {
+        // This bbox is fully enclosed within the expected bbox
+        failGeoJSONMultiPolygonTest({
+            ...singleGeoJsonMultiPolygon3D,
+            bbox: [0.25, 0.5, 1.0, 0.75, 1.0, 1.5],
         });
     });
     it("does not allow a multi-polygon with invalid bbox dimensions", () => {
