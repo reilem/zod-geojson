@@ -1,6 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
-import { multiGeoJsonFeatureCollection, singleGeoJsonFeatureCollection } from "../examples/feature_collection";
+import {
+    multiGeoJsonFeatureCollection,
+    multiGeoJsonFeatureCollectionWithBbox,
+    singleGeoJsonFeatureCollection,
+} from "../examples/feature_collection";
 import { GeoJSONFeatureCollectionSchema } from "../src";
 
 function passGeoJSONFeatureCollectionSchemaTest(object: unknown) {
@@ -23,6 +27,9 @@ describe("GeoJSONFeatureCollection", () => {
             color: "#00FF00",
         });
     });
+    it("allows a feature collection with multiple features and bbox", () => {
+        passGeoJSONFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox);
+    });
     it("allows a feature collection with empty features array", () => {
         passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, features: [] });
     });
@@ -30,7 +37,7 @@ describe("GeoJSONFeatureCollection", () => {
     it("does not allow a feature collection without features key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ type: "FeatureCollection" });
     });
-    it.skip("does not allow a feature collection with the coordinates key", () => {
+    it("does not allow a feature collection with the coordinates key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, coordinates: [] });
     });
     it("does not allow a feature collection with the geometry key", () => {
@@ -41,5 +48,28 @@ describe("GeoJSONFeatureCollection", () => {
     });
     it("does not allow a feature collection with the geometries key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection, geometries: [] });
+    });
+    it("does not allow a feature collection with inconsistent position dimensions across features", () => {
+        failGeoJSONFeatureCollectionSchemaTest({
+            ...multiGeoJsonFeatureCollection,
+        });
+    });
+    it("does not allow a feature with a geometry with incorrect bbox", () => {
+        failGeoJSONFeatureCollectionSchemaTest({
+            ...multiGeoJsonFeatureCollection,
+            bbox: [40, 40, 80, 80],
+        });
+    });
+    it("does not allow a feature with a geometry with invalid bbox dimensions", () => {
+        failGeoJSONFeatureCollectionSchemaTest({
+            ...multiGeoJsonFeatureCollection,
+            bbox: [0.0, 0.0, 0.0, 10.0, 10.0, 0.0],
+        });
+    });
+    it("does not allow a feature with a geometry with badly formatted bbox", () => {
+        failGeoJSONFeatureCollectionSchemaTest({
+            ...multiGeoJsonFeatureCollection,
+            bbox: ["bbox must not contain strings"],
+        });
     });
 });

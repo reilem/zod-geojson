@@ -131,28 +131,19 @@ describe("GeoJSONFeature", () => {
     it("does not allow a feature with a geometry with incorrect bbox", () => {
         failGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
-            geometry: {
-                ...geoJsonFeaturePoint2D.geometry,
-                bbox: [0.0, 0.0, 10.0, 10.0],
-            },
+            bbox: [0.0, 0.0, 10.0, 10.0],
         });
     });
     it("does not allow a feature with a geometry with invalid bbox dimensions", () => {
         failGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
-            geometry: {
-                ...geoJsonFeaturePoint2D.geometry,
-                bbox: [0.0, 0.0, 0.0, 10.0, 10.0, 0.0],
-            },
+            bbox: [0.0, 0.0, 0.0, 10.0, 10.0, 0.0],
         });
     });
     it("does not allow a feature with a geometry with badly formatted bbox", () => {
         failGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
-            geometry: {
-                ...geoJsonFeaturePoint2D.geometry,
-                bbox: ["bbox must not contain strings"],
-            },
+            bbox: ["bbox must not contain strings"],
         });
     });
 });

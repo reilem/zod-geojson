@@ -1,6 +1,6 @@
 import { GeoJSONFeature } from "../src";
 import { geoJsonPoint2D, geoJsonPoint3D } from "./geometry/point";
-import { geoJsonPolygon2D, geoJsonPolygon3DWithBbox } from "./geometry/polygon";
+import { geoJsonPolygon2D, geoJsonPolygon3D, geoJsonPolygon3DWithBbox } from "./geometry/polygon";
 
 export const geoJsonFeaturePoint2D: GeoJSONFeature = {
     type: "Feature",
@@ -23,5 +23,6 @@ export const geoJsonFeaturePolygon2D: GeoJSONFeature = {
 export const geoJsonFeaturePolygon3DWithBbox: GeoJSONFeature = {
     type: "Feature",
     properties: {},
-    geometry: geoJsonPolygon3DWithBbox,
+    geometry: geoJsonPolygon3D,
+    bbox: geoJsonPolygon3DWithBbox.bbox,
 };
