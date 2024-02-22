@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./_dimension_helpers";
-import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./_bbox_helpers";
+import { GeoJSONBaseSchema } from "../base";
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("LineString"),

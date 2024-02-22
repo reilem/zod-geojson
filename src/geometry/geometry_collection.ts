@@ -1,7 +1,7 @@
 import { z, ZodType } from "zod";
 import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./_bbox_helpers";
 import { getDimensionForGeometry } from "./_dimension_helpers";
-import { GeoJSONBaseSchema } from "./_helper";
+import { GeoJSONBaseSchema } from "../base";
 import { GeoJSONGeometry, GeoJSONGeometrySchema } from "./index";
 
 const INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE = {

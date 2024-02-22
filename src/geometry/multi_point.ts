@@ -2,7 +2,8 @@ import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./_bbox_helpers";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./_dimension_helpers";
-import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { GeoJSONBaseSchema } from "../base";
 
 export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiPoint"),

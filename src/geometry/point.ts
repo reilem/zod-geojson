@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./_bbox_helpers";
-import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { GeoJSONBaseSchema } from "../base";
 
 export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Point"),

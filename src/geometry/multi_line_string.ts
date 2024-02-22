@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./_bbox_helpers";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./_dimension_helpers";
-import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
 import { GeoJSONLineStringCoordinatesSchema } from "./line_string";
+import { GeoJSONBaseSchema } from "../base";
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiLineString"),
