@@ -6,7 +6,7 @@ import { GeoJSONLineStringCoordinatesSchema } from "./line_string";
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiLineString"),
-    coordinates: z.array(GeoJSONLineStringCoordinatesSchema),
+    coordinates: z.array(GeoJSONLineStringCoordinatesSchema).min(1),
 })
     .passthrough()
     .superRefine((val, ctx) => {

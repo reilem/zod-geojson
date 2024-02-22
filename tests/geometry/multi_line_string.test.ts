@@ -45,7 +45,10 @@ describe("GeoJSONMultiLineString", () => {
         });
     });
 
-    it("does not allow a multi-line string without coordinates", () => {
+    it("does not allow a multi-line string with empty coordinates", () => {
+        failGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [] });
+    });
+    it("does not allow a multi-line string without coordinates key", () => {
         failGeoJSONMultiLineStringTest({ type: "MultiLineString" });
     });
     it("does not allow a multi-line string with the geometry key", () => {

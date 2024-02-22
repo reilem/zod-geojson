@@ -46,7 +46,7 @@ describe("GeoJSONPoint", () => {
     it("does not allow a point with empty coordinates", () => {
         failGeoJSONPointTest({ type: "Point", coordinates: [] });
     });
-    it("does not allow a point without coordinates", () => {
+    it("does not allow a point without coordinates key", () => {
         failGeoJSONPointTest({ type: "Point" });
     });
     it("does not allow a point with the geometry key", () => {

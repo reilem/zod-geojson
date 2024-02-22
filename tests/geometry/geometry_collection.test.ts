@@ -54,8 +54,11 @@ describe("GeoJSONGeometryCollection", () => {
             extraKey: "extra",
         });
     });
+    it("allows a geometry collection with empty geometries", () => {
+        passGeoJSONGeometryCollectionTest({ type: "GeometryCollection", geometries: [] });
+    });
 
-    it("does not allow a geometry collection without geometries", () => {
+    it("does not allow a geometry collection without geometries key", () => {
         failGeoJSONGeometryCollectionTest({ type: "GeometryCollection" });
     });
     it("does not allow a geometry collection with the coordinates key", () => {
