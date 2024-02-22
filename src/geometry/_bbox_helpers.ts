@@ -1,3 +1,5 @@
+import { GeoJSONGeometry } from "./index";
+
 type BboxPositionOptions = { bbox?: number[]; coordinates: number[] };
 type BboxPositionListOptions = { bbox?: number[]; coordinates: number[][] };
 type BboxPositionGridOptions = { bbox?: number[]; coordinates: number[][][] };
@@ -30,7 +32,7 @@ export function validBboxForPositionList({ bbox, coordinates }: BboxPositionList
     if (bbox.length !== dimension * 2) return false;
 
     const expectedBbox: number[] = [];
-    updateBboxForPositions(expectedBbox, coordinates);
+    updateBboxForPositionList(expectedBbox, coordinates);
     return bboxEquals(bbox, expectedBbox);
 }
 
@@ -64,37 +66,51 @@ export function validBboxForPositionGridList({ bbox, coordinates }: BboxPosition
     return bboxEquals(bbox, expectedBbox);
 }
 
+export function getBboxForGeometries(geometries: GeoJSONGeometry[]): number[] {
+    return mergeBboxs(geometries.map(getBboxForGeometry));
+}
+
+export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
+    if (bbox1.length !== bbox2.length) {
+        return false;
+    }
+    return bbox1.every((value, index) => value === bbox2[index]);
+}
+
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGridList(currentBbox: number[], positions: number[][][][]): void {
+function updateBboxForPositionGridList(currentBbox: number[], positions: number[][][][]): number[] {
     for (let i = 0; i < positions.length; i++) {
         updateBboxForPositionGrid(currentBbox, positions[i]);
     }
+    return currentBbox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGrid(currentBbox: number[], positions: number[][][]): void {
+function updateBboxForPositionGrid(currentBbox: number[], positions: number[][][]): number[] {
     for (let i = 0; i < positions.length; i++) {
-        updateBboxForPositions(currentBbox, positions[i]);
+        updateBboxForPositionList(currentBbox, positions[i]);
     }
+    return currentBbox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositions(currentBbox: number[], positions: number[][]): void {
+function updateBboxForPositionList(currentBbox: number[], positions: number[][]): number[] {
     for (let i = 0; i < positions.length; i++) {
         updateBboxForPosition(currentBbox, positions[i]);
     }
+    return currentBbox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPosition(currentBbox: number[], position: number[]): void {
+function updateBboxForPosition(currentBbox: number[], position: number[]): number[] {
     const dimension = position.length;
     for (let i = 0; i < dimension; i++) {
         const value = position[i];
@@ -107,13 +123,34 @@ function updateBboxForPosition(currentBbox: number[], position: number[]): void 
             currentBbox[i + dimension] = value;
         }
     }
+    return currentBbox;
 }
 
-function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
-    if (bbox1.length !== bbox2.length) {
-        return false;
+function getBboxForGeometry(geometry: GeoJSONGeometry): number[] {
+    switch (geometry.type) {
+        case "Point":
+            return updateBboxForPosition([], geometry.coordinates);
+        case "MultiPoint":
+        case "LineString":
+            return updateBboxForPositionList([], geometry.coordinates);
+        case "MultiLineString":
+        case "Polygon":
+            return updateBboxForPositionGrid([], geometry.coordinates);
+        case "MultiPolygon":
+            return updateBboxForPositionGridList([], geometry.coordinates);
+        case "GeometryCollection":
+            return getBboxForGeometries(geometry.geometries);
     }
-    return bbox1.every((value, index) => value === bbox2[index]);
+}
+
+function mergeBboxs(bboxs: number[][]): number[] {
+    const dimension = bboxs[0].length / 2;
+    const mergedBbox: number[] = [];
+    for (let i = 0; i < dimension; i++) {
+        mergedBbox[i] = Math.min(...bboxs.map((bbox) => bbox[i]));
+        mergedBbox[i + dimension] = Math.max(...bboxs.map((bbox) => bbox[i + dimension]));
+    }
+    return mergedBbox;
 }
 
 export const INVALID_BBOX_ISSUE = {

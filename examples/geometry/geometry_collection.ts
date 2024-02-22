@@ -33,7 +33,7 @@ export const singleGeoJsonGeometryCollection2DWithBbox: GeoJSONGeometryCollectio
 
 export const multiGeoJsonGeometryCollection2DWithBbox: GeoJSONGeometryCollection = {
     ...multiGeoJsonGeometryCollection2D,
-    bbox: [0.0, 0.0, 30.0, 30.0],
+    bbox: [-3.0, -2.0, 30.0, 30.0],
 };
 
 export const multiGeoJsonGeometryCollection3DWithBbox: GeoJSONGeometryCollection = {
@@ -43,5 +43,5 @@ export const multiGeoJsonGeometryCollection3DWithBbox: GeoJSONGeometryCollection
 
 export const nestedGeoJsonGeometryCollectionWithBbox: GeoJSONGeometryCollection = {
     ...nestedGeoJsonGeometryCollection,
-    bbox: [0.0, 0.0, 30.0, 30.0],
+    bbox: [-3.0, -2.0, 30.0, 30.0],
 };
