@@ -1,22 +1,8 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
-import {
-    GeoJSONBaseSchema,
-    INVALID_BBOX_ISSUE,
-    INVALID_DIMENSIONS_ISSUE,
-    INVALID_KEYS_ISSUE,
-    validGeometryKeys,
-} from "./_helper";
-import { validBboxForPositionList } from "./_bbox_helpers";
-
-function validLineStringDimensions({ coordinates }: { coordinates: number[][] }): boolean {
-    const coordinatesLen = coordinates.length;
-    const dimension = coordinates[0].length;
-    for (let i = 1; i < coordinatesLen; i++) {
-        if (coordinates[i].length !== dimension) return false;
-    }
-    return true;
-}
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./_dimension_helpers";
+import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./_bbox_helpers";
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("LineString"),
@@ -32,7 +18,7 @@ export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
         // Skip remaining checks if coordinates empty
         if (!val.coordinates.length) return;
 
-        if (!validLineStringDimensions(val)) {
+        if (!validDimensionsForPositionList(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
             return;
         }

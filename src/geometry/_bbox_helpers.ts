@@ -89,3 +89,9 @@ function updateBboxForPosition(currentBbox: number[], position: number[]): void 
         }
     }
 }
+
+export const INVALID_BBOX_ISSUE = {
+    code: "custom" as const,
+    message:
+        "Invalid bbox. Bbox length must be 2 * n, where n is the dimension of the geometry. Bbox must be a valid extent for the geometry.",
+};

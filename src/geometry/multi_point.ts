@@ -1,22 +1,8 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
-import { validBboxForPositionList } from "./_bbox_helpers";
-import {
-    GeoJSONBaseSchema,
-    INVALID_BBOX_ISSUE,
-    INVALID_DIMENSIONS_ISSUE,
-    INVALID_KEYS_ISSUE,
-    validGeometryKeys,
-} from "./_helper";
-
-function validMultiPointDimensions({ coordinates }: { coordinates: number[][] }): boolean {
-    const coordinatesLen = coordinates.length;
-    const dimension = coordinates[0].length;
-    for (let i = 1; i < coordinatesLen; i++) {
-        if (coordinates[i].length !== dimension) return false;
-    }
-    return true;
-}
+import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./_bbox_helpers";
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./_dimension_helpers";
+import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
 
 export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiPoint"),
@@ -31,7 +17,7 @@ export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
         // Skip remaining checks if coordinates empty
         if (!val.coordinates.length) return;
 
-        if (!validMultiPointDimensions(val)) {
+        if (!validDimensionsForPositionList(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
             return;
         }

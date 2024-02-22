@@ -1,21 +1,8 @@
 import { z } from "zod";
-import { validBboxForPositionGrid } from "./_bbox_helpers";
-import {
-    bboxEquals,
-    GeoJSONBaseSchema,
-    INVALID_BBOX_ISSUE,
-    INVALID_DIMENSIONS_ISSUE,
-    INVALID_KEYS_ISSUE,
-    updateBboxForPositions,
-    validGeometryKeys,
-} from "./_helper";
+import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./_bbox_helpers";
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./_dimension_helpers";
+import { GeoJSONBaseSchema, INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
 import { GeoJSONLineStringCoordinatesSchema } from "./line_string";
-
-function validMultiLineStringDimensions({ coordinates }: { coordinates: number[][][] }): boolean {
-    if (coordinates.length === 0) return true;
-    let dimension = coordinates[0][0].length;
-    return coordinates.every((ring) => ring.every((position) => position.length === dimension));
-}
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
     type: z.literal("MultiLineString"),
@@ -30,7 +17,7 @@ export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
         // Skip remaining checks if coordinates array is empty
         if (!val.coordinates.length) return;
 
-        if (!validMultiLineStringDimensions(val)) {
+        if (!validDimensionsForPositionGrid(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
             return;
         }
