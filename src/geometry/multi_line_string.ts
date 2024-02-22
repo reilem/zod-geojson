@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validBboxForPositionGrid } from "./_bbox_helpers";
 import {
     bboxEquals,
     GeoJSONBaseSchema,
@@ -14,22 +15,6 @@ function validMultiLineStringDimensions({ coordinates }: { coordinates: number[]
     if (coordinates.length === 0) return true;
     let dimension = coordinates[0][0].length;
     return coordinates.every((ring) => ring.every((position) => position.length === dimension));
-}
-
-function validMultiLineStringBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[][][] }): boolean {
-    if (bbox == null) {
-        return true;
-    }
-    const dimension = coordinates[0][0].length;
-    if (bbox.length !== 2 * dimension) {
-        return false;
-    }
-    const expectedBbox: number[] = [];
-    const coordinatesLen = coordinates.length;
-    for (let i = 0; i < coordinatesLen; i++) {
-        updateBboxForPositions(expectedBbox, coordinates[i]);
-    }
-    return bboxEquals(bbox, expectedBbox);
 }
 
 export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
@@ -49,7 +34,7 @@ export const GeoJSONMultiLineStringSchema = GeoJSONBaseSchema.extend({
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
             return;
         }
-        if (!validMultiLineStringBbox(val)) {
+        if (!validBboxForPositionGrid(val)) {
             ctx.addIssue(INVALID_BBOX_ISSUE);
             return;
         }

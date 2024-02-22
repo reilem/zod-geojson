@@ -1,14 +1,13 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
 import {
-    bboxEquals,
     GeoJSONBaseSchema,
     INVALID_BBOX_ISSUE,
     INVALID_DIMENSIONS_ISSUE,
     INVALID_KEYS_ISSUE,
-    updateBboxForPositions,
     validGeometryKeys,
 } from "./_helper";
+import { validBboxForPositionList } from "./_bbox_helpers";
 
 function validLineStringDimensions({ coordinates }: { coordinates: number[][] }): boolean {
     const coordinatesLen = coordinates.length;
@@ -17,17 +16,6 @@ function validLineStringDimensions({ coordinates }: { coordinates: number[][] })
         if (coordinates[i].length !== dimension) return false;
     }
     return true;
-}
-
-function validLineStringBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[][] }): boolean {
-    if (!bbox) return true;
-
-    const dimension = coordinates[0].length;
-    if (bbox.length !== dimension * 2) return false;
-
-    const expectedBbox: number[] = [];
-    updateBboxForPositions(expectedBbox, coordinates);
-    return bboxEquals(bbox, expectedBbox);
 }
 
 export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
@@ -48,7 +36,7 @@ export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
             return;
         }
-        if (!validLineStringBbox(val)) {
+        if (!validBboxForPositionList(val)) {
             ctx.addIssue(INVALID_BBOX_ISSUE);
             return;
         }

@@ -1,12 +1,11 @@
 import { z } from "zod";
 import { GeoJSONPositionSchema } from "../position";
+import { validBboxForPositionGrid } from "./_bbox_helpers";
 import {
-    bboxEquals,
     GeoJSONBaseSchema,
     INVALID_BBOX_ISSUE,
     INVALID_DIMENSIONS_ISSUE,
     INVALID_KEYS_ISSUE,
-    updateBboxForPositions,
     validGeometryKeys,
 } from "./_helper";
 
@@ -37,22 +36,6 @@ function validPolygonRings({ coordinates: rings }: { coordinates: number[][][] }
     return rings.every(validLinearRing);
 }
 
-function validPolygonBbox({ bbox, coordinates }: { bbox?: number[]; coordinates: number[][][] }): boolean {
-    if (bbox == null) {
-        return true;
-    }
-    const dimension = coordinates[0][0].length;
-    if (bbox.length !== 2 * dimension) {
-        return false;
-    }
-    const expectedBbox: number[] = [];
-    const coordinatesLen = coordinates.length;
-    for (let i = 0; i < coordinatesLen; i++) {
-        updateBboxForPositions(expectedBbox, coordinates[i]);
-    }
-    return bboxEquals(bbox, expectedBbox);
-}
-
 export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
     type: z.literal("Polygon"),
     coordinates: z.array(z.array(GeoJSONPositionSchema).min(4)),
@@ -74,7 +57,7 @@ export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
             ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
             return;
         }
-        if (!validPolygonBbox(val)) {
+        if (!validBboxForPositionGrid(val)) {
             ctx.addIssue(INVALID_BBOX_ISSUE);
             return;
         }
