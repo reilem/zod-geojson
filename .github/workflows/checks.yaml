@@ -16,8 +16,11 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v2
 
-            - name: Install PNPM
+            - name: Setup PNPM
               uses: pnpm/action-setup@v3
+
+            - name: Install Dependencies
+              run: pnpm install
 
             - name: Typecheck
               run: pnpm run typecheck
