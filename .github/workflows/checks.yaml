@@ -1,0 +1,29 @@
+name: Checks
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    run_pnpm_scripts:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v2
+
+            - name: Install PNPM
+              uses: pnpm/action-setup@v3
+
+            - name: Typecheck
+              run: pnpm run typecheck
+
+            - name: Prettier Check
+              run: pnpm run prettiercheck
+
+            - name: Test
+              run: pnpm run test
