@@ -25,9 +25,6 @@ function validGeometryCollectionKeys(collection: Record<string, unknown>): boole
 }
 
 function validGeometryCollectionDimension({ geometries }: { geometries: GeoJSONGeometry[] }): boolean {
-    if (geometries.length < 2) {
-        return true;
-    }
     let dimension = getDimensionForGeometry(geometries[0]);
     for (let i = 1; i < geometries.length; i++) {
         const geometryDimension = getDimensionForGeometry(geometries[i]);

@@ -4,7 +4,7 @@
   "description": "Zod schemas for GeoJSON",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TODO"
+    "url": "https://github.com/reilem/zod-geojson"
   },
   "author": "Reinert Lemmens",
   "license": "MIT",

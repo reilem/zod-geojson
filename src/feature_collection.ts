@@ -31,9 +31,6 @@ function validFeatureCollection(collection: Record<string, unknown>): boolean {
 
 function validFeatureCollectionDimensions(collection: { features: GeoJSONFeature[] }): boolean {
     const geometries = getGeometries(collection);
-    if (geometries.length < 2) {
-        return true;
-    }
     const dimension = getDimensionForGeometry(geometries[0]);
     for (let i = 1; i < geometries.length; i++) {
         if (getDimensionForGeometry(geometries[i]) !== dimension) {
