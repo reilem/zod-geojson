@@ -66,6 +66,23 @@ export function validBboxForPositionGridList({ bbox, coordinates }: BboxPosition
     return bboxEquals(bbox, expectedBbox);
 }
 
+export function getBboxForGeometry(geometry: GeoJSONGeometry): number[] {
+    switch (geometry.type) {
+        case "Point":
+            return updateBboxForPosition([], geometry.coordinates);
+        case "MultiPoint":
+        case "LineString":
+            return updateBboxForPositionList([], geometry.coordinates);
+        case "MultiLineString":
+        case "Polygon":
+            return updateBboxForPositionGrid([], geometry.coordinates);
+        case "MultiPolygon":
+            return updateBboxForPositionGridList([], geometry.coordinates);
+        case "GeometryCollection":
+            return getBboxForGeometries(geometry.geometries);
+    }
+}
+
 export function getBboxForGeometries(geometries: GeoJSONGeometry[]): number[] {
     return mergeBboxs(geometries.map(getBboxForGeometry));
 }
@@ -124,23 +141,6 @@ function updateBboxForPosition(currentBbox: number[], position: number[]): numbe
         }
     }
     return currentBbox;
-}
-
-function getBboxForGeometry(geometry: GeoJSONGeometry): number[] {
-    switch (geometry.type) {
-        case "Point":
-            return updateBboxForPosition([], geometry.coordinates);
-        case "MultiPoint":
-        case "LineString":
-            return updateBboxForPositionList([], geometry.coordinates);
-        case "MultiLineString":
-        case "Polygon":
-            return updateBboxForPositionGrid([], geometry.coordinates);
-        case "MultiPolygon":
-            return updateBboxForPositionGridList([], geometry.coordinates);
-        case "GeometryCollection":
-            return getBboxForGeometries(geometry.geometries);
-    }
 }
 
 function mergeBboxs(bboxs: number[][]): number[] {

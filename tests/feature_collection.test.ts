@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
+import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
     multiGeoJsonFeatureCollection,
     multiGeoJsonFeatureCollectionWithBbox,
@@ -52,6 +53,7 @@ describe("GeoJSONFeatureCollection", () => {
     it("does not allow a feature collection with inconsistent position dimensions across features", () => {
         failGeoJSONFeatureCollectionSchemaTest({
             ...multiGeoJsonFeatureCollection,
+            features: [geoJsonFeaturePoint2D, geoJsonFeaturePoint3D],
         });
     });
     it("does not allow a feature with a geometry with incorrect bbox", () => {

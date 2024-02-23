@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GeoJSONBaseSchema } from "./base";
-import { GeoJSONGeometrySchema } from "./geometry";
+import { GeoJSONGeometry, GeoJSONGeometrySchema } from "./geometry";
+import { bboxEquals, getBboxForGeometry, INVALID_BBOX_ISSUE } from "./geometry/_bbox_helpers";
 
 const INVALID_FEATURE_KEYS_ISSUE = {
     code: "custom" as const,
@@ -9,6 +10,12 @@ const INVALID_FEATURE_KEYS_ISSUE = {
 
 function validFeatureKeys(feature: Record<string, unknown>): boolean {
     return !("coordinates" in feature) && !("features" in feature) && !("geometries" in feature);
+}
+
+function validFeatureBbox({ bbox, geometry }: { bbox?: number[]; geometry: GeoJSONGeometry | null }): boolean {
+    if (!bbox || !geometry) return true;
+    const expectedBbox = getBboxForGeometry(geometry);
+    return bboxEquals(expectedBbox, bbox);
 }
 
 export const GeoJSONFeatureSchema = GeoJSONBaseSchema.extend({
@@ -23,7 +30,9 @@ export const GeoJSONFeatureSchema = GeoJSONBaseSchema.extend({
             ctx.addIssue(INVALID_FEATURE_KEYS_ISSUE);
         }
 
-        // TODO: BBox validation
+        if (!validFeatureBbox(val)) {
+            ctx.addIssue(INVALID_BBOX_ISSUE);
+        }
     });
 
 export type GeoJSONFeature = z.infer<typeof GeoJSONFeatureSchema>;
