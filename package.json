@@ -11,10 +11,12 @@
     "keywords": [
         "zod",
         "geojson",
-        "schema"
+        "schema",
+        "validation"
     ],
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
+    "packageManager": "pnpm@8.10.4",
     "scripts": {
         "test": "jest",
         "clean": "rimraf lib",

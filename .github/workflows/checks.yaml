@@ -9,7 +9,7 @@ on:
             - main
 
 jobs:
-    run_pnpm_scripts:
+    run_checks:
         runs-on: ubuntu-latest
 
         steps:
