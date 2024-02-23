@@ -1,15 +1,10 @@
-name: Checks
+name: Publish Package
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
+    release:
+        types: [published]
 jobs:
-    run_checks:
+    publish:
         runs-on: ubuntu-latest
-
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v4
@@ -28,3 +23,11 @@ jobs:
 
             - name: Test
               run: pnpm run test
+
+            - name: Build
+              run: pnpm run build
+
+            - name: Publish
+              run: pnpm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
