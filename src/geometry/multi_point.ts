@@ -16,7 +16,9 @@ export const GeoJSONMultiPointSchema = GeoJSONBaseSchema.extend({
             return;
         }
         // Skip remaining checks if coordinates empty
-        if (!val.coordinates.length) return;
+        if (!val.coordinates.length) {
+            return;
+        }
 
         if (!validDimensionsForPositionList(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);

@@ -31,16 +31,22 @@ function validFeatureCollection(collection: Record<string, unknown>): boolean {
 
 function validFeatureCollectionDimensions(collection: { features: GeoJSONFeature[] }): boolean {
     const geometries = getGeometries(collection);
-    if (geometries.length < 2) return true;
+    if (geometries.length < 2) {
+        return true;
+    }
     const dimension = getDimensionForGeometry(geometries[0]);
     for (let i = 1; i < geometries.length; i++) {
-        if (getDimensionForGeometry(geometries[i]) !== dimension) return false;
+        if (getDimensionForGeometry(geometries[i]) !== dimension) {
+            return false;
+        }
     }
     return true;
 }
 
 function validFeatureCollectionBbox({ features, bbox }: { features: GeoJSONFeature[]; bbox?: GeoJSONBbox }) {
-    if (!bbox) return true;
+    if (!bbox) {
+        return true;
+    }
     const expectedBbox = getBboxForGeometries(getGeometries({ features }));
     return bboxEquals(expectedBbox, bbox);
 }
@@ -56,7 +62,9 @@ export const GeoJSONFeatureCollectionSchema = GeoJSONBaseSchema.extend({
             return;
         }
 
-        if (!val.features.length) return;
+        if (!val.features.length) {
+            return;
+        }
 
         if (!validFeatureCollectionDimensions(val)) {
             ctx.addIssue(INVALID_FEATURE_COLLECTION_DIMENSIONS_ISSUE);

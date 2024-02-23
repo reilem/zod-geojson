@@ -17,7 +17,9 @@ export const GeoJSONLineStringSchema = GeoJSONBaseSchema.extend({
         }
 
         // Skip remaining checks if coordinates empty
-        if (!val.coordinates.length) return;
+        if (!val.coordinates.length) {
+            return;
+        }
 
         if (!validDimensionsForPositionList(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);

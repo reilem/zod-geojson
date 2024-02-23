@@ -13,7 +13,9 @@ function validFeatureKeys(feature: Record<string, unknown>): boolean {
 }
 
 function validFeatureBbox({ bbox, geometry }: { bbox?: number[]; geometry: GeoJSONGeometry | null }): boolean {
-    if (!bbox || !geometry) return true;
+    if (!bbox || !geometry) {
+        return true;
+    }
     const expectedBbox = getBboxForGeometry(geometry);
     return bboxEquals(expectedBbox, bbox);
 }

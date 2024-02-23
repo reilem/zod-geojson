@@ -25,11 +25,15 @@ function validGeometryCollectionKeys(collection: Record<string, unknown>): boole
 }
 
 function validGeometryCollectionDimension({ geometries }: { geometries: GeoJSONGeometry[] }): boolean {
-    if (geometries.length < 2) return true;
+    if (geometries.length < 2) {
+        return true;
+    }
     let dimension = getDimensionForGeometry(geometries[0]);
     for (let i = 1; i < geometries.length; i++) {
         const geometryDimension = getDimensionForGeometry(geometries[i]);
-        if (dimension !== geometryDimension) return false;
+        if (dimension !== geometryDimension) {
+            return false;
+        }
     }
     return true;
 }
@@ -41,7 +45,9 @@ function validGeometryCollectionBbox({
     bbox?: number[];
     geometries: GeoJSONGeometry[];
 }): boolean {
-    if (!bbox) return true;
+    if (!bbox) {
+        return true;
+    }
     const expectedBbox = getBboxForGeometries(geometries);
     return bboxEquals(bbox, expectedBbox);
 }
@@ -60,7 +66,9 @@ export const GeoJSONGeometryCollectionSchema: ZodType<GeoJSONGeometryCollection>
             ctx.addIssue(INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE);
             return;
         }
-        if (!val.geometries.length) return;
+        if (!val.geometries.length) {
+            return;
+        }
 
         if (!validGeometryCollectionDimension(val)) {
             ctx.addIssue(INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE);

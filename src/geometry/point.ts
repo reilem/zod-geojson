@@ -14,7 +14,9 @@ export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
             ctx.addIssue(INVALID_KEYS_ISSUE);
         }
         // Skip remaining checks if coordinates empty
-        if (!val.coordinates.length) return;
+        if (!val.coordinates.length) {
+            return;
+        }
 
         if (!validBboxForPosition(val)) {
             ctx.addIssue(INVALID_BBOX_ISSUE);

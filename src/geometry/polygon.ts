@@ -37,7 +37,9 @@ export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
             return;
         }
         // Skip remaining checks if coordinates array is empty
-        if (!val.coordinates.length) return;
+        if (!val.coordinates.length) {
+            return;
+        }
 
         if (!validDimensionsForPositionGrid(val)) {
             ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
