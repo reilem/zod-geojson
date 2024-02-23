@@ -2,7 +2,7 @@
 
 This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library.
 
-The schemas are based on the GeoJSON specification found in this RFC: https://datatracker.ietf.org/doc/html/rfc7946. The 
+The schemas are based on the GeoJSON specification found in this RFC: https://datatracker.ietf.org/doc/html/rfc7946. The
 schemas do not only validate the basic structure of the GeoJSON objects but also the validity of the geometries and
 bounding boxes.
 
@@ -24,17 +24,17 @@ pnpm add zod-geojson
 Then you can use the schemas in your code:
 
 ```typescript
-import { GeoJSONSchema } from 'zod-geojson';
+import { GeoJSONSchema } from "zod-geojson";
 
 const schema = GeoJSONSchema.parse({
-  type: 'Feature',
-  geometry: {
-    type: 'Point',
-    coordinates: [0, 0],
-  },
-  properties: {
-    name: 'Null Island',
-  },
+    type: "Feature",
+    geometry: {
+        type: "Point",
+        coordinates: [0, 0],
+    },
+    properties: {
+        name: "Null Island",
+    },
 });
 ```
 
@@ -52,7 +52,7 @@ import {
     GeoJSONPolygonSchema,
     GeoJSONLineStringSchema,
     GeoJSONPointSchema,
-} from 'zod-geojson';
+} from "zod-geojson";
 ```
 
 It also exposes the resulting types from the schemas:
@@ -69,7 +69,7 @@ import type {
     GeoJSONPolygon,
     GeoJSONLineString,
     GeoJSONPoint,
-} from 'zod-geojson';
+} from "zod-geojson";
 ```
 
 ## Error Cases
@@ -78,22 +78,21 @@ This library will throw an error if the GeoJSON object is not valid. For example
 not match the geometry type:
 
 ```typescript
-import { GeoJSONSchema } from 'zod-geojson';
+import { GeoJSONSchema } from "zod-geojson";
 
 const schema = GeoJSONSchema.parse({
-    type: 'Point',
+    type: "Point",
     coordinates: [[0, 0]],
 });
-
 ```
 
 It will also throw an error if the bounding box does not match the geometry:
 
 ```typescript
-import { GeoJSONSchema } from 'zod-geojson';
+import { GeoJSONSchema } from "zod-geojson";
 
 const schema = GeoJSONSchema.parse({
-    type: 'MultiPoint',
+    type: "MultiPoint",
     coordinates: [
         [-2, 0],
         [3, 4],
