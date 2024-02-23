@@ -18,12 +18,7 @@ export function validBboxForPosition({ bbox, coordinates }: BboxPositionOptions)
     if (bbox.length !== dimension * 2) {
         return false;
     }
-    for (let i = 0; i < bbox.length; i++) {
-        if (bbox[i] !== coordinates[i % dimension]) {
-            return false;
-        }
-    }
-    return true;
+    return bbox.every((value, index) => value === coordinates[index % dimension]);
 }
 
 /**
@@ -115,9 +110,7 @@ export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
 function updateBboxForPositionGridList(currentBbox: number[], positions: number[][][][]): number[] {
-    for (let i = 0; i < positions.length; i++) {
-        updateBboxForPositionGrid(currentBbox, positions[i]);
-    }
+    positions.forEach((positionGrid) => updateBboxForPositionGrid(currentBbox, positionGrid));
     return currentBbox;
 }
 
@@ -125,9 +118,7 @@ function updateBboxForPositionGridList(currentBbox: number[], positions: number[
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
 function updateBboxForPositionGrid(currentBbox: number[], positions: number[][][]): number[] {
-    for (let i = 0; i < positions.length; i++) {
-        updateBboxForPositionList(currentBbox, positions[i]);
-    }
+    positions.forEach((positionList) => updateBboxForPositionList(currentBbox, positionList));
     return currentBbox;
 }
 
@@ -135,9 +126,7 @@ function updateBboxForPositionGrid(currentBbox: number[], positions: number[][][
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
 function updateBboxForPositionList(currentBbox: number[], positions: number[][]): number[] {
-    for (let i = 0; i < positions.length; i++) {
-        updateBboxForPosition(currentBbox, positions[i]);
-    }
+    positions.forEach((position) => updateBboxForPosition(currentBbox, position));
     return currentBbox;
 }
 
@@ -146,17 +135,16 @@ function updateBboxForPositionList(currentBbox: number[], positions: number[][])
  */
 function updateBboxForPosition(currentBbox: number[], position: number[]): number[] {
     const dimension = position.length;
-    for (let i = 0; i < dimension; i++) {
-        const value = position[i];
-        const iMin = currentBbox[i];
-        const iMax = currentBbox[i + dimension];
+    position.forEach((value, index) => {
+        const iMin = currentBbox[index];
+        const iMax = currentBbox[index + dimension];
         if (iMin === undefined || value < iMin) {
-            currentBbox[i] = value;
+            currentBbox[index] = value;
         }
         if (iMax === undefined || value > iMax) {
-            currentBbox[i + dimension] = value;
+            currentBbox[index + dimension] = value;
         }
-    }
+    });
     return currentBbox;
 }
 

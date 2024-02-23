@@ -26,13 +26,7 @@ function validGeometryCollectionKeys(collection: Record<string, unknown>): boole
 
 function validGeometryCollectionDimension({ geometries }: { geometries: GeoJSONGeometry[] }): boolean {
     let dimension = getDimensionForGeometry(geometries[0]);
-    for (let i = 1; i < geometries.length; i++) {
-        const geometryDimension = getDimensionForGeometry(geometries[i]);
-        if (dimension !== geometryDimension) {
-            return false;
-        }
-    }
-    return true;
+    return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
 }
 
 function validGeometryCollectionBbox({

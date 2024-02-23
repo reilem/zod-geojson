@@ -32,12 +32,7 @@ function validFeatureCollection(collection: Record<string, unknown>): boolean {
 function validFeatureCollectionDimensions(collection: { features: GeoJSONFeature[] }): boolean {
     const geometries = getGeometries(collection);
     const dimension = getDimensionForGeometry(geometries[0]);
-    for (let i = 1; i < geometries.length; i++) {
-        if (getDimensionForGeometry(geometries[i]) !== dimension) {
-            return false;
-        }
-    }
-    return true;
+    return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
 }
 
 function validFeatureCollectionBbox({ features, bbox }: { features: GeoJSONFeature[]; bbox?: GeoJSONBbox }) {

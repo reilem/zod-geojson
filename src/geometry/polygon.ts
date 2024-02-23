@@ -13,13 +13,7 @@ const INVALID_LINEAR_RING_MESSAGE = {
 function validLinearRing(linearRing: number[][]): boolean {
     const firstPosition = linearRing[0];
     const lastPosition = linearRing[linearRing.length - 1];
-    const dimension = firstPosition.length;
-    for (let i = 0; i < dimension; i++) {
-        if (firstPosition[i] !== lastPosition[i]) {
-            return false;
-        }
-    }
-    return true;
+    return firstPosition.every((value, index) => value === lastPosition[index]);
 }
 
 export function validPolygonRings({ coordinates: rings }: { coordinates: number[][][] }): boolean {
