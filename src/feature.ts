@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { GeoJSONBaseSchema } from "./base";
 import { GeoJSONGeometry, GeoJSONGeometrySchema } from "./geometry";
-import { bboxEquals, getBboxForGeometry, INVALID_BBOX_ISSUE } from "./geometry/_bbox_helpers";
+import { bboxEquals, getBboxForGeometry, INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 
 const INVALID_FEATURE_KEYS_ISSUE = {
     code: "custom" as const,

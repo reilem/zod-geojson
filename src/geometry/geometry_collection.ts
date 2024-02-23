@@ -1,6 +1,6 @@
 import { z, ZodType } from "zod";
-import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./_bbox_helpers";
-import { getDimensionForGeometry } from "./_dimension_helpers";
+import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./validation/bbox";
+import { getDimensionForGeometry } from "./validation/dimension";
 import { GeoJSONBaseSchema } from "../base";
 import { GeoJSONGeometry, GeoJSONGeometrySchema } from "./index";
 

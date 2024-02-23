@@ -3,8 +3,8 @@ import { GeoJSONBaseSchema } from "./base";
 import { GeoJSONBbox } from "./bbox";
 import { GeoJSONFeature, GeoJSONFeatureSchema } from "./feature";
 import { GeoJSONGeometry } from "./geometry";
-import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./geometry/_bbox_helpers";
-import { getDimensionForGeometry } from "./geometry/_dimension_helpers";
+import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
+import { getDimensionForGeometry } from "./geometry/validation/dimension";
 
 const INVALID_FEATURE_COLLECTION_KEYS_ISSUE = {
     code: "custom" as const,

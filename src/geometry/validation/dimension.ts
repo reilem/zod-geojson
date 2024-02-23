@@ -1,4 +1,4 @@
-import { GeoJSONGeometry } from "./index";
+import { GeoJSONGeometry } from "../index";
 
 export function validDimensionsForPositionList({ coordinates }: { coordinates: number[][] }): boolean {
     const dimension = coordinates[0].length;

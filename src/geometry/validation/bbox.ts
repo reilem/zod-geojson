@@ -1,4 +1,4 @@
-import { GeoJSONGeometry } from "./index";
+import { GeoJSONGeometry } from "../index";
 
 type BboxPositionOptions = { bbox?: number[]; coordinates: number[] };
 type BboxPositionListOptions = { bbox?: number[]; coordinates: number[][] };

@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./_bbox_helpers";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./_dimension_helpers";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./_helper";
+import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
+import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
 import { GeoJSONPolygonCoordinatesSchema, validPolygonRings } from "./polygon";
 import { GeoJSONBaseSchema } from "../base";
 
