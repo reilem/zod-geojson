@@ -17,6 +17,11 @@
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "packageManager": "pnpm@8.10.4",
+    "files": [
+        "lib",
+        "README.md",
+        "LICENSE"
+    ],
     "scripts": {
         "test": "jest",
         "clean": "rimraf lib",
