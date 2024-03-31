@@ -9,13 +9,18 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
 
-            - name: Setup node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: "18.x"
-
             - name: Setup PNPM
               uses: pnpm/action-setup@v3
+              with:
+                  version: 8
+                  run_install: false
+
+            - name: Setup node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "18.x"
+                  cache: pnpm
+                  registry-url: https://registry.npmjs.org
 
             - name: Install Dependencies
               run: pnpm install --frozen-lockfile
@@ -33,6 +38,6 @@ jobs:
               run: pnpm run build
 
             - name: Publish
-              run: pnpm publish --no-git-checks # Disable checks because this will run on a headless release
+              run: pnpm publish --access public --no-git-checks # Disable checks because this will run on a headless release
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
