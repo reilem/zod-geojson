@@ -45,6 +45,9 @@ describe("GeoJSONMultiLineString", () => {
         });
     });
 
+    it("does not allow a 1D multi-line string", () => {
+        failGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [[[0.0], [1.0]]] });
+    });
     it("does not allow a multi-line string with empty coordinates", () => {
         failGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [] });
     });

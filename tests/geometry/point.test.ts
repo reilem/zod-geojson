@@ -43,6 +43,9 @@ describe("GeoJSONPoint", () => {
         passGeoJSONPointTest(geoJsonPointWithExtraKeys);
     });
 
+    it("does not allow a 1D point", () => {
+        failGeoJSONPointTest({ type: "Point", coordinates: [1.0] });
+    });
     it("does not allow a point with empty coordinates", () => {
         failGeoJSONPointTest({ type: "Point", coordinates: [] });
     });

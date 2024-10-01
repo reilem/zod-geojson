@@ -54,6 +54,9 @@ describe("GeoJSONPolygon", () => {
         });
     });
 
+    it("does not allow a 1D polygon", () => {
+        failGeoJSONPolygonTest({ type: "Polygon", coordinates: [[[0.0], [1.0], [0.0], [0.0]]] });
+    });
     it("does not allow a polygon without coordinates key", () => {
         failGeoJSONPolygonTest({ type: "Polygon" });
     });

@@ -58,6 +58,12 @@ describe("GeoJSONGeometryCollection", () => {
         passGeoJSONGeometryCollectionTest({ type: "GeometryCollection", geometries: [] });
     });
 
+    it("does not allow a geometry collection with a 1D geometry", () => {
+        failGeoJSONGeometryCollectionTest({
+            type: "GeometryCollection",
+            geometries: [{ type: "Point", coordinates: [0.0] }],
+        });
+    });
     it("does not allow a geometry collection without geometries key", () => {
         failGeoJSONGeometryCollectionTest({ type: "GeometryCollection" });
     });

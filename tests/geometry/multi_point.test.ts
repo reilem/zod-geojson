@@ -37,6 +37,9 @@ describe("GeoJSONMultiPoint", () => {
         });
     });
 
+    it("does not allow a 1D multi-point", () => {
+        failGeoJSONMultiPointTest({ type: "MultiPoint", coordinates: [[0.0], [1.0]] });
+    });
     it("does not allow a multi-point with empty coordinates", () => {
         failGeoJSONMultiPointTest({ type: "MultiPoint", coordinates: [] });
     });

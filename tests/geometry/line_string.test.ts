@@ -37,6 +37,9 @@ describe("GeoJSONLineString", () => {
         passGeoJSONLineStringTest(geoJsonLineStringWithExtraKeys);
     });
 
+    it("does not allow a 1D line string", () => {
+        failGeoJSONLineStringTest({ type: "LineString", coordinates: [[0.0], [1.0]] });
+    });
     it("does not allow a line string with empty coordinates", () => {
         failGeoJSONLineStringTest({ type: "LineString", coordinates: [] });
     });
