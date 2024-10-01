@@ -1,26 +1,29 @@
 import { z } from "zod";
-import { GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
 import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
 import { GeoJSONBaseSchema } from "../base";
 
-export const GeoJSONPointSchema = GeoJSONBaseSchema.extend({
-    type: z.literal("Point"),
-    coordinates: GeoJSONPositionSchema,
-})
-    .passthrough()
-    .superRefine((val, ctx) => {
-        if (!validGeometryKeys(val)) {
-            ctx.addIssue(INVALID_KEYS_ISSUE);
-        }
-        // Skip remaining checks if coordinates empty
-        if (!val.coordinates.length) {
-            return;
-        }
+export const GeoJSONPointSchemaGeneric = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+    GeoJSONBaseSchema.extend({
+        type: z.literal("Point"),
+        coordinates: positionSchema,
+    })
+        .passthrough()
+        .superRefine((val, ctx) => {
+            if (!validGeometryKeys(val)) {
+                ctx.addIssue(INVALID_KEYS_ISSUE);
+            }
+            if (!validBboxForPosition(val)) {
+                ctx.addIssue(INVALID_BBOX_ISSUE);
+            }
+        });
 
-        if (!validBboxForPosition(val)) {
-            ctx.addIssue(INVALID_BBOX_ISSUE);
-        }
-    });
-
+export const GeoJSONPointSchema = GeoJSONPointSchemaGeneric(GeoJSONPositionSchema);
 export type GeoJSONPoint = z.infer<typeof GeoJSONPointSchema>;
+
+export const GeoJSON2DPointSchema = GeoJSONPointSchemaGeneric(GeoJSON2DPositionSchema);
+export type GeoJSON2DPoint = z.infer<typeof GeoJSON2DPointSchema>;
+
+export const GeoJSON3DPointSchema = GeoJSONPointSchemaGeneric(GeoJSON3DPositionSchema);
+export type GeoJSON3DPoint = z.infer<typeof GeoJSON3DPointSchema>;

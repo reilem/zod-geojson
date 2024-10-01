@@ -1,9 +1,9 @@
 import { GeoJSONGeometry } from "../index";
 
-type BboxPositionOptions = { bbox?: number[]; coordinates: number[] };
-type BboxPositionListOptions = { bbox?: number[]; coordinates: number[][] };
-type BboxPositionGridOptions = { bbox?: number[]; coordinates: number[][][] };
-type BboxPositionGridListOptions = { bbox?: number[]; coordinates: number[][][][] };
+type BboxPositionOptions = { bbox?: number[]; coordinates?: number[] };
+type BboxPositionListOptions = { bbox?: number[]; coordinates?: number[][] };
+type BboxPositionGridOptions = { bbox?: number[]; coordinates?: number[][][] };
+type BboxPositionGridListOptions = { bbox?: number[]; coordinates?: number[][][][] };
 
 /**
  * Checks if given bbox is valid for the given position.
@@ -11,9 +11,9 @@ type BboxPositionGridListOptions = { bbox?: number[]; coordinates: number[][][][
  * @param coordinates Contains the position
  */
 export function validBboxForPosition({ bbox, coordinates }: BboxPositionOptions): boolean {
-    if (!bbox) {
-        return true;
-    }
+    if (bbox == null) return true;
+    if (coordinates == null) return false;
+
     const dimension = coordinates.length;
     if (bbox.length !== dimension * 2) {
         return false;
@@ -27,9 +27,9 @@ export function validBboxForPosition({ bbox, coordinates }: BboxPositionOptions)
  * @param coordinates Contains the list of positions
  */
 export function validBboxForPositionList({ bbox, coordinates }: BboxPositionListOptions): boolean {
-    if (!bbox) {
-        return true;
-    }
+    if (bbox == null) return true;
+    if (coordinates == null) return false;
+
     const dimension = coordinates[0].length;
     if (bbox.length !== dimension * 2) {
         return false;
@@ -46,9 +46,9 @@ export function validBboxForPositionList({ bbox, coordinates }: BboxPositionList
  * @param coordinates Contains the grid of positions
  */
 export function validBboxForPositionGrid({ bbox, coordinates }: BboxPositionGridOptions): boolean {
-    if (bbox == null) {
-        return true;
-    }
+    if (bbox == null) return true;
+    if (coordinates == null) return false;
+
     const dimension = coordinates[0][0].length;
     if (bbox.length !== 2 * dimension) {
         return false;
@@ -65,9 +65,9 @@ export function validBboxForPositionGrid({ bbox, coordinates }: BboxPositionGrid
  * @param coordinates Contains the grid of positions
  */
 export function validBboxForPositionGridList({ bbox, coordinates }: BboxPositionGridListOptions): boolean {
-    if (bbox == null) {
-        return true;
-    }
+    if (bbox == null) return true;
+    if (coordinates == null) return false;
+
     const dimension = coordinates[0][0][0].length;
     if (bbox.length !== 2 * dimension) {
         return false;

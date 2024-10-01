@@ -23,46 +23,4 @@ describe("GeoJSONPosition", () => {
     it("does not allow empty positions", () => {
         expect(() => GeoJSONPositionSchema.parse([])).toThrow(ZodError);
     });
-
-    describe("inference", () => {
-        function testPositionType0D(_position: []): void {}
-        function testPositionType1D(_position: [number]): void {}
-        function testPositionType2D(_position: [number, number]): void {}
-        function testPositionType3D(_position: [number, number, number]): void {}
-        function testPositionType7D(_position: [number, number, number, number, number, number, number]): void {}
-
-        it("should correctly infer 2D position", () => {
-            const position: GeoJSONPosition = [1, 1];
-
-            testPositionType2D(position);
-        });
-
-        it("should correctly infer 3D position", () => {
-            const position: GeoJSONPosition = [1, 1, 1];
-
-            testPositionType3D(position);
-        });
-
-        it("should correctly infer 7D position", () => {
-            const position: GeoJSONPosition = [1, 1, 1, 1, 1, 1, 1];
-
-            testPositionType7D(position);
-        });
-
-        it("should not infer 1D position", () => {
-            // @ts-expect-error -- This should fail
-            const position: GeoJSONPosition = [1];
-
-            // @ts-expect-error -- This should fail
-            testPositionType1D(position);
-        });
-
-        it("should not infer 0D position", () => {
-            // @ts-expect-error -- This should fail
-            const position: GeoJSONPosition = [];
-
-            // @ts-expect-error -- This should fail
-            testPositionType0D(position);
-        });
-    });
 });

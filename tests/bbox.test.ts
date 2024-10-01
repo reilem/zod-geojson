@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 import { bbox2D, bbox3D, bbox4D } from "../examples/bbox";
-import { GeoJSONBBoxSchema } from "../src";
+import { GeoJSONBBoxSchema, GeoJSONBbox } from "../src";
 
 describe("GeoJSONBBox", () => {
     it("allows 2D bbox", () => {
@@ -38,5 +38,63 @@ describe("GeoJSONBBox", () => {
 
     it("does not allow a badly formatted bbox", () => {
         expect(() => GeoJSONBBoxSchema.parse("bbox cannot be a string")).toThrow(ZodError);
+    });
+
+    describe("inference", () => {
+        function testBboxType0D(_position: []): void {}
+        function testBboxType1D(_position: [number]): void {}
+        function testBboxType2D(_position: [number, number]): void {}
+        function testBboxType3D(_position: [number, number, number]): void {}
+        function testBboxTypeCorrect(_position: [number, number, number, number, ...number[]]): void {}
+
+        it("should correctly infer 4D bbox", () => {
+            const bbox: GeoJSONBbox = [1, 1, 1, 1];
+
+            testBboxTypeCorrect(bbox);
+        });
+
+        it("should correctly infer 6D bbox", () => {
+            const bbox: GeoJSONBbox = [1, 1, 1, 1, 1, 1];
+
+            testBboxTypeCorrect(bbox);
+        });
+
+        it("should correctly infer 10D bbox", () => {
+            const bbox: GeoJSONBbox = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+            testBboxTypeCorrect(bbox);
+        });
+
+        it("should not infer 3D bbox", () => {
+            // @ts-expect-error -- This should fail
+            const bbox: GeoJSONBbox = [1, 1, 1];
+
+            // @ts-expect-error -- This should fail
+            testBboxType3D(bbox);
+        });
+
+        it("should not infer 2D bbox", () => {
+            // @ts-expect-error -- This should fail
+            const bbox: GeoJSONBbox = [1, 1];
+
+            // @ts-expect-error -- This should fail
+            testBboxType2D(bbox);
+        });
+
+        it("should not infer 1D bbox", () => {
+            // @ts-expect-error -- This should fail
+            const bbox: GeoJSONBbox = [1];
+
+            // @ts-expect-error -- This should fail
+            testBboxType1D(bbox);
+        });
+
+        it("should not infer 0D bbox", () => {
+            // @ts-expect-error -- This should fail
+            const bbox: GeoJSONBbox = [];
+
+            // @ts-expect-error -- This should fail
+            testBboxType0D(bbox);
+        });
     });
 });
