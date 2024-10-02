@@ -35,8 +35,8 @@ export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(p
 export const GeoJSONMultiLineStringSchema = GeoJSONMultiLineStringGenericSchema(GeoJSONPositionSchema);
 export type GeoJSONMultiLineString = z.infer<typeof GeoJSONMultiLineStringSchema>;
 
-export const GeoJSONMulti2DLineStringSchema = GeoJSONMultiLineStringGenericSchema(GeoJSON2DPositionSchema);
-export type GeoJSON2DMultiLineString = z.infer<typeof GeoJSONMulti2DLineStringSchema>;
+export const GeoJSON2DMultiLineStringSchema = GeoJSONMultiLineStringGenericSchema(GeoJSON2DPositionSchema);
+export type GeoJSON2DMultiLineString = z.infer<typeof GeoJSON2DMultiLineStringSchema>;
 
-export const GeoJSONMulti3DLineStringSchema = GeoJSONMultiLineStringGenericSchema(GeoJSON3DPositionSchema);
-export type GeoJSON3DMultiLineString = z.infer<typeof GeoJSONMulti3DLineStringSchema>;
+export const GeoJSON3DMultiLineStringSchema = GeoJSONMultiLineStringGenericSchema(GeoJSON3DPositionSchema);
+export type GeoJSON3DMultiLineString = z.infer<typeof GeoJSON3DMultiLineStringSchema>;
