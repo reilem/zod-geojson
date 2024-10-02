@@ -131,6 +131,13 @@ const schema = GeoJSONSchema.parse({
 
 ## Shortcomings
 
+### Error messages
+
+The error messages are currently very big and not user-friendly due to the default handling of failures in
+nested zod unions. This is something I hope to improve in the future.
+
+### Nested Geometry Collections
+
 This library does not support the validation of nested geometry collections. E.g.
 
 ```typescript

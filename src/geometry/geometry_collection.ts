@@ -6,6 +6,8 @@ import { GeoJSONBaseSchema } from "../base";
 import { GeoJSONGeometry } from "./index";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 
+type ValidatableGeometryCollection = { geometries: GeoJSONGeometry[]; bbox?: number[] };
+
 const INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE = {
     code: "custom" as const,
     message:
@@ -26,19 +28,13 @@ function validGeometryCollectionKeys(collection: Record<string, unknown>): boole
     );
 }
 
-function validGeometryCollectionDimension({ geometries }: { geometries?: GeoJSONGeometry[] }): boolean {
+function validGeometryCollectionDimension({ geometries }: ValidatableGeometryCollection): boolean {
     if (geometries == null) return false;
     let dimension = getDimensionForGeometry(geometries[0]);
     return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
 }
 
-function validGeometryCollectionBbox({
-    bbox,
-    geometries,
-}: {
-    bbox?: number[];
-    geometries: GeoJSONGeometry[];
-}): boolean {
+function validGeometryCollectionBbox({ bbox, geometries }: ValidatableGeometryCollection): boolean {
     if (!bbox) {
         return true;
     }
@@ -65,14 +61,14 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition
                 return;
             }
 
-            // This type cast is necessary because the type of val.geometries is not inferred correctly
-            if (!validGeometryCollectionDimension(val as { geometries: GeoJSONGeometry[] })) {
+            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
+            if (!validGeometryCollectionDimension(val as ValidatableGeometryCollection)) {
                 ctx.addIssue(INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE);
                 return;
             }
 
-            // This type cast is necessary because the type of val.geometries is not inferred correctly
-            if (!validGeometryCollectionBbox(val as { geometries: GeoJSONGeometry[] })) {
+            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
+            if (!validGeometryCollectionBbox(val as ValidatableGeometryCollection)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
                 return;
             }
