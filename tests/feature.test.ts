@@ -6,7 +6,7 @@ import {
     geoJsonFeaturePolygon2D,
     geoJsonFeaturePolygon3DWithBbox,
 } from "../examples/feature";
-import { GeoJSONFeatureSchema } from "../src";
+import { GeoJSON2DFeatureSchema, GeoJSON3DFeatureSchema, GeoJSONFeatureSchema } from "../src";
 
 function passGeoJSONFeatureSchemaTest(object: unknown) {
     expect(GeoJSONFeatureSchema.parse(object)).toEqual(object);
@@ -144,6 +144,24 @@ describe("GeoJSONFeature", () => {
         failGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             bbox: ["bbox must not contain strings"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D feature", () => {
+            expect(GeoJSON2DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toEqual(geoJsonFeaturePolygon2D);
+        });
+        it("does not allow a 3D feature", () => {
+            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D feature", () => {
+            expect(GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint3D)).toEqual(geoJsonFeaturePoint3D);
+        });
+        it("does not allow a 2D feature", () => {
+            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
         });
     });
 });

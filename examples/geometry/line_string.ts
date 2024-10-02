@@ -1,6 +1,6 @@
-import { GeoJSONLineString } from "../../src";
+import { GeoJSON2DLineString, GeoJSON3DLineString } from "../../src";
 
-export const geoJsonLineString2D: GeoJSONLineString = {
+export const geoJsonLineString2D: GeoJSON2DLineString = {
     type: "LineString",
     coordinates: [
         [1.0, 2.0],
@@ -8,7 +8,7 @@ export const geoJsonLineString2D: GeoJSONLineString = {
     ],
 };
 
-export const geoJsonLineString3D: GeoJSONLineString = {
+export const geoJsonLineString3D: GeoJSON3DLineString = {
     type: "LineString",
     coordinates: [
         [0.0, 0.0, 0.0],
@@ -17,12 +17,12 @@ export const geoJsonLineString3D: GeoJSONLineString = {
     ],
 };
 
-export const geoJsonLineString2DWithBbox: GeoJSONLineString = {
+export const geoJsonLineString2DWithBbox: GeoJSON2DLineString = {
     ...geoJsonLineString2D,
     bbox: [1.0, 2.0, 3.0, 4.0],
 };
 
-export const geoJsonLineString3DWithBbox: GeoJSONLineString = {
+export const geoJsonLineString3DWithBbox: GeoJSON3DLineString = {
     ...geoJsonLineString3D,
     bbox: [0.0, 0.0, 0.0, 20.0, 10.0, 2.0],
 };

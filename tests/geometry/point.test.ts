@@ -1,11 +1,12 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     geoJsonPoint2D,
     geoJsonPoint2DWithBbox,
     geoJsonPoint3D,
     geoJsonPoint3DWithBbox,
 } from "../../examples/geometry/point";
-import { GeoJSONPointSchema } from "../../src";
+import { GeoJSON2DPointSchema, GeoJSON3DPointSchema, GeoJSONPointSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPointTest(value: unknown): void {
@@ -107,6 +108,24 @@ describe("GeoJSONPoint", () => {
         failGeoJSONPointTest({
             ...geoJsonPoint2D,
             coordinates: [],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D point", () => {
+            expect(GeoJSON2DPointSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
+        });
+        it("does not allow a 3D point", () => {
+            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D point", () => {
+            expect(GeoJSON3DPointSchema.parse(geoJsonPoint3D)).toEqual(geoJsonPoint3D);
+        });
+        it("does not allow a 2D point", () => {
+            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint2D)).toThrow(ZodError);
         });
     });
 });

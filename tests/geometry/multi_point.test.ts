@@ -1,4 +1,5 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     geoJsonMultiPoint2D,
     geoJsonMultiPoint2DWithBbox,
@@ -6,7 +7,7 @@ import {
     geoJsonMultiPoint3DWithBbox,
 } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
-import { GeoJSONMultiPointSchema } from "../../src";
+import { GeoJSON2DMultiPointSchema, GeoJSON3DMultiPointSchema, GeoJSONMultiPointSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPointTest(value: unknown): void {
@@ -115,6 +116,24 @@ describe("GeoJSONMultiPoint", () => {
         failGeoJSONMultiPointTest({
             ...geoJsonMultiPoint2D,
             bbox: ["hello"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D multi-point", () => {
+            expect(GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint2D)).toEqual(geoJsonMultiPoint2D);
+        });
+        it("does not allow a 3D multi-point", () => {
+            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D multi-point", () => {
+            expect(GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint3D)).toEqual(geoJsonMultiPoint3D);
+        });
+        it("does not allow a 2D multi-point", () => {
+            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint2D)).toThrow(ZodError);
         });
     });
 });

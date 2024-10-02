@@ -1,4 +1,5 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     multiGeoJsonMultiPolygon2D,
     multiGeoJsonMultiPolygon2DWithBbox,
@@ -8,7 +9,7 @@ import {
     singleGeoJsonMultiPolygon3DWithBbox,
 } from "../../examples/geometry/multi_polygon";
 import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
-import { GeoJSONMultiPolygonSchema } from "../../src";
+import { GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema, GeoJSONMultiPolygonSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
@@ -168,6 +169,24 @@ describe("GeoJSONMultiPolygon", () => {
         failGeoJSONMultiPolygonTest({
             ...singleGeoJsonMultiPolygon2D,
             bbox: ["hello"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D multi-polygon", () => {
+            expect(GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toEqual(singleGeoJsonMultiPolygon2D);
+        });
+        it("does not allow a 3D multi-polygon", () => {
+            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D multi-polygon", () => {
+            expect(GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toEqual(singleGeoJsonMultiPolygon3D);
+        });
+        it("does not allow a 2D multi-polygon", () => {
+            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toThrow(ZodError);
         });
     });
 });

@@ -1,4 +1,5 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     multiGeoJsonGeometryCollection2D,
     multiGeoJsonGeometryCollection2DWithBbox,
@@ -10,7 +11,11 @@ import {
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { geoJsonMultiPoint2D } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D } from "../../examples/geometry/point";
-import { GeoJSONGeometryCollectionSchema } from "../../src";
+import {
+    GeoJSON2DGeometryCollectionSchema,
+    GeoJSON3DGeometryCollectionSchema,
+    GeoJSONGeometryCollectionSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONGeometryCollectionTest(value: unknown): void {
@@ -148,6 +153,28 @@ describe("GeoJSONGeometryCollection", () => {
         failGeoJSONGeometryCollectionTest({
             ...singleGeoJsonGeometryCollection2D,
             bbox: ["bbox cannot contain strings"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D geometry collection", () => {
+            expect(GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toEqual(
+                multiGeoJsonGeometryCollection2D,
+            );
+        });
+        it("does not allow a 3D geometry collection", () => {
+            expect(() => GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D geometry collection", () => {
+            expect(GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toEqual(
+                multiGeoJsonGeometryCollection3D,
+            );
+        });
+        it("does not allow a 2D geometry collection", () => {
+            expect(() => GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toThrow(ZodError);
         });
     });
 });

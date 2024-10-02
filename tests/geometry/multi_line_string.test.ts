@@ -1,4 +1,5 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
     multiGeoJsonMultiLineString2D,
@@ -8,7 +9,11 @@ import {
     singleGeoJsonMultiLineString3D,
     singleGeoJsonMultiLineString3DWithBbox,
 } from "../../examples/geometry/multi_line_string";
-import { GeoJSONMultiLineStringSchema } from "../../src";
+import {
+    GeoJSON2DMultiLineStringSchema,
+    GeoJSON3DMultiLineStringSchema,
+    GeoJSONMultiLineStringSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiLineStringTest(value: unknown): void {
@@ -131,6 +136,28 @@ describe("GeoJSONMultiLineString", () => {
         failGeoJSONMultiLineStringTest({
             ...singleGeoJsonMultiLineString2D,
             bbox: ["hello"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D multi-line string", () => {
+            expect(GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toEqual(
+                singleGeoJsonMultiLineString2D,
+            );
+        });
+        it("does not allow a 3D multi-line string", () => {
+            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D multi-line string", () => {
+            expect(GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toEqual(
+                singleGeoJsonMultiLineString3D,
+            );
+        });
+        it("does not allow a 2D multi-line string", () => {
+            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toThrow(ZodError);
         });
     });
 });
