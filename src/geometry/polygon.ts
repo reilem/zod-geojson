@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
 import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
@@ -20,35 +20,41 @@ export function validPolygonRings({ coordinates: rings }: { coordinates: number[
     return rings.every(validLinearRing);
 }
 
-export const GeoJSONPolygonSchema = GeoJSONBaseSchema.extend({
-    type: z.literal("Polygon"),
-    coordinates: z.array(z.array(GeoJSONPositionSchema).min(4)),
-})
-    .passthrough()
-    .superRefine((val, ctx) => {
-        if (!validGeometryKeys(val)) {
-            ctx.addIssue(INVALID_KEYS_ISSUE);
-            return;
-        }
-        // Skip remaining checks if coordinates array is empty
-        if (!val.coordinates.length) {
-            return;
-        }
+export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+    GeoJSONBaseSchema.extend({
+        type: z.literal("Polygon"),
+        coordinates: z.array(z.array(positionSchema).min(4)),
+    })
+        .passthrough()
+        .superRefine((val, ctx) => {
+            if (!validGeometryKeys(val)) {
+                ctx.addIssue(INVALID_KEYS_ISSUE);
+                return;
+            }
+            // Skip remaining checks if coordinates array is empty
+            if (!val.coordinates.length) {
+                return;
+            }
 
-        if (!validDimensionsForPositionGrid(val)) {
-            ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
-            return;
-        }
-        if (!validPolygonRings(val)) {
-            ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
-            return;
-        }
-        if (!validBboxForPositionGrid(val)) {
-            ctx.addIssue(INVALID_BBOX_ISSUE);
-            return;
-        }
-    });
+            if (!validDimensionsForPositionGrid(val)) {
+                ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
+                return;
+            }
+            if (!validPolygonRings(val)) {
+                ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
+                return;
+            }
+            if (!validBboxForPositionGrid(val)) {
+                ctx.addIssue(INVALID_BBOX_ISSUE);
+                return;
+            }
+        });
 
-export const GeoJSONPolygonCoordinatesSchema = GeoJSONPolygonSchema.innerType().shape.coordinates;
-
+export const GeoJSONPolygonSchema = GeoJSONPolygonGenericSchema(GeoJSONPositionSchema);
 export type GeoJSONPolygon = z.infer<typeof GeoJSONPolygonSchema>;
+
+export const GeoJSON2DPolygonSchema = GeoJSONPolygonGenericSchema(GeoJSON2DPositionSchema);
+export type GeoJSON2DPolygon = z.infer<typeof GeoJSON2DPolygonSchema>;
+
+export const GeoJSON3DPolygonSchema = GeoJSONPolygonGenericSchema(GeoJSON3DPositionSchema);
+export type GeoJSON3DPolygon = z.infer<typeof GeoJSON3DPolygonSchema>;
