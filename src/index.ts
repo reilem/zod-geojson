@@ -15,5 +15,4 @@ export const GeoJSONSchema = GeoJSONGeometrySchema.or(GeoJSONFeatureSchema).or(G
 
 export type GeoJSON = z.infer<typeof GeoJSONSchema>;
 
-// TODO: Performance testing & optimisation (replace callback iterators with for loops?)
-// TODO: Compare performance with and without refinements
+// TODO: Improve error messages
