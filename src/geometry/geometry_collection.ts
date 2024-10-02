@@ -65,12 +65,14 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition
                 return;
             }
 
-            if (!validGeometryCollectionDimension(val)) {
+            // This type cast is necessary because the type of val.geometries is not inferred correctly
+            if (!validGeometryCollectionDimension(val as { geometries: GeoJSONGeometry[] })) {
                 ctx.addIssue(INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE);
                 return;
             }
 
-            if (!validGeometryCollectionBbox(val)) {
+            // This type cast is necessary because the type of val.geometries is not inferred correctly
+            if (!validGeometryCollectionBbox(val as { geometries: GeoJSONGeometry[] })) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
                 return;
             }

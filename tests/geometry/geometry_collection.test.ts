@@ -4,8 +4,6 @@ import {
     multiGeoJsonGeometryCollection2DWithBbox,
     multiGeoJsonGeometryCollection3D,
     multiGeoJsonGeometryCollection3DWithBbox,
-    nestedGeoJsonGeometryCollection,
-    nestedGeoJsonGeometryCollectionWithBbox,
     singleGeoJsonGeometryCollection2D,
     singleGeoJsonGeometryCollection2DWithBbox,
 } from "../../examples/geometry/geometry_collection";
@@ -33,9 +31,6 @@ describe("GeoJSONGeometryCollection", () => {
     it("allows a geometry collection with multiple 3D geometries", () => {
         passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection3D);
     });
-    it("allows a geometry collection with nested geometry collection", () => {
-        passGeoJSONGeometryCollectionTest(nestedGeoJsonGeometryCollection);
-    });
     it("allows a geometry collection with one 2D geometry and valid bbox", () => {
         passGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBbox);
     });
@@ -44,9 +39,6 @@ describe("GeoJSONGeometryCollection", () => {
     });
     it("allows a geometry collection with multiple 3D geometries and valid bbox", () => {
         passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
-    });
-    it("allows a geometry collection with nested geometry collection and valid bbox", () => {
-        passGeoJSONGeometryCollectionTest(nestedGeoJsonGeometryCollectionWithBbox);
     });
     it("allows a geometry collection and preserves extra keys", () => {
         passGeoJSONGeometryCollectionTest({

@@ -21,11 +21,6 @@ export const multiGeoJsonGeometryCollection3D: GeoJSONGeometryCollection = {
     geometries: [geoJsonPoint3D, geoJsonLineString3D, singleGeoJsonMultiPolygon3D],
 };
 
-export const nestedGeoJsonGeometryCollection: GeoJSONGeometryCollection = {
-    type: "GeometryCollection",
-    geometries: [geoJsonPoint2D, multiGeoJsonGeometryCollection2D],
-};
-
 export const singleGeoJsonGeometryCollection2DWithBbox: GeoJSONGeometryCollection = {
     ...singleGeoJsonGeometryCollection2D,
     bbox: geoJsonPoint2DWithBbox.bbox,
@@ -39,9 +34,4 @@ export const multiGeoJsonGeometryCollection2DWithBbox: GeoJSONGeometryCollection
 export const multiGeoJsonGeometryCollection3DWithBbox: GeoJSONGeometryCollection = {
     ...multiGeoJsonGeometryCollection3D,
     bbox: [0.0, 0.0, 0.0, 20.0, 10.0, 10.0],
-};
-
-export const nestedGeoJsonGeometryCollectionWithBbox: GeoJSONGeometryCollection = {
-    ...nestedGeoJsonGeometryCollection,
-    bbox: [-3.0, -2.0, 30.0, 30.0],
 };

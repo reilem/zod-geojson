@@ -1,6 +1,6 @@
-import { GeoJSONPolygon } from "../../src";
+import { GeoJSON2DPolygon, GeoJSONPolygon } from "../../src";
 
-export const geoJsonPolygon2D: GeoJSONPolygon = {
+export const geoJsonPolygon2D: GeoJSON2DPolygon = {
     type: "Polygon",
     coordinates: [
         [

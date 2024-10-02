@@ -1,4 +1,4 @@
-import { GeoJSONMultiPolygon } from "../../src";
+import { GeoJSON2DMultiPolygon, GeoJSONMultiPolygon } from "../../src";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithBbox,
@@ -8,7 +8,7 @@ import {
     geoJsonPolygon3DWithBbox,
 } from "./polygon";
 
-export const singleGeoJsonMultiPolygon2D: GeoJSONMultiPolygon = {
+export const singleGeoJsonMultiPolygon2D: GeoJSON2DMultiPolygon = {
     type: "MultiPolygon",
     coordinates: [geoJsonPolygon2D.coordinates],
 };
