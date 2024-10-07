@@ -134,7 +134,8 @@ const schema = GeoJSONSchema.parse({
 ### Error messages
 
 The error messages are currently very big and not user-friendly due to the default handling of failures in
-nested zod unions. This is something I hope to improve in the future.
+nested zod unions. If you're not using it already, I recommend using
+[zod-validation-error](https://www.npmjs.com/package/zod-validation-error) to simplify the error messages.
 
 ### Nested Geometry Collections
 
