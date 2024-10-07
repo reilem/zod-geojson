@@ -1,11 +1,12 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithHole,
     geoJsonPolygon2DWithHoleAndBbox,
     geoJsonPolygon3D,
 } from "../../examples/geometry/polygon";
-import { GeoJSONPolygonSchema } from "../../src";
+import { GeoJSON2DPolygonSchema, GeoJSON3DPolygonSchema, GeoJSONPolygonSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPolygonTest(value: unknown): void {
@@ -54,6 +55,9 @@ describe("GeoJSONPolygon", () => {
         });
     });
 
+    it("does not allow a 1D polygon", () => {
+        failGeoJSONPolygonTest({ type: "Polygon", coordinates: [[[0.0], [1.0], [0.0], [0.0]]] });
+    });
     it("does not allow a polygon without coordinates key", () => {
         failGeoJSONPolygonTest({ type: "Polygon" });
     });
@@ -161,6 +165,24 @@ describe("GeoJSONPolygon", () => {
         failGeoJSONPolygonTest({
             ...geoJsonPolygon2D,
             bbox: ["hello"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D polygon", () => {
+            expect(GeoJSON2DPolygonSchema.parse(geoJsonPolygon2D)).toEqual(geoJsonPolygon2D);
+        });
+        it("does not allow a 3D polygon", () => {
+            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D polygon", () => {
+            expect(GeoJSON3DPolygonSchema.parse(geoJsonPolygon3D)).toEqual(geoJsonPolygon3D);
+        });
+        it("does not allow a 2D polygon", () => {
+            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
         });
     });
 });

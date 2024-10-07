@@ -38,7 +38,7 @@ const schema = GeoJSONSchema.parse({
 });
 ```
 
-This library also exposes schemas for the individual GeoJSON types:
+This library exposes schemas for the individual GeoJSON types:
 
 ```typescript
 import {
@@ -72,6 +72,33 @@ import type {
 } from "zod-geojson";
 ```
 
+### Dimensionality
+
+This library exports specific schemas for 2D and 3D geometries, and their accompanying types:
+
+```typescript
+import type {
+    GeoJSON2DFeatureSchema,
+    GeoJSON2DFeature,
+    // ...
+    GeoJSON2DPointSchema,
+    GeoJSON2DPoint,
+} from "zod-geojson";
+```
+
+If you wish the use a different dimension, the generic schemas are also exposed and you can
+use them to create your own schemas and types:
+
+```typescript
+import { GeoJSONGeometryGenericSchema } from "zod-geojson";
+
+const GeoJSON4DPositionSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+type GeoJSON4DPosition = z.infer<typeof GeoJSON4DPositionSchema>;
+
+const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema);
+type GeoJSON4DGeometry = z.infer<typeof GeoJSON4DGeometrySchema>;
+```
+
 ## Error Cases
 
 This library will throw an error if the GeoJSON object is not valid. For example, where the coordinates type does
@@ -102,6 +129,48 @@ const schema = GeoJSONSchema.parse({
 });
 ```
 
+## Shortcomings
+
+### Error messages
+
+The error messages are currently very big and not user-friendly due to the default handling of failures in
+nested zod unions. This is something I hope to improve in the future.
+
+### Nested Geometry Collections
+
+This library does not support the validation of nested geometry collections. E.g.
+
+```typescript
+// This will fail
+const schema = GeoJSONSchema.parse({
+    type: "GeometryCollection",
+    geometries: [
+        {
+            type: "GeometryCollection",
+            geometries: [
+                {
+                    type: "Point",
+                    coordinates: [0, 0],
+                },
+            ],
+        },
+    ],
+    bbox: [0, 0, 1, 1],
+});
+```
+
+This is per the GeoJSON RFC [recommendation](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8):
+
+> To maximize interoperability, implementations SHOULD avoid nested GeometryCollections.
+
+and also because the implementation of recursive zod schemas together with generics is quite cumbersome and would
+needlessy complicate both the implementation and usage of this library. If you need to validate nested geometry
+collections feel free to open an issue and we can discuss possible solutions.
+
 ## Contributing
 
 If you find any issues with the schemas or want to add new features, feel free to open an issue or a pull request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -1,11 +1,12 @@
-import { describe, it } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
+import { ZodError } from "zod";
 import {
     geoJsonLineString2D,
     geoJsonLineString2DWithBbox,
     geoJsonLineString3D,
     geoJsonLineString3DWithBbox,
 } from "../../examples/geometry/line_string";
-import { GeoJSONLineStringSchema } from "../../src";
+import { GeoJSON2DLineStringSchema, GeoJSON3DLineStringSchema, GeoJSONLineStringSchema } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONLineStringTest(value: unknown): void {
@@ -37,6 +38,9 @@ describe("GeoJSONLineString", () => {
         passGeoJSONLineStringTest(geoJsonLineStringWithExtraKeys);
     });
 
+    it("does not allow a 1D line string", () => {
+        failGeoJSONLineStringTest({ type: "LineString", coordinates: [[0.0], [1.0]] });
+    });
     it("does not allow a line string with empty coordinates", () => {
         failGeoJSONLineStringTest({ type: "LineString", coordinates: [] });
     });
@@ -115,6 +119,24 @@ describe("GeoJSONLineString", () => {
         failGeoJSONLineStringTest({
             ...geoJsonLineString2D,
             bbox: ["badformat"],
+        });
+    });
+
+    describe("2D", () => {
+        it("allows a 2D line string", () => {
+            expect(GeoJSON2DLineStringSchema.parse(geoJsonLineString2D)).toEqual(geoJsonLineString2D);
+        });
+        it("does not allow a 3D line string", () => {
+            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString3D)).toThrow(ZodError);
+        });
+    });
+
+    describe("3D", () => {
+        it("allows a 3D line string", () => {
+            expect(GeoJSON3DLineStringSchema.parse(geoJsonLineString3D)).toEqual(geoJsonLineString3D);
+        });
+        it("does not allow a 2D line string", () => {
+            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString2D)).toThrow(ZodError);
         });
     });
 });
