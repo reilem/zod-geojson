@@ -27,5 +27,3 @@ export type GeoJSON2D = z.infer<typeof GeoJSON2DSchema>;
 
 export const GeoJSON3DSchema = GeoJSONGenericSchema(GeoJSON3DPositionSchema);
 export type GeoJSON3D = z.infer<typeof GeoJSON3DSchema>;
-
-// TODO: Improve error messages
