@@ -1,10 +1,9 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSONGeometryBaseSchema } from "./base";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
 import { GeoJSONPolygonGenericSchema, validPolygonRings } from "./polygon";
-import { GeoJSONBaseSchema } from "../base";
 
 const INVALID_LINEAR_RING_MESSAGE = {
     code: "custom" as const,
@@ -16,16 +15,12 @@ function validMultiPolygonLinearRings({ coordinates }: { coordinates: number[][]
 }
 
 export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
+    GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiPolygon"),
         coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates).min(1),
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-                return;
-            }
             // Skip remaining checks if coordinates array is empty
             if (!val.coordinates.length) {
                 return;

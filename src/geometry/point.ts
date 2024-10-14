@@ -1,19 +1,17 @@
 import { z } from "zod";
+import { GeoJSONBBoxSchema } from "../bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSONGeometryBaseSchema } from "./base";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
-import { GeoJSONBaseSchema } from "../base";
 
 export const GeoJSONPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
+    GeoJSONGeometryBaseSchema.extend({
+        bbox: GeoJSONBBoxSchema.optional(),
         type: z.literal("Point"),
         coordinates: positionSchema,
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-            }
             if (!validBboxForPosition(val)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
             }

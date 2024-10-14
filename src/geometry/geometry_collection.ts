@@ -2,31 +2,16 @@ import { z } from "zod";
 import { _GeoJSONSimpleGeometryGenericSchema } from "./_simple";
 import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./validation/bbox";
 import { getDimensionForGeometry } from "./validation/dimension";
-import { GeoJSONBaseSchema } from "../base";
 import { GeoJSONGeometry } from "./index";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSONBaseSchema } from "../base";
 
 type ValidatableGeometryCollection = { geometries: GeoJSONGeometry[]; bbox?: number[] };
-
-const INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE = {
-    code: "custom" as const,
-    message:
-        'GeoJSON geometry collection object cannot have "geometry", "coordinates", "properties", or "features" keys',
-};
 
 const INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE = {
     code: "custom" as const,
     message: "Invalid geometry collection dimensions. All geometries must have the same dimension.",
 };
-
-function validGeometryCollectionKeys(collection: Record<string, unknown>): boolean {
-    return (
-        !("coordinates" in collection) &&
-        !("geometry" in collection) &&
-        !("properties" in collection) &&
-        !("features" in collection)
-    );
-}
 
 function validGeometryCollectionDimension({ geometries }: ValidatableGeometryCollection): boolean {
     if (geometries == null) return false;
@@ -44,6 +29,10 @@ function validGeometryCollectionBbox({ bbox, geometries }: ValidatableGeometryCo
 
 const _GeoJSONGeometryCollectionBaseSchema = GeoJSONBaseSchema.extend({
     type: z.literal("GeometryCollection"),
+    coordinates: z.never({ message: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
+    geometry: z.never({ message: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),
+    properties: z.never({ message: "GeoJSON geometry collection cannot have a 'properties' key" }).optional(),
+    features: z.never({ message: "GeoJSON geometry collection cannot have a 'features' key" }).optional(),
 });
 
 export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
@@ -53,10 +42,6 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition
         })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryCollectionKeys(val)) {
-                ctx.addIssue(INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE);
-                return;
-            }
             if (!val.geometries.length) {
                 return;
             }
