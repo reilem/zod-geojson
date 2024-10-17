@@ -1,10 +1,22 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONPointGenericSchemaInnerType } from "./point";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 
-export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+type GeoJSONMultiPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<"MultiPoint">;
+    coordinates: z.ZodArray<GeoJSONPointGenericSchemaInnerType<P>["coordinates"]>;
+};
+
+export type GeoJSONMultiPointGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONMultiPointGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONMultiPointGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiPoint"),
         // We allow an empty coordinates array

@@ -1,12 +1,23 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
-import { GeoJSONPolygonGenericSchema } from "./polygon";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaInnerType } from "./polygon";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
 import { INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+type GeoJSONMultiPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<"MultiPolygon">;
+    coordinates: z.ZodArray<GeoJSONPolygonGenericSchemaInnerType<P>["coordinates"]>;
+};
+
+export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONMultiPolygonGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONMultiPolygonGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiPolygon"),
         // We allow an empty coordinates array:

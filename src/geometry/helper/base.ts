@@ -34,7 +34,7 @@ type ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType extends z.ZodRawShape> =
     GeoJSONGeometryBaseSchemaInnerType,
     InnerType
 >;
-export type GenericSchemaType<InnerType extends z.ZodRawShape> = z.ZodEffects<
+export type GeoJSONGeometryBaseGenericSchemaType<InnerType extends z.ZodRawShape> = z.ZodEffects<
     z.ZodObject<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, "passthrough", z.ZodTypeAny>,
     objectOutputType<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, z.ZodTypeAny, "passthrough">,
     objectInputType<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, z.ZodTypeAny, "passthrough">

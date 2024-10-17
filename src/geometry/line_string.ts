@@ -1,10 +1,21 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 
-export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export type GeoJSONLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<"LineString">;
+    coordinates: z.ZodTuple<[z.ZodSchema<P>, z.ZodSchema<P>], z.ZodSchema<P>>;
+};
+
+export type GeoJSONLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONLineStringGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONLineStringGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("LineString"),
         // > For type "LineString", the "coordinates" member is an array of two or

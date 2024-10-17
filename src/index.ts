@@ -31,3 +31,4 @@ export type GeoJSON3D = z.infer<typeof GeoJSON3DSchema>;
 // TODO: Make type aliases for each level, all simple geometries, the simple geometries type, the geometry collection,
 //       the geometry type, the feature type, feature collection type & geojson type (like bbox has now)
 // TODO: Do not expost every single schema & inner type, only the useful ones
+// TODO: Add negative typing examples for all types (like with point)

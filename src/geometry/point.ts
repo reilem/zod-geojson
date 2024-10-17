@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
 
-type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
+export type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
     type: z.ZodLiteral<"Point">;
     coordinates: z.ZodSchema<P>;
 };
 
-type GeoJSONPointGenericSchemaType<P extends GeoJSONPosition> = GenericSchemaType<
+export type GeoJSONPointGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
     GeoJSONPointGenericSchemaInnerType<P>
 >;
 

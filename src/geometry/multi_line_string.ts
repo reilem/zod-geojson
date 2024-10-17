@@ -1,11 +1,22 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
-import { GeoJSONLineStringGenericSchema } from "./line_string";
+import { GeoJSONLineStringGenericSchema, GeoJSONLineStringGenericSchemaInnerType } from "./line_string";
 
-export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+type GeoJSONMultiLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<"MultiLineString">;
+    coordinates: z.ZodArray<GeoJSONLineStringGenericSchemaInnerType<P>["coordinates"]>;
+};
+
+export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONMultiLineStringGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONMultiLineStringGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiLineString"),
         // We allow an empty coordinates array
