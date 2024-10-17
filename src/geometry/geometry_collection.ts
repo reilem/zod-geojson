@@ -2,15 +2,10 @@ import { z } from "zod";
 import { GeoJSONGeometryBaseGenericSchemaType } from "./helper/base";
 import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
 import { GeoJSONGeometryTypeSchema } from "./helper/type";
-import { INVALID_BBOX_ISSUE } from "./validation/bbox";
+import { INVALID_BBOX_ISSUE, validBboxForCollection } from "./validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
-import {
-    INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE,
-    ValidatableGeometryCollection,
-    validGeometryCollectionBbox,
-    validGeometryCollectionDimension,
-} from "./validation/collection";
+import { INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE, validDimensionsForCollection } from "./validation/dimension";
 
 type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> = GeoJSONBaseSchemaInnerType & {
     type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.GeometryCollection>;
@@ -44,15 +39,11 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition
             if (!val.geometries.length) {
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validGeometryCollectionDimension(val as ValidatableGeometryCollection)) {
+            if (!validDimensionsForCollection(val)) {
                 ctx.addIssue(INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE);
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validGeometryCollectionBbox(val as ValidatableGeometryCollection)) {
+            if (!validBboxForCollection(val)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
                 return;
             }

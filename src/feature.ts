@@ -1,12 +1,10 @@
 import { z } from "zod";
 import { GeoJSONBaseSchema } from "./base";
-import { GeoJSONGeometry, GeoJSONGeometryGenericSchema } from "./geometry";
+import { GeoJSONGeometryGenericSchema } from "./geometry";
 import { INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONTypeSchema } from "./type";
-import { validFeatureBbox } from "./validation/bbox";
-
-export type ValidatableGeoJSONFeature = { bbox?: number[]; geometry: GeoJSONGeometry | null };
+import { validBboxForFeature } from "./validation/bbox";
 
 export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONBaseSchema.extend({
@@ -20,8 +18,7 @@ export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionS
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validFeatureBbox(val as ValidatableGeoJSONFeature)) {
+            if (!validBboxForFeature(val)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
             }
         });

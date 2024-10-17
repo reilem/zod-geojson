@@ -10,4 +10,5 @@ export const GeoJSONGeometryTypeSchema = z.enum([
     "GeometryCollection",
 ]);
 
+export type GeoJSONGeometryEnumType = typeof GeoJSONGeometryTypeSchema.enum;
 export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;

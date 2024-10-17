@@ -4,12 +4,11 @@ import { GeoJSONFeatureGenericSchema } from "./feature";
 import { INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONTypeSchema } from "./type";
+import { validBboxForFeatureCollection } from "./validation/bbox";
 import {
     INVALID_FEATURE_COLLECTION_DIMENSIONS_ISSUE,
-    ValidatableGeoJSONFeatureCollection,
-    validFeatureCollectionBbox,
-    validFeatureCollectionDimensions,
-} from "./validation/collection";
+    validDimensionsForFeatureCollection,
+} from "./validation/dimension";
 
 export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONBaseSchema.extend({
@@ -25,15 +24,11 @@ export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>
             if (!val.features.length) {
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validFeatureCollectionDimensions(val as ValidatableGeoJSONFeatureCollection)) {
+            if (!validDimensionsForFeatureCollection(val)) {
                 ctx.addIssue(INVALID_FEATURE_COLLECTION_DIMENSIONS_ISSUE);
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validFeatureCollectionBbox(val as ValidatableGeoJSONFeatureCollection)) {
+            if (!validBboxForFeatureCollection(val)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
                 return;
             }
