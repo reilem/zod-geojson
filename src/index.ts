@@ -28,6 +28,6 @@ export type GeoJSON2D = z.infer<typeof GeoJSON2DSchema>;
 export const GeoJSON3DSchema = GeoJSONGenericSchema(GeoJSON3DPositionSchema);
 export type GeoJSON3D = z.infer<typeof GeoJSON3DSchema>;
 
-// TODO: Experiment with no passthrough & super refine, any way to make this RFC compliant without them at each level?
 // TODO: Make type aliases for each level, all simple geometries, the simple geometries type, the geometry collection,
 //       the geometry type, the feature type, feature collection type & geojson type (like bbox has now)
+// TODO: Do not expost every single schema & inner type, only the useful ones
