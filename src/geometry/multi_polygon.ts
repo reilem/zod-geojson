@@ -1,14 +1,10 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseSchema } from "./base";
-import { GeoJSONPolygonGenericSchema, validPolygonRings } from "./polygon";
+import { GeoJSONPolygonGenericSchema } from "./polygon";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
-
-const INVALID_LINEAR_RING_MESSAGE = {
-    code: "custom" as const,
-    message: "Invalid multi polygon. Each polygon inside the multi polygon must be made out of linear rings.",
-};
+import { INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
 export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
@@ -31,7 +27,7 @@ export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(posi
             }
 
             if (!validMultiPolygonLinearRings(val)) {
-                ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
+                ctx.addIssue(INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE);
                 return;
             }
 
@@ -49,7 +45,3 @@ export type GeoJSON2DMultiPolygon = z.infer<typeof GeoJSON2DMultiPolygonSchema>;
 
 export const GeoJSON3DMultiPolygonSchema = GeoJSONMultiPolygonGenericSchema(GeoJSON3DPositionSchema);
 export type GeoJSON3DMultiPolygon = z.infer<typeof GeoJSON3DMultiPolygonSchema>;
-
-function validMultiPolygonLinearRings({ coordinates }: { coordinates: number[][][][] }) {
-    return coordinates.every((polygon) => validPolygonRings({ coordinates: polygon }));
-}

@@ -3,11 +3,7 @@ import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJ
 import { GeoJSONGeometryBaseSchema } from "./base";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
-
-const INVALID_LINEAR_RING_MESSAGE = {
-    code: "custom" as const,
-    message: "Invalid polygon. Each ring inside a polygon must form a linear ring.",
-};
+import { INVALID_POLYGON_LINEAR_RING_MESSAGE, validPolygonRings } from "./validation/linear_ring";
 
 export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
@@ -32,7 +28,7 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionS
                 return;
             }
             if (!validPolygonRings(val)) {
-                ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
+                ctx.addIssue(INVALID_POLYGON_LINEAR_RING_MESSAGE);
                 return;
             }
             if (!validBboxForPositionGrid(val)) {
@@ -49,13 +45,3 @@ export type GeoJSON2DPolygon = z.infer<typeof GeoJSON2DPolygonSchema>;
 
 export const GeoJSON3DPolygonSchema = GeoJSONPolygonGenericSchema(GeoJSON3DPositionSchema);
 export type GeoJSON3DPolygon = z.infer<typeof GeoJSON3DPolygonSchema>;
-
-function validLinearRing(linearRing: number[][]): boolean {
-    const firstPosition = linearRing[0];
-    const lastPosition = linearRing[linearRing.length - 1];
-    return firstPosition.every((value, index) => value === lastPosition[index]);
-}
-
-export function validPolygonRings({ coordinates: rings }: { coordinates: number[][][] }): boolean {
-    return rings.every(validLinearRing);
-}

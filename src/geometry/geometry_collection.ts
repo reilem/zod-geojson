@@ -1,31 +1,14 @@
 import { z } from "zod";
 import { _GeoJSONSimpleGeometryGenericSchema } from "./_simple";
-import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./validation/bbox";
-import { getDimensionForGeometry } from "./validation/dimension";
-import { GeoJSONGeometry } from "./index";
+import { INVALID_BBOX_ISSUE } from "./validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONBaseSchema } from "../base";
-
-type ValidatableGeometryCollection = { geometries: GeoJSONGeometry[]; bbox?: number[] };
-
-const INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE = {
-    code: "custom" as const,
-    message: "Invalid geometry collection dimensions. All geometries must have the same dimension.",
-};
-
-function validGeometryCollectionDimension({ geometries }: ValidatableGeometryCollection): boolean {
-    if (geometries == null) return false;
-    let dimension = getDimensionForGeometry(geometries[0]);
-    return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
-}
-
-function validGeometryCollectionBbox({ bbox, geometries }: ValidatableGeometryCollection): boolean {
-    if (!bbox) {
-        return true;
-    }
-    const expectedBbox = getBboxForGeometries(geometries);
-    return bboxEquals(bbox, expectedBbox);
-}
+import {
+    INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE,
+    ValidatableGeometryCollection,
+    validGeometryCollectionBbox,
+    validGeometryCollectionDimension,
+} from "./validation/collection";
 
 const _GeoJSONGeometryCollectionBaseSchema = GeoJSONBaseSchema.extend({
     type: z.literal("GeometryCollection"),
