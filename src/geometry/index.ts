@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { _GeoJSONSimpleGeometryGenericSchema } from "./_simple";
+import { _GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
 import { GeoJSONGeometryCollectionSchema } from "./geometry_collection";
 
 export * from "./geometry_collection";

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema } from "./base";
+import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
 

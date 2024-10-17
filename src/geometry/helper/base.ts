@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GeoJSONBase, GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
+import { GeoJSONBase, GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../../base";
 
 export type GeoJSONGeometryBase = GeoJSONBase & {
     geometry?: never;

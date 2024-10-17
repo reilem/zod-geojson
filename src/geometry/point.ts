@@ -1,6 +1,6 @@
 import { objectInputType, objectOutputType, objectUtil, z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaInnerType } from "./base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaInnerType } from "./helper/base";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
 
 type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = objectUtil.extendShape<
