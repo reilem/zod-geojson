@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { _GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
-import { GeoJSONGeometryCollectionSchema } from "./geometry_collection";
+import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
+import {
+    GeoJSONGeometryCollectionGenericSchema,
+    GeoJSONGeometryCollectionGenericSchemaType,
+} from "./geometry_collection";
 
 export * from "./geometry_collection";
 export * from "./line_string";
@@ -11,8 +14,17 @@ export * from "./multi_polygon";
 export * from "./point";
 export * from "./polygon";
 
-export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    _GeoJSONSimpleGeometryGenericSchema(positionSchema).or(GeoJSONGeometryCollectionSchema);
+export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONPosition> = z.ZodUnion<
+    [GeoJSONSimpleGeometryGenericSchemaType<P>, GeoJSONGeometryCollectionGenericSchemaType<P>]
+>;
+
+export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONGeometryGenericSchemaType<P> =>
+    z.union([
+        GeoJSONSimpleGeometryGenericSchema(positionSchema),
+        GeoJSONGeometryCollectionGenericSchema(positionSchema),
+    ]);
 export type GeoJSONGenericGeometry<P extends GeoJSONPosition> = z.infer<
     ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
 >;
