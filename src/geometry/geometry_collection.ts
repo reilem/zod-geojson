@@ -38,6 +38,10 @@ const _GeoJSONGeometryCollectionBaseSchema = GeoJSONBaseSchema.extend({
 export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     _GeoJSONGeometryCollectionBaseSchema
         .extend({
+            // > The value of "geometries" is an array. Each element of this array is a
+            //   GeoJSON Geometry object. It is possible for this array to be empty. (RFC 7946, section 3.1.8)
+            // > To maximize interoperability, implementations SHOULD avoid nested
+            //    GeometryCollections. (RFC 7946, section 3.1.8)
             geometries: _GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
         })
         .passthrough()

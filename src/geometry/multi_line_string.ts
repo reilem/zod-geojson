@@ -8,7 +8,10 @@ import { GeoJSONLineStringGenericSchema } from "./line_string";
 export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiLineString"),
-        coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates).min(1),
+        // We allow an empty coordinates array
+        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+        //   arrays as null objects. (RFC 7946, section 3.1)
+        coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates),
     })
         .passthrough()
         .superRefine((val, ctx) => {

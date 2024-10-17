@@ -7,7 +7,10 @@ import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./vali
 export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("MultiPoint"),
-        coordinates: z.array(positionSchema).min(1),
+        // We allow an empty coordinates array
+        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+        //   arrays as null objects. (RFC 7946, section 3.1)
+        coordinates: z.array(positionSchema),
     })
         .passthrough()
         .superRefine((val, ctx) => {

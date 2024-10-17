@@ -7,6 +7,8 @@ import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox"
 export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("LineString"),
+        // > For type "LineString", the "coordinates" member is an array of two or
+        //   more positions. (RFC 7946, section 3.1.4)
         coordinates: z.array(positionSchema).min(2),
     })
         .passthrough()
