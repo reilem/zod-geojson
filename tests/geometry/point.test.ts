@@ -6,7 +6,14 @@ import {
     geoJsonPoint3D,
     geoJsonPoint3DWithBbox,
 } from "../../examples/geometry/point";
-import { GeoJSON2DPointSchema, GeoJSON3DPointSchema, GeoJSONPointSchema } from "../../src";
+import {
+    GeoJSON2DPoint,
+    GeoJSON2DPointSchema,
+    GeoJSON3DPoint,
+    GeoJSON3DPointSchema,
+    GeoJSONPoint,
+    GeoJSONPointSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPointTest(value: unknown): void {
@@ -129,3 +136,39 @@ describe("GeoJSONPoint", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON Point to test types
+ */
+export const invalidGeoJsonPoint: GeoJSONPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+};
+
+/**
+ * Invalid 2D GeoJSON Point to test types
+ */
+export const invalidGeoJsonPoint2D: GeoJSON2DPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 2.0, 3.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+};
+
+/**
+ * Invalid 3D GeoJSON Point to test types
+ */
+export const invalidGeoJsonPoint3D: GeoJSON3DPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0, 3.0],
+};

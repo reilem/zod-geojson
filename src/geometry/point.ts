@@ -1,20 +1,15 @@
-import { objectInputType, objectOutputType, objectUtil, z } from "zod";
+import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaInnerType } from "./helper/base";
+import { GenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
 import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
 
-type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = objectUtil.extendShape<
-    GeoJSONGeometryBaseSchemaInnerType,
-    {
-        type: z.ZodLiteral<"Point">;
-        coordinates: z.ZodSchema<P>;
-    }
->;
+type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<"Point">;
+    coordinates: z.ZodSchema<P>;
+};
 
-type GeoJSONPointGenericSchemaType<P extends GeoJSONPosition> = z.ZodEffects<
-    z.ZodObject<GeoJSONPointGenericSchemaInnerType<P>, "passthrough", z.ZodTypeAny>,
-    objectOutputType<GeoJSONPointGenericSchemaInnerType<P>, z.ZodTypeAny, "passthrough">,
-    objectInputType<GeoJSONPointGenericSchemaInnerType<P>, z.ZodTypeAny, "passthrough">
+type GeoJSONPointGenericSchemaType<P extends GeoJSONPosition> = GenericSchemaType<
+    GeoJSONPointGenericSchemaInnerType<P>
 >;
 
 export const GeoJSONPointGenericSchema = <P extends GeoJSONPosition>(

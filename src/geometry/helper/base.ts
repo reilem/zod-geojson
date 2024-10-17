@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { objectInputType, objectOutputType, objectUtil, z } from "zod";
 import { GeoJSONBase, GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../../base";
 
 export type GeoJSONGeometryBase = GeoJSONBase & {
@@ -29,3 +29,13 @@ export const GeoJSONGeometryBaseSchema: GeoJSONGeometryBaseSchemaType = GeoJSONB
     features: z.never({ message: "GeoJSON geometry object cannot have a 'features' key" }).optional(),
     geometries: z.never({ message: "GeoJSON geometry object cannot have a 'geometries' key" }).optional(),
 });
+
+type ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType extends z.ZodRawShape> = objectUtil.extendShape<
+    GeoJSONGeometryBaseSchemaInnerType,
+    InnerType
+>;
+export type GenericSchemaType<InnerType extends z.ZodRawShape> = z.ZodEffects<
+    z.ZodObject<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, "passthrough", z.ZodTypeAny>,
+    objectOutputType<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, z.ZodTypeAny, "passthrough">,
+    objectInputType<ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType>, z.ZodTypeAny, "passthrough">
+>;
