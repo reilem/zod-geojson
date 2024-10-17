@@ -24,10 +24,10 @@ export type GeoJSONGeometryBaseSchemaType = z.ZodObject<
 >;
 
 export const GeoJSONGeometryBaseSchema: GeoJSONGeometryBaseSchemaType = GeoJSONBaseSchema.extend({
-    geometry: z.never({ message: "GeoJSON geometry object cannot have a 'geometry' key" }).optional(),
-    properties: z.never({ message: "GeoJSON geometry object cannot have a 'properties' key" }).optional(),
-    features: z.never({ message: "GeoJSON geometry object cannot have a 'features' key" }).optional(),
-    geometries: z.never({ message: "GeoJSON geometry object cannot have a 'geometries' key" }).optional(),
+    geometry: z.never({ message: "GeoJSON geometry cannot have a 'geometry' key" }).optional(),
+    properties: z.never({ message: "GeoJSON geometry cannot have a 'properties' key" }).optional(),
+    features: z.never({ message: "GeoJSON geometry cannot have a 'features' key" }).optional(),
+    geometries: z.never({ message: "GeoJSON geometry cannot have a 'geometries' key" }).optional(),
 });
 
 type ExtendGeoJSONGeometryBaseSchemaInnerType<InnerType extends z.ZodRawShape> = objectUtil.extendShape<
