@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GeoJSONGeometryBaseGenericSchemaType } from "./helper/base";
 import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
+import { GeoJSONGeometryTypeSchema } from "./helper/type";
 import { INVALID_BBOX_ISSUE } from "./validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
@@ -12,7 +13,7 @@ import {
 } from "./validation/collection";
 
 type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> = GeoJSONBaseSchemaInnerType & {
-    type: z.ZodLiteral<"GeometryCollection">;
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.GeometryCollection>;
     coordinates: z.ZodOptional<z.ZodNever>;
     geometry: z.ZodOptional<z.ZodNever>;
     properties: z.ZodOptional<z.ZodNever>;
@@ -27,7 +28,7 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONGeometryCollectionGenericSchemaType<P> =>
     GeoJSONBaseSchema.extend({
-        type: z.literal("GeometryCollection"),
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
         coordinates: z.never({ message: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
         geometry: z.never({ message: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),
         properties: z.never({ message: "GeoJSON geometry collection cannot have a 'properties' key" }).optional(),

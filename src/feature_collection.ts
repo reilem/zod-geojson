@@ -6,6 +6,7 @@ import { GeoJSONGeometry } from "./geometry";
 import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import { getDimensionForGeometry } from "./geometry/validation/dimension";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONTypeSchema } from "./type";
 
 type ValidatableGeoJSONFeatureCollection = { features: GeoJSONFeature[]; bbox?: GeoJSONBbox };
 
@@ -48,7 +49,7 @@ function validFeatureCollectionBbox({ features, bbox }: ValidatableGeoJSONFeatur
 
 export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONBaseSchema.extend({
-        type: z.literal("FeatureCollection"),
+        type: z.literal(GeoJSONTypeSchema.enum.FeatureCollection),
         features: z.array(GeoJSONFeatureGenericSchema(positionSchema)),
     })
         .passthrough()

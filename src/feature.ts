@@ -3,6 +3,7 @@ import { GeoJSONBaseSchema } from "./base";
 import { GeoJSONGeometry, GeoJSONGeometryGenericSchema } from "./geometry";
 import { bboxEquals, getBboxForGeometry, INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONTypeSchema } from "./type";
 
 export type ValidatableGeoJSONFeature = { bbox?: number[]; geometry: GeoJSONGeometry | null };
 
@@ -26,7 +27,7 @@ function validFeatureBbox({ bbox, geometry }: ValidatableGeoJSONFeature): boolea
 export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONBaseSchema.extend({
         id: z.string().or(z.number()).optional(),
-        type: z.literal("Feature"),
+        type: z.literal(GeoJSONTypeSchema.enum.Feature),
         geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
         properties: z.object({}).passthrough().nullable(),
     })

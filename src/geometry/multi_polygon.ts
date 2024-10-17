@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./helper/type";
 import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaInnerType } from "./polygon";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
 import { INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
 type GeoJSONMultiPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<"MultiPolygon">;
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiPolygon>;
     coordinates: z.ZodArray<GeoJSONPolygonGenericSchemaInnerType<P>["coordinates"]>;
 };
 
@@ -19,7 +20,7 @@ export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONMultiPolygonGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
-        type: z.literal("MultiPolygon"),
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
         // We allow an empty coordinates array:
         // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
         //   arrays as null objects. (RFC 7946, section 3.1)

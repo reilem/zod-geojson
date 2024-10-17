@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./helper/type";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
 import { INVALID_POLYGON_LINEAR_RING_MESSAGE, validPolygonRings } from "./validation/linear_ring";
 
 export type GeoJSONPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<"Polygon">;
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.Polygon>;
     coordinates: z.ZodArray<
         z.ZodTuple<[z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>], z.ZodSchema<P>>
     >;
@@ -20,7 +21,7 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONPolygonGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
-        type: z.literal("Polygon"),
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.Polygon),
         // We allow an empty coordinates array
         // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
         //   arrays as null objects. (RFC 7946, section 3.1)

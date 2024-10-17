@@ -13,6 +13,7 @@ export * from "./multi_point";
 export * from "./multi_polygon";
 export * from "./point";
 export * from "./polygon";
+export * from "./helper/type";
 
 export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONPosition> = z.ZodUnion<
     [GeoJSONSimpleGeometryGenericSchemaType<P>, GeoJSONGeometryCollectionGenericSchemaType<P>]

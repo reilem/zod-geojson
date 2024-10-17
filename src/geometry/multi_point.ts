@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./helper/type";
 import { GeoJSONPointGenericSchemaInnerType } from "./point";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 
 type GeoJSONMultiPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<"MultiPoint">;
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiPoint>;
     coordinates: z.ZodArray<GeoJSONPointGenericSchemaInnerType<P>["coordinates"]>;
 };
 
@@ -18,7 +19,7 @@ export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONMultiPointGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
-        type: z.literal("MultiPoint"),
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPoint),
         // We allow an empty coordinates array
         // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
         //   arrays as null objects. (RFC 7946, section 3.1)

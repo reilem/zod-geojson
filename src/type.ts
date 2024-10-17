@@ -1,18 +1,7 @@
 // GeoJSON types and Geometry type (see 1.4)
 import { z } from "zod";
+import { GeoJSONGeometryTypeSchema } from "./geometry";
 
-export const GeoJSONGeometryTypeSchema = z.enum([
-    "Point",
-    "MultiPoint",
-    "LineString",
-    "MultiLineString",
-    "Polygon",
-    "MultiPolygon",
-    "GeometryCollection",
-]);
-
-export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;
-
-export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection"]).or(GeoJSONGeometryTypeSchema);
+export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection", ...GeoJSONGeometryTypeSchema.options]);
 
 export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;

@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./helper/type";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
 import { GeoJSONLineStringGenericSchema, GeoJSONLineStringGenericSchemaInnerType } from "./line_string";
 
 type GeoJSONMultiLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<"MultiLineString">;
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiLineString>;
     coordinates: z.ZodArray<GeoJSONLineStringGenericSchemaInnerType<P>["coordinates"]>;
 };
 
@@ -18,7 +19,7 @@ export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONMultiLineStringGenericSchemaType<P> =>
     GeoJSONGeometryBaseSchema.extend({
-        type: z.literal("MultiLineString"),
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiLineString),
         // We allow an empty coordinates array
         // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
         //   arrays as null objects. (RFC 7946, section 3.1)
