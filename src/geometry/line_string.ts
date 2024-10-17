@@ -1,15 +1,15 @@
 import { z } from "zod";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
 import { GeoJSONGeometryBaseSchema } from "./helper/base";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 
 export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema.extend({
         type: z.literal("LineString"),
         // > For type "LineString", the "coordinates" member is an array of two or
         //   more positions. (RFC 7946, section 3.1.4)
-        coordinates: z.array(positionSchema).min(2),
+        coordinates: z.tuple([positionSchema, positionSchema]).rest(positionSchema),
     })
         .passthrough()
         .superRefine((val, ctx) => {
