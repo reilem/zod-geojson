@@ -31,6 +31,9 @@ jobs:
             - name: Prettier Check
               run: pnpm run prettiercheck
 
+            - name: Circular Dependencies Check
+              run: pnpm run circularcheck
+
             - name: Test
               run: pnpm run test
 
