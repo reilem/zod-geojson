@@ -1,74 +1,49 @@
 import { z } from "zod";
-import { _GeoJSONSimpleGeometryGenericSchema } from "./_simple";
-import { bboxEquals, getBboxForGeometries, INVALID_BBOX_ISSUE } from "./validation/bbox";
-import { getDimensionForGeometry } from "./validation/dimension";
-import { GeoJSONBaseSchema } from "../base";
-import { GeoJSONGeometry } from "./index";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSONGeometryBaseGenericSchemaType } from "./helper/base";
+import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
+import { GeoJSONGeometryTypeSchema } from "./type";
+import { INVALID_BBOX_ISSUE, validBboxForCollection } from "./validation/bbox";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
+import { INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE, validDimensionsForCollection } from "./validation/dimension";
 
-type ValidatableGeometryCollection = { geometries: GeoJSONGeometry[]; bbox?: number[] };
-
-const INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE = {
-    code: "custom" as const,
-    message:
-        'GeoJSON geometry collection object cannot have "geometry", "coordinates", "properties", or "features" keys',
+type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> = GeoJSONBaseSchemaInnerType & {
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.GeometryCollection>;
+    coordinates: z.ZodOptional<z.ZodNever>;
+    geometry: z.ZodOptional<z.ZodNever>;
+    properties: z.ZodOptional<z.ZodNever>;
+    features: z.ZodOptional<z.ZodNever>;
+    geometries: z.ZodArray<GeoJSONSimpleGeometryGenericSchemaType<P>>;
 };
 
-const INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE = {
-    code: "custom" as const,
-    message: "Invalid geometry collection dimensions. All geometries must have the same dimension.",
-};
+export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONPosition> =
+    GeoJSONGeometryBaseGenericSchemaType<GeoJSONGeometryCollectionGenericSchemaInnerType<P>>;
 
-function validGeometryCollectionKeys(collection: Record<string, unknown>): boolean {
-    return (
-        !("coordinates" in collection) &&
-        !("geometry" in collection) &&
-        !("properties" in collection) &&
-        !("features" in collection)
-    );
-}
-
-function validGeometryCollectionDimension({ geometries }: ValidatableGeometryCollection): boolean {
-    if (geometries == null) return false;
-    let dimension = getDimensionForGeometry(geometries[0]);
-    return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
-}
-
-function validGeometryCollectionBbox({ bbox, geometries }: ValidatableGeometryCollection): boolean {
-    if (!bbox) {
-        return true;
-    }
-    const expectedBbox = getBboxForGeometries(geometries);
-    return bboxEquals(bbox, expectedBbox);
-}
-
-const _GeoJSONGeometryCollectionBaseSchema = GeoJSONBaseSchema.extend({
-    type: z.literal("GeometryCollection"),
-});
-
-export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    _GeoJSONGeometryCollectionBaseSchema
-        .extend({
-            geometries: _GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
-        })
+export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONGeometryCollectionGenericSchemaType<P> =>
+    GeoJSONBaseSchema.extend({
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
+        coordinates: z.never({ message: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
+        geometry: z.never({ message: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),
+        properties: z.never({ message: "GeoJSON geometry collection cannot have a 'properties' key" }).optional(),
+        features: z.never({ message: "GeoJSON geometry collection cannot have a 'features' key" }).optional(),
+        // > The value of "geometries" is an array. Each element of this array is a
+        //   GeoJSON Geometry object. It is possible for this array to be empty. (RFC 7946, section 3.1.8)
+        // > To maximize interoperability, implementations SHOULD avoid nested
+        //    GeometryCollections. (RFC 7946, section 3.1.8)
+        geometries: GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
+    })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryCollectionKeys(val)) {
-                ctx.addIssue(INVALID_GEOMETRY_COLLECTION_KEYS_ISSUE);
-                return;
-            }
             if (!val.geometries.length) {
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validGeometryCollectionDimension(val as ValidatableGeometryCollection)) {
+            if (!validDimensionsForCollection(val)) {
                 ctx.addIssue(INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE);
                 return;
             }
-
-            // Type-cast is safe, but necessary because the type of val is not inferred correctly due to the generics
-            if (!validGeometryCollectionBbox(val as ValidatableGeometryCollection)) {
+            if (!validBboxForCollection(val)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
                 return;
             }

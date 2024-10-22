@@ -1,31 +1,33 @@
 import { z } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaInnerType } from "./polygon";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
-import { GeoJSONPolygonGenericSchema, validPolygonRings } from "./polygon";
-import { GeoJSONBaseSchema } from "../base";
+import { INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-const INVALID_LINEAR_RING_MESSAGE = {
-    code: "custom" as const,
-    message: "Invalid multi polygon. Each polygon inside the multi polygon must be made out of linear rings.",
+type GeoJSONMultiPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiPolygon>;
+    coordinates: z.ZodArray<GeoJSONPolygonGenericSchemaInnerType<P>["coordinates"]>;
 };
 
-function validMultiPolygonLinearRings({ coordinates }: { coordinates: number[][][][] }) {
-    return coordinates.every((polygon) => validPolygonRings({ coordinates: polygon }));
-}
+export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONMultiPolygonGenericSchemaInnerType<P>
+>;
 
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
-        type: z.literal("MultiPolygon"),
-        coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates).min(1),
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONMultiPolygonGenericSchemaType<P> =>
+    GeoJSONGeometryBaseSchema.extend({
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
+        // We allow an empty coordinates array:
+        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+        //   arrays as null objects. (RFC 7946, section 3.1)
+        coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates),
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-                return;
-            }
             // Skip remaining checks if coordinates array is empty
             if (!val.coordinates.length) {
                 return;
@@ -37,7 +39,7 @@ export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(posi
             }
 
             if (!validMultiPolygonLinearRings(val)) {
-                ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
+                ctx.addIssue(INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE);
                 return;
             }
 

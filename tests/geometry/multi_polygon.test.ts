@@ -45,12 +45,12 @@ describe("GeoJSONMultiPolygon", () => {
             extraKey: "extra",
         });
     });
+    it("allows a multi-polygon with empty coordinates", () => {
+        passGeoJSONMultiPolygonTest({ type: "MultiPolygon", coordinates: [] });
+    });
 
     it("does not allow a 1D multi-polygon", () => {
         failGeoJSONMultiPolygonTest({ type: "MultiPolygon", coordinates: [[[[0.0], [1.0], [0.0], [0.0]]]] });
-    });
-    it("does not allow a multi-polygon with empty coordinates", () => {
-        failGeoJSONMultiPolygonTest({ type: "MultiPolygon", coordinates: [] });
     });
     it("does not allow a multi-polygon without coordinates key", () => {
         failGeoJSONMultiPolygonTest({ type: "MultiPolygon" });

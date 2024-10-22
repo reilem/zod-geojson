@@ -1,36 +1,37 @@
 import { z } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
-import { GeoJSONBaseSchema } from "../base";
+import { INVALID_POLYGON_LINEAR_RING_MESSAGE, validPolygonRings } from "./validation/linear_ring";
 
-const INVALID_LINEAR_RING_MESSAGE = {
-    code: "custom" as const,
-    message: "Invalid polygon. Each ring inside a polygon must form a linear ring.",
+export type GeoJSONPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.Polygon>;
+    coordinates: z.ZodArray<
+        z.ZodTuple<[z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>], z.ZodSchema<P>>
+    >;
 };
 
-function validLinearRing(linearRing: number[][]): boolean {
-    const firstPosition = linearRing[0];
-    const lastPosition = linearRing[linearRing.length - 1];
-    return firstPosition.every((value, index) => value === lastPosition[index]);
-}
+export type GeoJSONPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONPolygonGenericSchemaInnerType<P>
+>;
 
-export function validPolygonRings({ coordinates: rings }: { coordinates: number[][][] }): boolean {
-    return rings.every(validLinearRing);
-}
-
-export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
-        type: z.literal("Polygon"),
-        coordinates: z.array(z.array(positionSchema).min(4)),
+export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONPolygonGenericSchemaType<P> =>
+    GeoJSONGeometryBaseSchema.extend({
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.Polygon),
+        // We allow an empty coordinates array
+        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+        //   arrays as null objects. (RFC 7946, section 3.1)
+        coordinates: z.array(
+            // > A linear ring is a closed LineString with four or more positions (RFC 7946, section 3.1.6)
+            z.tuple([positionSchema, positionSchema, positionSchema, positionSchema]).rest(positionSchema),
+        ),
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-                return;
-            }
             // Skip remaining checks if coordinates array is empty
             if (!val.coordinates.length) {
                 return;
@@ -41,7 +42,7 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionS
                 return;
             }
             if (!validPolygonRings(val)) {
-                ctx.addIssue(INVALID_LINEAR_RING_MESSAGE);
+                ctx.addIssue(INVALID_POLYGON_LINEAR_RING_MESSAGE);
                 return;
             }
             if (!validBboxForPositionGrid(val)) {

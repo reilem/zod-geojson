@@ -1,22 +1,30 @@
 import { z } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
-import { GeoJSONBaseSchema } from "../base";
+import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
 
-export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
-        type: z.literal("LineString"),
-        coordinates: z.array(positionSchema).min(2),
+export type GeoJSONLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.LineString>;
+    coordinates: z.ZodTuple<[z.ZodSchema<P>, z.ZodSchema<P>], z.ZodSchema<P>>;
+};
+
+export type GeoJSONLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONLineStringGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONLineStringGenericSchemaType<P> =>
+    GeoJSONGeometryBaseSchema.extend({
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.LineString),
+        // > For type "LineString", the "coordinates" member is an array of two or
+        //   more positions. (RFC 7946, section 3.1.4)
+        coordinates: z.tuple([positionSchema, positionSchema]).rest(positionSchema),
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-                return;
-            }
-
             // Skip remaining checks if coordinates empty
             if (!val.coordinates.length) {
                 return;

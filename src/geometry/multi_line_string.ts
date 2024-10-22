@@ -1,22 +1,32 @@
 import { z } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
-import { INVALID_KEYS_ISSUE, validGeometryKeys } from "./validation/keys";
-import { GeoJSONLineStringGenericSchema } from "./line_string";
-import { GeoJSONBaseSchema } from "../base";
+import { GeoJSONLineStringGenericSchema, GeoJSONLineStringGenericSchemaInnerType } from "./line_string";
 
-export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
-        type: z.literal("MultiLineString"),
-        coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates).min(1),
+type GeoJSONMultiLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
+    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiLineString>;
+    coordinates: z.ZodArray<GeoJSONLineStringGenericSchemaInnerType<P>["coordinates"]>;
+};
+
+export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
+    GeoJSONMultiLineStringGenericSchemaInnerType<P>
+>;
+
+export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONMultiLineStringGenericSchemaType<P> =>
+    GeoJSONGeometryBaseSchema.extend({
+        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiLineString),
+        // We allow an empty coordinates array
+        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+        //   arrays as null objects. (RFC 7946, section 3.1)
+        coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates),
     })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validGeometryKeys(val)) {
-                ctx.addIssue(INVALID_KEYS_ISSUE);
-                return;
-            }
             // Skip remaining checks if coordinates array is empty
             if (!val.coordinates.length) {
                 return;
