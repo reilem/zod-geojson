@@ -1,6 +1,6 @@
 import { GeoJSONBbox } from "../../bbox";
-import { GeoJSONPosition } from "../../position";
-import { GeoJSONGeometryEnumType } from "../helper/type";
+import { GeoJSONPosition } from "../position";
+import { GeoJSONGeometryEnumType } from "../type";
 
 /**
  * The bare essential types required to validate geometries

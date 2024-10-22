@@ -2,7 +2,12 @@ import { z } from "zod";
 import { GeoJSONFeatureGenericSchema } from "./feature";
 import { GeoJSONFeatureCollectionGenericSchema } from "./feature_collection";
 import { GeoJSONGeometryGenericSchema } from "./geometry/geometry";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import {
+    GeoJSON2DPositionSchema,
+    GeoJSON3DPositionSchema,
+    GeoJSONPosition,
+    GeoJSONPositionSchema,
+} from "./geometry/position";
 
 export const GeoJSONGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     z.union([

@@ -2,7 +2,12 @@ import { z } from "zod";
 import { GeoJSONBaseSchema } from "./base";
 import { GeoJSONFeatureGenericSchema } from "./feature";
 import { INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import {
+    GeoJSON2DPositionSchema,
+    GeoJSON3DPositionSchema,
+    GeoJSONPosition,
+    GeoJSONPositionSchema,
+} from "./geometry/position";
 import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeatureCollection } from "./validation/bbox";
 import {

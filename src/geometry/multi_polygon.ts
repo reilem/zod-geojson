@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
-import { GeoJSONGeometryTypeSchema } from "./helper/type";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaInnerType } from "./polygon";
 import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
 import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";

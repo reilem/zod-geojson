@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { GeoJSONGeometryBaseGenericSchemaType } from "./helper/base";
 import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
-import { GeoJSONGeometryTypeSchema } from "./helper/type";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { INVALID_BBOX_ISSUE, validBboxForCollection } from "./validation/bbox";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../position";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
 import { INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE, validDimensionsForCollection } from "./validation/dimension";
 

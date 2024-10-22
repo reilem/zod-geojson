@@ -1,4 +1,4 @@
-import { GeoJSONPosition } from "../../position";
+import { GeoJSONPosition } from "../position";
 import {
     ValidatableCollection,
     ValidatableCoordinate,

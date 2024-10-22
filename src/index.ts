@@ -3,12 +3,6 @@
 // TODO: Make sure each exposed type & schema is tested
 
 export {
-    GeoJSONGeometryTypeSchema,
-    type GeoJSONGeometryEnumType,
-    type GeoJSONGeometryType,
-} from "./geometry/helper/type";
-
-export {
     GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     type GeoJSONGeometry,
@@ -88,6 +82,17 @@ export {
     type GeoJSON3DPolygon,
 } from "./geometry/polygon";
 
+export {
+    GeoJSONPositionSchema,
+    type GeoJSONPosition,
+    GeoJSON2DPositionSchema,
+    type GeoJSON2DPosition,
+    GeoJSON3DPositionSchema,
+    type GeoJSON3DPosition,
+} from "./geometry/position";
+
+export { GeoJSONGeometryTypeSchema, type GeoJSONGeometryEnumType, type GeoJSONGeometryType } from "./geometry/type";
+
 export { GeoJSONBboxSchema, type GeoJSONBbox } from "./bbox";
 
 export {
@@ -119,14 +124,5 @@ export {
     GeoJSON3DSchema,
     type GeoJSON3D,
 } from "./geojson";
-
-export {
-    GeoJSONPositionSchema,
-    type GeoJSONPosition,
-    GeoJSON2DPositionSchema,
-    type GeoJSON2DPosition,
-    GeoJSON3DPositionSchema,
-    type GeoJSON3DPosition,
-} from "./position";
 
 export { GeoJSONTypeSchema, type GeoJSONType } from "./type";

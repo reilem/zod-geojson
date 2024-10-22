@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GeoJSONPosition } from "../../position";
+import { GeoJSONPosition } from "../position";
 import { GeoJSONLineStringGenericSchema, GeoJSONLineStringGenericSchemaType } from "../line_string";
 import { GeoJSONMultiLineStringGenericSchema, GeoJSONMultiLineStringGenericSchemaType } from "../multi_line_string";
 import { GeoJSONMultiPointGenericSchema, GeoJSONMultiPointGenericSchemaType } from "../multi_point";

@@ -1,4 +1,4 @@
-import { GeoJSONPosition } from "../../position";
+import { GeoJSONPosition } from "../position";
 
 export const INVALID_POLYGON_LINEAR_RING_MESSAGE = {
     code: "custom" as const,

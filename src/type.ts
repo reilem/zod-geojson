@@ -1,6 +1,6 @@
 // GeoJSON types and Geometry type (see 1.4)
 import { z } from "zod";
-import { GeoJSONGeometryTypeSchema } from "./geometry/helper/type";
+import { GeoJSONGeometryTypeSchema } from "./geometry/type";
 
 export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection", ...GeoJSONGeometryTypeSchema.options]);
 

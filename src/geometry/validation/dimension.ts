@@ -1,4 +1,4 @@
-import { GeoJSONPosition } from "../../position";
+import { GeoJSONPosition } from "../position";
 import { ValidatableCollection, ValidatableGeometry } from "./types";
 
 export const INVALID_DIMENSIONS_ISSUE = {
