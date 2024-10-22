@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GeoJSONBbox, GeoJSONBBoxSchema, GeoJSONBboxSchemaType } from "./bbox";
+import { GeoJSONBbox, GeoJSONBboxSchema, GeoJSONBboxSchemaType } from "./bbox";
 
 export type GeoJSONBase = {
     bbox?: GeoJSONBbox;
@@ -18,5 +18,5 @@ export type GeoJSONBaseSchemaType = z.ZodObject<
 >;
 
 export const GeoJSONBaseSchema: GeoJSONBaseSchemaType = z.object({
-    bbox: GeoJSONBBoxSchema.optional(),
+    bbox: GeoJSONBboxSchema.optional(),
 });
