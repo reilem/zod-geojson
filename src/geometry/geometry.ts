@@ -6,15 +6,6 @@ import {
     GeoJSONGeometryCollectionGenericSchemaType,
 } from "./geometry_collection";
 
-export * from "./geometry_collection";
-export * from "./line_string";
-export * from "./multi_line_string";
-export * from "./multi_point";
-export * from "./multi_polygon";
-export * from "./point";
-export * from "./polygon";
-export * from "./helper/type";
-
 export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONPosition> = z.ZodUnion<
     [GeoJSONSimpleGeometryGenericSchemaType<P>, GeoJSONGeometryCollectionGenericSchemaType<P>]
 >;

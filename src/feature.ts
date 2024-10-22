@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { GeoJSONBaseSchema } from "./base";
-import { GeoJSONGeometryGenericSchema } from "./geometry";
+import { GeoJSONGeometryGenericSchema } from "./geometry/geometry";
 import { INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONTypeSchema } from "./type";
