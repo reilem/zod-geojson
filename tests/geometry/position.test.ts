@@ -1,6 +1,14 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "../src";
+import {
+    GeoJSON2DPosition,
+    GeoJSON2DPositionSchema,
+    GeoJSON3DPosition,
+    GeoJSON3DPositionSchema,
+    GeoJSONPosition,
+    GeoJSONPositionSchema,
+} from "../../src";
+import { AssertExtends } from "./_helpers";
 
 const position2D: GeoJSONPosition = [0, 0];
 
@@ -44,3 +52,25 @@ describe("GeoJSONPosition", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON position to test types
+ */
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPosition: GeoJSONPosition = [1];
+
+/**
+ * Invalid 2D GeoJSON positions to test types
+ */
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPosition2DTooBig: GeoJSON2DPosition = [1, 2, 3];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPosition2DTooSmall: GeoJSON2DPosition = [1];
+
+/**
+ * Invalid 3D GeoJSON positions to test types
+ */
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPosition3DTooBig: GeoJSON3DPosition = [1, 2, 3, 4];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPosition3DTooSmall: GeoJSON3DPosition = [1, 2];

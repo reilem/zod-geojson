@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { geoJsonFeaturePolygon2D } from "../examples/feature";
 import { multiGeoJsonFeatureCollection2D } from "../examples/feature_collection";
 import { geoJsonPoint3D } from "../examples/geometry/point";
-import { GeoJSON2DSchema, GeoJSON3DSchema, GeoJSONSchema } from "../src";
+import { GeoJSON, GeoJSON2D, GeoJSON2DSchema, GeoJSON3D, GeoJSON3DSchema, GeoJSONSchema } from "../src";
 
 describe("GeoJSONSchema", () => {
     it("allows a basic geometry", () => {
@@ -38,3 +38,336 @@ describe("GeoJSONSchema", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON to test types
+ */
+export const invalidGeoJsonPoint: GeoJSON = {
+    type: "Point",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonGeometryCollection: GeoJSON = {
+    type: "GeometryCollection",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonFeature: GeoJSON = {
+    type: "Feature",
+    geometry: {
+        // @ts-expect-error -- THIS SHOULD FAIL
+        type: "Foo",
+        // @ts-expect-error -- THIS SHOULD FAIL
+        coordinates: [1.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        bbox: [0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        features: [],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        properties: {},
+        // @ts-expect-error -- THIS SHOULD FAIL
+        geometry: {},
+        otherKey: "allowed",
+    },
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonFeatureCollection: GeoJSON = {
+    type: "FeatureCollection",
+    features: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            geometry: {
+                // @ts-expect-error -- THIS SHOULD FAIL
+                type: "Bar",
+                // @ts-expect-error -- THIS SHOULD FAIL
+                coordinates: [1.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                bbox: [0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                features: [],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                properties: {},
+                // @ts-expect-error -- THIS SHOULD FAIL
+                geometry: {},
+                otherKey: "allowed",
+            },
+            // @ts-expect-error -- THIS SHOULD FAIL
+            features: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            geometries: {},
+            otherKey: "allowed",
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    otherKey: "allowed",
+};
+
+/**
+ * Invalid 2D GeoJSON to test types
+ */
+export const invalidGeoJson2DPoint: GeoJSON2D = {
+    type: "Point",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson2DGeometryCollection: GeoJSON2D = {
+    type: "GeometryCollection",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson2DFeature: GeoJSON2D = {
+    type: "Feature",
+    geometry: {
+        // @ts-expect-error -- THIS SHOULD FAIL
+        type: "Foo",
+        // @ts-expect-error -- THIS SHOULD FAIL
+        coordinates: [1.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        bbox: [0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        features: [],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        properties: {},
+        // @ts-expect-error -- THIS SHOULD FAIL
+        geometry: {},
+        otherKey: "allowed",
+    },
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson2DFeatureCollection: GeoJSON2D = {
+    type: "FeatureCollection",
+    features: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            geometry: {
+                // @ts-expect-error -- THIS SHOULD FAIL
+                type: "Bar",
+                // @ts-expect-error -- THIS SHOULD FAIL
+                coordinates: [1.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                bbox: [0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                features: [],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                properties: {},
+                // @ts-expect-error -- THIS SHOULD FAIL
+                geometry: {},
+                otherKey: "allowed",
+            },
+            // @ts-expect-error -- THIS SHOULD FAIL
+            features: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            geometries: {},
+            otherKey: "allowed",
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    otherKey: "allowed",
+};
+
+/**
+ * Invalid 3D GeoJSON to test types
+ */
+export const invalidGeoJson3DPoint: GeoJSON3D = {
+    type: "Point",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson3DGeometryCollection: GeoJSON3D = {
+    type: "GeometryCollection",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0, 0.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson3DFeature: GeoJSON3D = {
+    type: "Feature",
+    geometry: {
+        // @ts-expect-error -- THIS SHOULD FAIL
+        type: "Foo",
+        // @ts-expect-error -- THIS SHOULD FAIL
+        coordinates: [1.0, 0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        bbox: [0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        features: [],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        properties: {},
+        // @ts-expect-error -- THIS SHOULD FAIL
+        geometry: {},
+        otherKey: "allowed",
+    },
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
+    type: "FeatureCollection",
+    features: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            geometry: {
+                // @ts-expect-error -- THIS SHOULD FAIL
+                type: "Bar",
+                // @ts-expect-error -- THIS SHOULD FAIL
+                coordinates: [1.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                bbox: [0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                features: [],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                properties: {},
+                // @ts-expect-error -- THIS SHOULD FAIL
+                geometry: {},
+                otherKey: "allowed",
+            },
+            // @ts-expect-error -- THIS SHOULD FAIL
+            features: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            geometries: {},
+            otherKey: "allowed",
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    otherKey: "allowed",
+};
