@@ -13,6 +13,8 @@ const position2D: GeoJSONPosition = [0, 0];
 
 const position3D: GeoJSONPosition = [1, 2, 3];
 
+const position4D: GeoJSONPosition = [1, 2, 3, 4];
+
 describe("GeoJSONPosition", () => {
     it("allows 2D positions", () => {
         expect(GeoJSONPositionSchema.parse(position2D)).toEqual(position2D);
@@ -21,7 +23,6 @@ describe("GeoJSONPosition", () => {
         expect(GeoJSONPositionSchema.parse(position3D)).toEqual(position3D);
     });
     it("allows unknown 4D positions", () => {
-        const position4D: GeoJSONPosition = [1, 2, 3, 4];
         expect(GeoJSONPositionSchema.parse(position4D)).toEqual(position4D);
     });
 
@@ -40,6 +41,9 @@ describe("GeoJSONPosition", () => {
         it("does not allow a 3D position", () => {
             expect(() => GeoJSON2DPositionSchema.parse(position3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D position", () => {
+            expect(() => GeoJSON2DPositionSchema.parse(position4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -48,6 +52,9 @@ describe("GeoJSONPosition", () => {
         });
         it("does not allow a 2D position", () => {
             expect(() => GeoJSON3DPositionSchema.parse(position2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D position", () => {
+            expect(() => GeoJSON3DPositionSchema.parse(position4D)).toThrow(ZodError);
         });
     });
 });

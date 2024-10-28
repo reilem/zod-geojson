@@ -5,6 +5,7 @@ import {
     geoJsonPolygon2DWithHole,
     geoJsonPolygon2DWithHoleAndBbox,
     geoJsonPolygon3D,
+    geoJsonPolygon4D,
 } from "../../examples/geometry/polygon";
 import {
     GeoJSON2DPolygon,
@@ -17,37 +18,48 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONPolygonSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema], value);
+}
+
+function passGeoJSON2DPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON2DPolygonSchema], value);
+}
+
+function passGeoJSON3DPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
 
 function failGeoJSONPolygonTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONPolygonSchema, value);
+    failGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON2DPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
 
 describe("GeoJSONPolygon", () => {
     it("allows a 2D polygon", () => {
-        passGeoJSONPolygonTest(geoJsonPolygon2D);
+        passGeoJSON2DPolygonTest(geoJsonPolygon2D);
     });
     it("allows a 3D polygon", () => {
-        passGeoJSONPolygonTest(geoJsonPolygon3D);
+        passGeoJSON3DPolygonTest(geoJsonPolygon3D);
+    });
+    it("allows a 4D polygon", () => {
+        passGeoJSONPolygonTest(geoJsonPolygon4D);
     });
     it("allows a 2D polygon with a hole", () => {
-        passGeoJSONPolygonTest(geoJsonPolygon2DWithHole);
+        passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHole);
     });
     it("allows a 2D polygon with bbox", () => {
-        passGeoJSONPolygonTest({
+        passGeoJSON2DPolygonTest({
             ...geoJsonPolygon2D,
             bbox: [0.0, 0.0, 1.0, 1.0],
         });
     });
     it("allows a 3D polygon with bbox", () => {
-        passGeoJSONPolygonTest({
+        passGeoJSON3DPolygonTest({
             ...geoJsonPolygon3D,
             bbox: [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
         });
     });
     it("allows a 2D polygon with a hole and bbox", () => {
-        passGeoJSONPolygonTest(geoJsonPolygon2DWithHoleAndBbox);
+        passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHoleAndBbox);
     });
     it("allows a polygon and preserves extra keys", () => {
         passGeoJSONPolygonTest({
@@ -182,6 +194,9 @@ describe("GeoJSONPolygon", () => {
         it("does not allow a 3D polygon", () => {
             expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D polygon", () => {
+            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -190,6 +205,9 @@ describe("GeoJSONPolygon", () => {
         });
         it("does not allow a 2D polygon", () => {
             expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D polygon", () => {
+            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(ZodError);
         });
     });
 });
