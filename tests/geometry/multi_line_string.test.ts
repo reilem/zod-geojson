@@ -8,6 +8,7 @@ import {
     singleGeoJsonMultiLineString2DWithBbox,
     singleGeoJsonMultiLineString3D,
     singleGeoJsonMultiLineString3DWithBbox,
+    singleGeoJsonMultiLineString5D,
 } from "../../examples/geometry/multi_line_string";
 import {
     GeoJSON2DMultiLineString,
@@ -20,31 +21,45 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiLineStringTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONMultiLineStringSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema], value);
+}
+
+function passGeoJSON2DMultiLineStringTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema, GeoJSON2DMultiLineStringSchema], value);
+}
+
+function passGeoJSON3DMultiLineStringTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema, GeoJSON3DMultiLineStringSchema], value);
 }
 
 function failGeoJSONMultiLineStringTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONMultiLineStringSchema, value);
+    failGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiLineStringSchema, GeoJSON2DMultiLineStringSchema, GeoJSON3DMultiLineStringSchema],
+        value,
+    );
 }
 
 describe("GeoJSONMultiLineString", () => {
     it("allows a 2D multi-line string with one line", () => {
-        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString2D);
+        passGeoJSON2DMultiLineStringTest(singleGeoJsonMultiLineString2D);
     });
     it("allows a 2D multi-line string with multiple lines", () => {
-        passGeoJSONMultiLineStringTest(multiGeoJsonMultiLineString2D);
+        passGeoJSON2DMultiLineStringTest(multiGeoJsonMultiLineString2D);
     });
     it("allows a 3D multi-line string", () => {
-        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString3D);
+        passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3D);
+    });
+    it("allows a 5D multi-line string", () => {
+        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString5D);
     });
     it("allows a 2D multi-line string with one line and bbox", () => {
-        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString2DWithBbox);
+        passGeoJSON2DMultiLineStringTest(singleGeoJsonMultiLineString2DWithBbox);
     });
     it("allows a 2D multi-line string with multiples and with bbox", () => {
-        passGeoJSONMultiLineStringTest(multiGeoJsonMultiLineString2DWithBbox);
+        passGeoJSON2DMultiLineStringTest(multiGeoJsonMultiLineString2DWithBbox);
     });
     it("allows a 3D multi-line string with bbox", () => {
-        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString3DWithBbox);
+        passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3DWithBbox);
     });
     it("allows a multi-line string and preserves extra keys", () => {
         passGeoJSONMultiLineStringTest({
@@ -151,6 +166,9 @@ describe("GeoJSONMultiLineString", () => {
         it("does not allow a 3D multi-line string", () => {
             expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toThrow(ZodError);
         });
+        it("does not allow a 5D multi-line string", () => {
+            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString5D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -161,6 +179,9 @@ describe("GeoJSONMultiLineString", () => {
         });
         it("does not allow a 2D multi-line string", () => {
             expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toThrow(ZodError);
+        });
+        it("does not allow a 5D multi-line string", () => {
+            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString5D)).toThrow(ZodError);
         });
     });
 });

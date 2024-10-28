@@ -7,6 +7,7 @@ import {
     singleGeoJsonMultiPolygon2DWithBbox,
     singleGeoJsonMultiPolygon3D,
     singleGeoJsonMultiPolygon3DWithBbox,
+    singleGeoJsonMultiPolygon4D,
 } from "../../examples/geometry/multi_polygon";
 import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
 import {
@@ -20,34 +21,48 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONMultiPolygonSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema], value);
+}
+
+function passGeoJSON2DMultiPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema, GeoJSON2DMultiPolygonSchema], value);
+}
+
+function passGeoJSON3DMultiPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema, GeoJSON3DMultiPolygonSchema], value);
 }
 
 function failGeoJSONMultiPolygonTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONMultiPolygonSchema, value);
+    failGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiPolygonSchema, GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema],
+        value,
+    );
 }
 
 describe("GeoJSONMultiPolygon", () => {
     it("allows a 2D multi-polygon with one polygon", () => {
-        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon2D);
+        passGeoJSON2DMultiPolygonTest(singleGeoJsonMultiPolygon2D);
     });
     it("allows a 2D multi-polygon with multiple polygons", () => {
-        passGeoJSONMultiPolygonTest(multiGeoJsonMultiPolygon2D);
+        passGeoJSON2DMultiPolygonTest(multiGeoJsonMultiPolygon2D);
     });
     it("allows a 3D multi-polygon with one polygon", () => {
-        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon3D);
+        passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3D);
     });
     it("allows a 2D multi-polygon with one polygon and bbox", () => {
-        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon2DWithBbox);
+        passGeoJSON2DMultiPolygonTest(singleGeoJsonMultiPolygon2DWithBbox);
     });
     it("allows a 2D multi-polygon with multiple polygons and bbox", () => {
-        passGeoJSONMultiPolygonTest(multiGeoJsonMultiPolygon2DWithBbox);
+        passGeoJSON2DMultiPolygonTest(multiGeoJsonMultiPolygon2DWithBbox);
     });
     it("allows a 3D multi-polygon with one polygon and bbox", () => {
-        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBbox);
+        passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBbox);
+    });
+    it("allows a 4D multi-polygon", () => {
+        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon4D);
     });
     it("allows a multi-polygon and preserves extra keys", () => {
-        passGeoJSONMultiPolygonTest({
+        passGeoJSON2DMultiPolygonTest({
             ...singleGeoJsonMultiPolygon2D,
             extraKey: "extra",
         });
@@ -186,6 +201,9 @@ describe("GeoJSONMultiPolygon", () => {
         it("does not allow a 3D multi-polygon", () => {
             expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D multi-polygon", () => {
+            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -194,6 +212,9 @@ describe("GeoJSONMultiPolygon", () => {
         });
         it("does not allow a 2D multi-polygon", () => {
             expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D multi-polygon", () => {
+            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(ZodError);
         });
     });
 });
