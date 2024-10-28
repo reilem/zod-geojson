@@ -144,8 +144,8 @@ export const invalidGeoJsonPoint: GeoJSONPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0],
     // @ts-expect-error -- THIS SHOULD FAIL
     features: [],

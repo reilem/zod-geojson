@@ -8,7 +8,6 @@ import {
     GeoJSONPosition,
     GeoJSONPositionSchema,
 } from "../../src";
-import { AssertExtends } from "./_helpers";
 
 const position2D: GeoJSONPosition = [0, 0];
 
