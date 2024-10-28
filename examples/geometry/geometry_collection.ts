@@ -1,9 +1,9 @@
-import { GeoJSON2DGeometryCollection, GeoJSON3DGeometryCollection } from "../../src";
+import { GeoJSON2DGeometryCollection, GeoJSON3DGeometryCollection, GeoJSONGeometryCollection } from "../../src";
 import { geoJsonLineString3D } from "./line_string";
 import { multiGeoJsonMultiLineString2D } from "./multi_line_string";
 import { geoJsonMultiPoint2D } from "./multi_point";
 import { singleGeoJsonMultiPolygon3D } from "./multi_polygon";
-import { geoJsonPoint2D, geoJsonPoint2DWithBbox, geoJsonPoint3D } from "./point";
+import { geoJsonPoint2D, geoJsonPoint2DWithBbox, geoJsonPoint3D, geoJsonPoint6D } from "./point";
 import { geoJsonPolygon2D } from "./polygon";
 
 export const singleGeoJsonGeometryCollection2D: GeoJSON2DGeometryCollection = {
@@ -34,4 +34,9 @@ export const multiGeoJsonGeometryCollection2DWithBbox: GeoJSON2DGeometryCollecti
 export const multiGeoJsonGeometryCollection3DWithBbox: GeoJSON3DGeometryCollection = {
     ...multiGeoJsonGeometryCollection3D,
     bbox: [0.0, 0.0, 0.0, 20.0, 10.0, 10.0],
+};
+
+export const singleGeoJsonGeometryCollection6D: GeoJSONGeometryCollection = {
+    type: "GeometryCollection",
+    geometries: [geoJsonPoint6D],
 };
