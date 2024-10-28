@@ -6,7 +6,14 @@ import {
     geoJsonLineString3D,
     geoJsonLineString3DWithBbox,
 } from "../../examples/geometry/line_string";
-import { GeoJSON2DLineStringSchema, GeoJSON3DLineStringSchema, GeoJSONLineStringSchema } from "../../src";
+import {
+    GeoJSON2DLineString,
+    GeoJSON2DLineStringSchema,
+    GeoJSON3DLineString,
+    GeoJSON3DLineStringSchema,
+    GeoJSONLineString,
+    GeoJSONLineStringSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONLineStringTest(value: unknown): void {
@@ -140,3 +147,115 @@ describe("GeoJSONLineString", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON MultiPoint to test types
+ */
+export const invalidGeoJsonLineStringTooFewPositions: GeoJSONLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonLineStringPositionTooSmall: GeoJSONLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 0.0], [0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+};
+
+/**
+ * Invalid 2D GeoJSON LineString to test types
+ */
+export const invalidGeoJsonLineString2DTooFewPositions: GeoJSON2DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonLineString2DPositionTooSmall: GeoJSON2DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 0.0], [0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0],
+};
+export const invalidGeoJsonLineString2DPositionTooBig: GeoJSON2DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [1.0, 0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        [0.0, 0.0, 0.0],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0, 0.0],
+};
+
+/**
+ * Invalid 3D GeoJSON LineString to test types
+ */
+export const invalidGeoJsonLineString3DTooFewPositions: GeoJSON3DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 2.0, 0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonLineString3DPositionTooSmall: GeoJSON3DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [1.0, 2.0, 0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        [1.0, 2.0],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+};
+export const invalidGeoJsonLineString3DPositionTooBig: GeoJSON3DLineString = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [1.0, 2.0, 0.0],
+        // @ts-expect-error -- THIS SHOULD FAIL
+        [1.0, 2.0, 0.0, 0.0],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0, 3.0],
+};

@@ -9,7 +9,14 @@ import {
     singleGeoJsonMultiPolygon3DWithBbox,
 } from "../../examples/geometry/multi_polygon";
 import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
-import { GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema, GeoJSONMultiPolygonSchema } from "../../src";
+import {
+    GeoJSON2DMultiPolygon,
+    GeoJSON2DMultiPolygonSchema,
+    GeoJSON3DMultiPolygon,
+    GeoJSON3DMultiPolygonSchema,
+    GeoJSONMultiPolygon,
+    GeoJSONMultiPolygonSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
@@ -190,3 +197,164 @@ describe("GeoJSONMultiPolygon", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON MultiPolygon to test types
+ */
+export const invalidGeoJsonMultiPolygonRingTooSmall: GeoJSONMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [
+                [0.0, 0.0],
+                [1.0, 0.0],
+                [0.0, 0.0],
+            ],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonMultiPolygonPositionsTooSmall: GeoJSONMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[[[0.0], [1.0], [0.0], [0.0]]]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0],
+};
+
+/**
+ * Invalid 2D GeoJSON MultiPolygon to test types
+ */
+export const invalidGeoJsonMultiPolygon2DRingTooSmall: GeoJSON2DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [
+                [0.0, 0.0],
+                [1.0, 0.0],
+                [0.0, 0.0],
+            ],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonMultiPolygon2DPositionsTooSmall: GeoJSON2DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[[0.0], [1.0], [0.0], [0.0]]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0],
+};
+export const invalidGeoJsonMultiPolygon2DPositionsTooBig: GeoJSON2DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [0.0, 0.0, 0.0],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [1.0, 0.0, 0.0],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [0.0, 0.0, 0.0],
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [0.0, 0.0, 0.0],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0, 0.0],
+};
+
+/**
+ * Invalid 3D GeoJSON MultiPolygon to test types
+ */
+export const invalidGeoJsonMultiPolygon3DRingTooSmall: GeoJSON3DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            // @ts-expect-error -- THIS SHOULD FAIL
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+            ],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonMultiPolygon3DPositionsTooSmall: GeoJSON3DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            [
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [1.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0],
+            ],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0],
+};
+export const invalidGeoJsonMultiPolygon3DPositionsTooBig: GeoJSON3DMultiPolygon = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    coordinates: [
+        [
+            [
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0, 0.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [1.0, 0.0, 0.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0, 0.0, 0.0],
+                // @ts-expect-error -- THIS SHOULD FAIL
+                [0.0, 0.0, 0.0, 0.0],
+            ],
+        ],
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0, 0.0],
+};

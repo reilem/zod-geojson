@@ -12,8 +12,11 @@ import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { geoJsonMultiPoint2D } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D } from "../../examples/geometry/point";
 import {
+    GeoJSON2DGeometryCollection,
     GeoJSON2DGeometryCollectionSchema,
+    GeoJSON3DGeometryCollection,
     GeoJSON3DGeometryCollectionSchema,
+    GeoJSONGeometryCollection,
     GeoJSONGeometryCollectionSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
@@ -178,3 +181,112 @@ describe("GeoJSONGeometryCollection", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON GeometryCollection to test types
+ */
+export const invalidGeoJsonGeometryCollection: GeoJSONGeometryCollection = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+
+/**
+ * Invalid 2D GeoJSON GeometryCollection to test types
+ */
+export const invalidGeoJsonGeometryCollection2DPositionTooSmall: GeoJSON2DGeometryCollection = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonGeometryCollection2DPositionTooBig: GeoJSON2DGeometryCollection = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0, 0.0, 0.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0, 0.0],
+};
+
+/**
+ * Invalid 3D GeoJSON GeometryCollection to test types
+ */
+export const invalidGeoJsonGeometryCollection3DPositionTooSmall: GeoJSON3DGeometryCollection = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0, 0.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonGeometryCollection3DPositionTooBig: GeoJSON3DGeometryCollection = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    geometries: [
+        {
+            // @ts-expect-error -- THIS SHOULD FAIL
+            type: "Foo",
+            // @ts-expect-error -- THIS SHOULD FAIL
+            coordinates: [1.0, 0.0, 0.0, 0.0],
+        },
+    ],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0, 0.0],
+};

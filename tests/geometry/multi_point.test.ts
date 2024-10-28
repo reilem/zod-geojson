@@ -7,7 +7,14 @@ import {
     geoJsonMultiPoint3DWithBbox,
 } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
-import { GeoJSON2DMultiPointSchema, GeoJSON3DMultiPointSchema, GeoJSONMultiPointSchema } from "../../src";
+import {
+    GeoJSON2DMultiPoint,
+    GeoJSON2DMultiPointSchema,
+    GeoJSON3DMultiPoint,
+    GeoJSON3DMultiPointSchema,
+    GeoJSONMultiPoint,
+    GeoJSONMultiPointSchema,
+} from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPointTest(value: unknown): void {
@@ -137,3 +144,82 @@ describe("GeoJSONMultiPoint", () => {
         });
     });
 });
+
+/**
+ * Invalid GeoJSON MultiPoint to test types
+ */
+export const invalidGeoJsonMultiPoint: GeoJSONMultiPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+
+/**
+ * Invalid 2D GeoJSON MultiPoint to test types
+ */
+export const invalidGeoJsonMultiPoint2DPositionTooSmall: GeoJSON2DMultiPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonMultiPoint2DPositionTooBig: GeoJSON2DMultiPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 2.0, 3.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+};
+
+/**
+ * Invalid 3D GeoJSON MultiPoint to test types
+ */
+export const invalidGeoJsonMultiPoint3DPositionTooSmall: GeoJSON3DMultiPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 2.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonMultiPoint3DPositionTooBig: GeoJSON3DMultiPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [[1.0, 2.0, 0.0, 0.0]],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0, 3.0],
+};

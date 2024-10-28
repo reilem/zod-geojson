@@ -98,3 +98,15 @@ describe("GeoJSONBBox", () => {
         });
     });
 });
+
+/**
+ * Invalid bbox to test types
+ */
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidBbox0D: GeoJSONBbox = [];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidBbox1D: GeoJSONBbox = [0.0];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidBbox2D: GeoJSONBbox = [0.0, 0.0];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidBbox3D: GeoJSONBbox = [0.0, 0.0, 0.0];

@@ -147,28 +147,71 @@ export const invalidGeoJsonPoint: GeoJSONPoint = {
     coordinates: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
 };
 
 /**
- * Invalid 2D GeoJSON Point to test types
+ * Invalid 2D GeoJSON Points to test types
  */
-export const invalidGeoJsonPoint2D: GeoJSON2DPoint = {
+export const invalidGeoJsonPoint2DPositionTooSmall: GeoJSON2DPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 0.0, 0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonPoint2DPositionTooBig: GeoJSON2DPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0, 2.0, 3.0],
     // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [1.0],
+    bbox: [1.0, 0.0, 0.0],
 };
 
 /**
  * Invalid 3D GeoJSON Point to test types
  */
-export const invalidGeoJsonPoint3D: GeoJSON3DPoint = {
+export const invalidGeoJsonPoint3DPositionTooSmall: GeoJSON3DPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0, 2.0],
     // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [1.0, 2.0, 3.0],
+    bbox: [1.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometries: [],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: {},
+    // @ts-expect-error -- THIS SHOULD FAIL
+    geometry: {},
+    otherKey: "allowed",
+};
+export const invalidGeoJsonPoint3DPositionTooBig: GeoJSON3DPoint = {
+    // @ts-expect-error -- THIS SHOULD FAIL
+    type: "Hello",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 2.0, 0.0, 0.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [1.0, 2.0],
 };
