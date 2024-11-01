@@ -1,6 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
 import { ZodError } from "zod";
 import {
+    geoJsonFeatureGeometryCollection2D,
+    geoJsonFeatureGeometryCollection3D,
     geoJsonFeaturePoint2D,
     geoJsonFeaturePoint3D,
     geoJsonFeaturePolygon2D,
@@ -14,26 +16,48 @@ import {
     GeoJSONFeature,
     GeoJSONFeatureSchema,
 } from "../src";
+import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
+import { geoJsonPoint4D } from "./geometry/point.test";
+
+export const geoJsonFeaturePoint4D = {
+    ...geoJsonFeaturePoint2D,
+    geometry: geoJsonPoint4D,
+};
 
 function passGeoJSONFeatureSchemaTest(object: unknown) {
-    expect(GeoJSONFeatureSchema.parse(object)).toEqual(object);
+    passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema, GeoJSON3DFeatureSchema], object);
 }
+
+function passGeoJSON2DFeatureSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema], object);
+}
+
+function passGeoJSON3DFeatureSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON3DFeatureSchema], object);
+}
+
 function failGeoJSONFeatureSchemaTest(object: unknown) {
-    expect(() => GeoJSONFeatureSchema.parse(object)).toThrow(ZodError);
+    failGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema, GeoJSON3DFeatureSchema], object);
 }
 
 describe("GeoJSONFeature", () => {
     it("allows a feature with a 2D point geometry", () => {
-        passGeoJSONFeatureSchemaTest(geoJsonFeaturePoint2D);
+        passGeoJSON2DFeatureSchemaTest(geoJsonFeaturePoint2D);
     });
     it("allows a feature with a 3D point geometry", () => {
-        passGeoJSONFeatureSchemaTest(geoJsonFeaturePoint3D);
+        passGeoJSON3DFeatureSchemaTest(geoJsonFeaturePoint3D);
     });
     it("allows a feature with a 2D polygon geometry", () => {
-        passGeoJSONFeatureSchemaTest(geoJsonFeaturePolygon2D);
+        passGeoJSON2DFeatureSchemaTest(geoJsonFeaturePolygon2D);
     });
     it("allows a feature with a 3D polygon geometry and valid bbox", () => {
-        passGeoJSONFeatureSchemaTest(geoJsonFeaturePolygon3DWithBbox);
+        passGeoJSON3DFeatureSchemaTest(geoJsonFeaturePolygon3DWithBbox);
+    });
+    it("allows a feature with a 2D geometry collection", () => {
+        passGeoJSON2DFeatureSchemaTest(geoJsonFeatureGeometryCollection2D);
+    });
+    it("allows a feature with a 3D geometry collection", () => {
+        passGeoJSON3DFeatureSchemaTest(geoJsonFeatureGeometryCollection3D);
     });
     it("allows a feature with a string id", () => {
         passGeoJSONFeatureSchemaTest({
@@ -72,6 +96,18 @@ describe("GeoJSONFeature", () => {
         });
     });
 
+    it("does not allow a feature with a 1D geometry", () => {
+        failGeoJSONFeatureSchemaTest({
+            ...geoJsonFeaturePoint2D,
+            geometry: {
+                type: "Point",
+                coordinates: [0.0],
+            },
+        });
+    });
+    it("does not allow a feature with a 4D geometry", () => {
+        failGeoJSONFeatureSchemaTest(geoJsonFeaturePoint4D);
+    });
     it("does not allow a feature without properties", () => {
         failGeoJSONFeatureSchemaTest({
             type: "Feature",
@@ -161,6 +197,9 @@ describe("GeoJSONFeature", () => {
         it("does not allow a 3D feature", () => {
             expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D feature", () => {
+            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -169,6 +208,9 @@ describe("GeoJSONFeature", () => {
         });
         it("does not allow a 2D feature", () => {
             expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D feature", () => {
+            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
         });
     });
 });
@@ -206,6 +248,8 @@ export const invalidGeoJsonFeature: GeoJSONFeature = {
     geometries: {},
     otherKey: "allowed",
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonFeaturePositionsTooBig: GeoJSONFeature = geoJsonFeaturePoint4D;
 
 /**
  * Invalid 2D GeoJSON Feature to test types

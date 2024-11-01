@@ -10,20 +10,22 @@ import {
 } from "./geometry/position";
 import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
+import { ValidatableFeature } from "./validation/types";
 
 export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema.extend({
-        id: z.string().or(z.number()).optional(),
-        type: z.literal(GeoJSONTypeSchema.enum.Feature),
-        geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
-        properties: z.object({}).passthrough().nullable(),
-        coordinates: z.never({ message: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
-        features: z.never({ message: "GeoJSON Feature cannot have a 'features' key" }).optional(),
-        geometries: z.never({ message: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
-    })
+    GeoJSONBaseSchema(positionSchema)
+        .extend({
+            id: z.string().or(z.number()).optional(),
+            type: z.literal(GeoJSONTypeSchema.enum.Feature),
+            geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
+            properties: z.object({}).passthrough().nullable(),
+            coordinates: z.never({ message: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
+            features: z.never({ message: "GeoJSON Feature cannot have a 'features' key" }).optional(),
+            geometries: z.never({ message: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
-            if (!validBboxForFeature(val)) {
+            if (!validBboxForFeature(val as ValidatableFeature)) {
                 ctx.addIssue(INVALID_BBOX_ISSUE);
             }
         });

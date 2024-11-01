@@ -14,6 +14,9 @@ import {
     GeoJSONGeometry,
     GeoJSONSchema,
 } from "../src";
+import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
+import { singleGeoJsonGeometryCollection4D } from "./geometry/geometry_collection.test";
+import { geoJsonPoint4D } from "./geometry/point.test";
 
 describe("GeoJSONSchema", () => {
     it("allows a basic geometry", () => {
@@ -27,7 +30,7 @@ describe("GeoJSONSchema", () => {
     });
 
     it("does not allow a geojson with invalid type", () => {
-        expect(() => GeoJSONSchema.parse({ type: "SkippityBoop" })).toThrow(ZodError);
+        expect(() => GeoJSONSchema.parse({ type: "Foo" })).toThrow(ZodError);
     });
 
     describe("2D", () => {
@@ -37,6 +40,9 @@ describe("GeoJSONSchema", () => {
         it("does not allow a 3D geojson", () => {
             expect(() => GeoJSON2DSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D geojson", () => {
+            expect(() => GeoJSON2DSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -45,6 +51,9 @@ describe("GeoJSONSchema", () => {
         });
         it("does not allow a 2D geojson", () => {
             expect(() => GeoJSON3DSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D geojson", () => {
+            expect(() => GeoJSON3DSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
         });
     });
 });
@@ -142,6 +151,8 @@ export const invalidGeoJsonFeatureCollection: GeoJSON = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPositionsTooBig: GeoJSON = geoJsonPoint4D;
 
 /**
  * Invalid 2D GeoJSON to test types
