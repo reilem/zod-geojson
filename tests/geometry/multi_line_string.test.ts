@@ -26,7 +26,10 @@ export const singleGeoJsonMultiLineString4D = {
 };
 
 function passGeoJSONMultiLineStringTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiLineStringSchema, GeoJSON2DMultiLineStringSchema, GeoJSON3DMultiLineStringSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DMultiLineStringTest(value: unknown): void {
@@ -64,7 +67,7 @@ describe("GeoJSONMultiLineString", () => {
         passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3DWithBbox);
     });
     it("allows a multi-line string and preserves extra keys", () => {
-        passGeoJSONMultiLineStringTest({
+        passGeoJSON2DMultiLineStringTest({
             ...singleGeoJsonMultiLineString2D,
             extraKey: "extra",
         });

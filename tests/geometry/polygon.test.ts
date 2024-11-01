@@ -30,7 +30,7 @@ export const geoJsonPolygon4D = {
 };
 
 function passGeoJSONPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema], value);
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON2DPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
 
 function passGeoJSON2DPolygonTest(value: unknown): void {
@@ -71,7 +71,7 @@ describe("GeoJSONPolygon", () => {
         passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHoleAndBbox);
     });
     it("allows a polygon and preserves extra keys", () => {
-        passGeoJSONPolygonTest({
+        passGeoJSON2DPolygonTest({
             ...geoJsonPolygon2D,
             extraKey: "extra",
         });

@@ -24,10 +24,6 @@ export const geoJsonLineString4D = {
     ],
 };
 
-function passGeoJSONLineStringTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONLineStringSchema], value);
-}
-
 function passGeoJSON2DLineStringTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONLineStringSchema, GeoJSON2DLineStringSchema], value);
 }
@@ -61,7 +57,7 @@ describe("GeoJSONLineString", () => {
             ...geoJsonLineString2D,
             extraKey: "extra",
         };
-        passGeoJSONLineStringTest(geoJsonLineStringWithExtraKeys);
+        passGeoJSON2DLineStringTest(geoJsonLineStringWithExtraKeys);
     });
 
     it("does not allow a 1D line string", () => {

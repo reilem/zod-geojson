@@ -28,7 +28,10 @@ export const singleGeoJsonGeometryCollection4D = {
 };
 
 function passGeoJSONGeometryCollectionTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONGeometryCollectionSchema, GeoJSON2DGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DGeometryCollectionTest(value: unknown): void {
@@ -67,7 +70,7 @@ describe("GeoJSONGeometryCollection", () => {
         passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
     });
     it("allows a geometry collection and preserves extra keys", () => {
-        passGeoJSONGeometryCollectionTest({
+        passGeoJSON2DGeometryCollectionTest({
             ...singleGeoJsonGeometryCollection2D,
             extraKey: "extra",
         });

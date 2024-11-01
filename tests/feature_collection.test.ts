@@ -59,7 +59,7 @@ describe("GeoJSONFeatureCollection", () => {
         });
     });
     it("allows a feature collection with multiple features and bbox", () => {
-        passGeoJSONFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox2D);
+        passGeoJSON2DFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox2D);
     });
     it("allows a feature collection with empty features array", () => {
         passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection2D, features: [] });

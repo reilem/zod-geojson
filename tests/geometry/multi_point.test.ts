@@ -24,7 +24,10 @@ export const geoJsonMultiPoint4D = {
 };
 
 function passGeoJSONMultiPointTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiPointSchema, GeoJSON2DMultiPointSchema, GeoJSON3DMultiPointSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DMultiPointTest(value: unknown): void {
@@ -56,7 +59,7 @@ describe("GeoJSONMultiPoint", () => {
         passGeoJSON3DMultiPointTest(geoJsonMultiPoint3DWithBbox);
     });
     it("allows a multi point and preserves extra keys", () => {
-        passGeoJSONMultiPointTest({
+        passGeoJSON2DMultiPointTest({
             ...geoJsonMultiPoint2D,
             extraKey: "extra",
         });

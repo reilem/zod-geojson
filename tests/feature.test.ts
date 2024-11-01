@@ -60,25 +60,25 @@ describe("GeoJSONFeature", () => {
         passGeoJSON3DFeatureSchemaTest(geoJsonFeatureGeometryCollection3D);
     });
     it("allows a feature with a string id", () => {
-        passGeoJSONFeatureSchemaTest({
+        passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             id: "unique-id",
         });
     });
     it("allows a feature with a number id", () => {
-        passGeoJSONFeatureSchemaTest({
+        passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             id: 98765,
         });
     });
     it("allows a feature with a string id", () => {
-        passGeoJSONFeatureSchemaTest({
+        passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             id: "98765",
         });
     });
     it("allows a feature and preserves extra keys", () => {
-        passGeoJSONFeatureSchemaTest({
+        passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             color: "#FF00FF",
         });
@@ -90,7 +90,7 @@ describe("GeoJSONFeature", () => {
         });
     });
     it("allows a feature with null properties", () => {
-        passGeoJSONFeatureSchemaTest({
+        passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             properties: null,
         });

@@ -26,7 +26,10 @@ export const singleGeoJsonMultiPolygon4D = {
 };
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiPolygonSchema, GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DMultiPolygonTest(value: unknown): void {

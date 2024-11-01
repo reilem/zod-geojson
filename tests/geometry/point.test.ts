@@ -21,10 +21,6 @@ export const geoJsonPoint4D = {
     coordinates: [1.0, 2.0, 3.0, 4.0],
 };
 
-function passGeoJSONPointTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONPointSchema], value);
-}
-
 function passGeoJSON2DPointTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONPointSchema, GeoJSON2DPointSchema], value);
 }
@@ -55,7 +51,7 @@ describe("GeoJSONPoint", () => {
             ...geoJsonPoint2D,
             extraKey: "extra",
         };
-        passGeoJSONPointTest(geoJsonPointWithExtraKeys);
+        passGeoJSON2DPointTest(geoJsonPointWithExtraKeys);
     });
 
     it("does not allow a 1D point", () => {
