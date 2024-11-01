@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
@@ -319,3 +320,12 @@ export const invalidGeoJsonMultiLineString3DPositionTooBig: GeoJSON3DMultiLineSt
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0, 3.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const multiLineString1: GeoJSONTypes.MultiLineString = multiGeoJsonMultiLineString2D;
+export const multiLineString2: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString3D;
+export const multiLineString3: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString2DWithBbox;
+export const multiLineString4: GeoJSONTypes.MultiLineString =
+    singleGeoJsonMultiLineString2DWithBbox as GeoJSONMultiLineString;

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { GeoJSONType, GeoJSONTypeSchema } from "../src";
 
@@ -18,3 +19,10 @@ describe("GeoJSONType", () => {
  */
 // @ts-expect-error -- THIS SHOULD FAIL
 export const invalidGeoJsonType: GeoJSONType = "Foo";
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const type1: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.Feature;
+export const type2: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.FeatureCollection;
+export const type3: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.Polygon;

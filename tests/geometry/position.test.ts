@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     GeoJSON2DPosition,
@@ -82,3 +83,10 @@ export const invalidGeoJsonPosition2DTooSmall: GeoJSON2DPosition = [1];
 export const invalidGeoJsonPosition3DTooBig: GeoJSON3DPosition = [1, 2, 3, 4];
 // @ts-expect-error -- THIS SHOULD FAIL
 export const invalidGeoJsonPosition3DTooSmall: GeoJSON3DPosition = [1, 2];
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const position1: GeoJSONTypes.Position = position2D;
+export const position2: GeoJSONTypes.Position = position3D;
+export const position3: GeoJSONTypes.Position = position3D as GeoJSONPosition;

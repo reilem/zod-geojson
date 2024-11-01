@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { bbox2D, bbox3D } from "../examples/bbox";
 import { GeoJSONBboxSchema, GeoJSONBbox } from "../src";
@@ -6,7 +7,7 @@ import { GeoJSON2DBbox, GeoJSON2DBboxSchema, GeoJSON3DBbox, GeoJSON3DBboxSchema 
 
 const bbox4D = [0, 0, 0, 0, 0, 0, 0, 0];
 
-describe("GeoJSONBBox", () => {
+describe("GeoJSONBbox", () => {
     it("allows 2D bbox", () => {
         expect(GeoJSONBboxSchema.parse(bbox2D)).toEqual(bbox2D);
     });
@@ -95,3 +96,10 @@ export const invalidBbox2D5: GeoJSON2DBbox = [0.0, 0.0, 0.0, 0.0, 0.0];
 export const invalidBbox3D5: GeoJSON3DBbox = [0.0, 0.0, 0.0, 0.0, 0.0];
 // @ts-expect-error -- THIS SHOULD FAIL
 export const invalidBbox3D7: GeoJSON3DBbox = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const bbox1: GeoJSONTypes.BBox = bbox2D as GeoJSONBbox;
+export const bbox2: GeoJSONTypes.BBox = bbox2D;
+export const bbox3: GeoJSONTypes.BBox = bbox3D;

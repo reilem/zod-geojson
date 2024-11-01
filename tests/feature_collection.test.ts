@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
@@ -315,3 +316,14 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
         },
     ],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types
+export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    singleGeoJsonFeatureCollection3D as GeoJSONFeatureCollection;
+export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    singleGeoJsonFeatureCollection3D;
+export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    multiGeoJsonFeatureCollectionWithBbox2D;

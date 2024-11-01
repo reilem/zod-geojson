@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     multiGeoJsonMultiPolygon2D,
@@ -389,3 +390,10 @@ export const invalidGeoJsonMultiPolygon3DPositionsTooBig: GeoJSON3DMultiPolygon 
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0, 0.0, 0.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const multiPolygon1: GeoJSONTypes.MultiPolygon = multiGeoJsonMultiPolygon2D;
+export const multiPolygon2: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D;
+export const multiPolygon3: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D as GeoJSONMultiPolygon;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
-import { geoJsonFeaturePolygon2D } from "../examples/feature";
+import { geoJsonFeatureGeometryCollection3D, geoJsonFeaturePolygon2D } from "../examples/feature";
 import { multiGeoJsonFeatureCollection2D } from "../examples/feature_collection";
 import { geoJsonPoint3D } from "../examples/geometry/point";
 import {
@@ -343,3 +344,14 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
     // @ts-expect-error -- THIS SHOULD FAIL
     geometry: {},
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonFeaturePolygon2D;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES
+export const geoJson3: GeoJSONTypes.GeoJSON = geoJsonFeatureGeometryCollection3D;
