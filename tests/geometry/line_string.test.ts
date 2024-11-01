@@ -5,7 +5,6 @@ import {
     geoJsonLineString2DWithBbox,
     geoJsonLineString3D,
     geoJsonLineString3DWithBbox,
-    geoJsonLineString5D,
 } from "../../examples/geometry/line_string";
 import {
     GeoJSON2DLineString,
@@ -16,6 +15,14 @@ import {
     GeoJSONLineStringSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
+
+export const geoJsonLineString4D = {
+    ...geoJsonLineString2D,
+    coordinates: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 1],
+    ],
+};
 
 function passGeoJSONLineStringTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONLineStringSchema], value);
@@ -43,9 +50,6 @@ describe("GeoJSONLineString", () => {
     it("allows a 3D line string", () => {
         passGeoJSON3DLineStringTest(geoJsonLineString3D);
     });
-    it("allows a 5D line string", () => {
-        passGeoJSONLineStringTest(geoJsonLineString5D);
-    });
     it("allows 2D line string with valid bbox", () => {
         passGeoJSON2DLineStringTest(geoJsonLineString2DWithBbox);
     });
@@ -57,11 +61,14 @@ describe("GeoJSONLineString", () => {
             ...geoJsonLineString2D,
             extraKey: "extra",
         };
-        passGeoJSON2DLineStringTest(geoJsonLineStringWithExtraKeys);
+        passGeoJSONLineStringTest(geoJsonLineStringWithExtraKeys);
     });
 
     it("does not allow a 1D line string", () => {
         failGeoJSONLineStringTest({ type: "LineString", coordinates: [[0.0], [1.0]] });
+    });
+    it("does not allow a 4D line string", () => {
+        failGeoJSONLineStringTest(geoJsonLineString4D);
     });
     it("does not allow a line string with empty coordinates", () => {
         failGeoJSONLineStringTest({ type: "LineString", coordinates: [] });
@@ -152,7 +159,7 @@ describe("GeoJSONLineString", () => {
             expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString3D)).toThrow(ZodError);
         });
         it("does not allow a 5D line string", () => {
-            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString5D)).toThrow(ZodError);
+            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString4D)).toThrow(ZodError);
         });
     });
 
@@ -164,7 +171,7 @@ describe("GeoJSONLineString", () => {
             expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString2D)).toThrow(ZodError);
         });
         it("does not allow a 5D line string", () => {
-            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString5D)).toThrow(ZodError);
+            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString4D)).toThrow(ZodError);
         });
     });
 });
@@ -197,6 +204,8 @@ export const invalidGeoJsonLineStringPositionTooSmall: GeoJSONLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonLineStringPositionTooBig: GeoJSONLineString = geoJsonLineString4D;
 
 /**
  * Invalid 2D GeoJSON LineString to test types

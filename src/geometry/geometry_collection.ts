@@ -7,7 +7,7 @@ import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJ
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaInnerType } from "../base";
 import { INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE, validDimensionsForCollection } from "./validation/dimension";
 
-type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> = GeoJSONBaseSchemaInnerType & {
+type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> = GeoJSONBaseSchemaInnerType<P> & {
     type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.GeometryCollection>;
     coordinates: z.ZodOptional<z.ZodNever>;
     geometry: z.ZodOptional<z.ZodNever>;
@@ -17,23 +17,24 @@ type GeoJSONGeometryCollectionGenericSchemaInnerType<P extends GeoJSONPosition> 
 };
 
 export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONPosition> =
-    GeoJSONGeometryBaseGenericSchemaType<GeoJSONGeometryCollectionGenericSchemaInnerType<P>>;
+    GeoJSONGeometryBaseGenericSchemaType<GeoJSONGeometryCollectionGenericSchemaInnerType<P>, P>;
 
 export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONGeometryCollectionGenericSchemaType<P> =>
-    GeoJSONBaseSchema.extend({
-        type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
-        coordinates: z.never({ message: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
-        geometry: z.never({ message: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),
-        properties: z.never({ message: "GeoJSON geometry collection cannot have a 'properties' key" }).optional(),
-        features: z.never({ message: "GeoJSON geometry collection cannot have a 'features' key" }).optional(),
-        // > The value of "geometries" is an array. Each element of this array is a
-        //   GeoJSON Geometry object. It is possible for this array to be empty. (RFC 7946, section 3.1.8)
-        // > To maximize interoperability, implementations SHOULD avoid nested
-        //    GeometryCollections. (RFC 7946, section 3.1.8)
-        geometries: GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
-    })
+    GeoJSONBaseSchema(positionSchema)
+        .extend({
+            type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
+            coordinates: z.never({ message: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
+            geometry: z.never({ message: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),
+            properties: z.never({ message: "GeoJSON geometry collection cannot have a 'properties' key" }).optional(),
+            features: z.never({ message: "GeoJSON geometry collection cannot have a 'features' key" }).optional(),
+            // > The value of "geometries" is an array. Each element of this array is a
+            //   GeoJSON Geometry object. It is possible for this array to be empty. (RFC 7946, section 3.1.8)
+            // > To maximize interoperability, implementations SHOULD avoid nested
+            //    GeometryCollections. (RFC 7946, section 3.1.8)
+            geometries: GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
             if (!val.geometries.length) {

@@ -14,22 +14,24 @@ export type GeoJSONPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
 };
 
 export type GeoJSONPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONPolygonGenericSchemaInnerType<P>
+    GeoJSONPolygonGenericSchemaInnerType<P>,
+    P
 >;
 
 export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONPolygonGenericSchemaType<P> =>
-    GeoJSONGeometryBaseSchema.extend({
-        type: z.literal(GeoJSONGeometryTypeSchema.enum.Polygon),
-        // We allow an empty coordinates array
-        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
-        //   arrays as null objects. (RFC 7946, section 3.1)
-        coordinates: z.array(
-            // > A linear ring is a closed LineString with four or more positions (RFC 7946, section 3.1.6)
-            z.tuple([positionSchema, positionSchema, positionSchema, positionSchema]).rest(positionSchema),
-        ),
-    })
+    GeoJSONGeometryBaseSchema(positionSchema)
+        .extend({
+            type: z.literal(GeoJSONGeometryTypeSchema.enum.Polygon),
+            // We allow an empty coordinates array
+            // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+            //   arrays as null objects. (RFC 7946, section 3.1)
+            coordinates: z.array(
+                // > A linear ring is a closed LineString with four or more positions (RFC 7946, section 3.1.6)
+                z.tuple([positionSchema, positionSchema, positionSchema, positionSchema]).rest(positionSchema),
+            ),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
             // Skip remaining checks if coordinates array is empty

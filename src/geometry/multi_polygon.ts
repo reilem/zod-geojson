@@ -13,19 +13,21 @@ type GeoJSONMultiPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
 };
 
 export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONMultiPolygonGenericSchemaInnerType<P>
+    GeoJSONMultiPolygonGenericSchemaInnerType<P>,
+    P
 >;
 
 export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONMultiPolygonGenericSchemaType<P> =>
-    GeoJSONGeometryBaseSchema.extend({
-        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
-        // We allow an empty coordinates array:
-        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
-        //   arrays as null objects. (RFC 7946, section 3.1)
-        coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates),
-    })
+    GeoJSONGeometryBaseSchema(positionSchema)
+        .extend({
+            type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
+            // We allow an empty coordinates array:
+            // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+            //   arrays as null objects. (RFC 7946, section 3.1)
+            coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
             // Skip remaining checks if coordinates array is empty

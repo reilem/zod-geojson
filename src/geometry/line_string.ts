@@ -11,18 +11,20 @@ export type GeoJSONLineStringGenericSchemaInnerType<P extends GeoJSONPosition> =
 };
 
 export type GeoJSONLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONLineStringGenericSchemaInnerType<P>
+    GeoJSONLineStringGenericSchemaInnerType<P>,
+    P
 >;
 
 export const GeoJSONLineStringGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONLineStringGenericSchemaType<P> =>
-    GeoJSONGeometryBaseSchema.extend({
-        type: z.literal(GeoJSONGeometryTypeSchema.enum.LineString),
-        // > For type "LineString", the "coordinates" member is an array of two or
-        //   more positions. (RFC 7946, section 3.1.4)
-        coordinates: z.tuple([positionSchema, positionSchema]).rest(positionSchema),
-    })
+    GeoJSONGeometryBaseSchema(positionSchema)
+        .extend({
+            type: z.literal(GeoJSONGeometryTypeSchema.enum.LineString),
+            // > For type "LineString", the "coordinates" member is an array of two or
+            //   more positions. (RFC 7946, section 3.1.4)
+            coordinates: z.tuple([positionSchema, positionSchema]).rest(positionSchema),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
             // Skip remaining checks if coordinates empty

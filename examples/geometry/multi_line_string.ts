@@ -1,10 +1,9 @@
-import { GeoJSON2DMultiLineString, GeoJSON3DMultiLineString, GeoJSONMultiLineString } from "../../src";
+import { GeoJSON2DMultiLineString, GeoJSON3DMultiLineString } from "../../src";
 import {
     geoJsonLineString2D,
     geoJsonLineString2DWithBbox,
     geoJsonLineString3D,
     geoJsonLineString3DWithBbox,
-    geoJsonLineString5D,
 } from "./line_string";
 
 export const singleGeoJsonMultiLineString2D: GeoJSON2DMultiLineString = {
@@ -40,9 +39,4 @@ export const multiGeoJsonMultiLineString2DWithBbox: GeoJSON2DMultiLineString = {
 export const singleGeoJsonMultiLineString3DWithBbox: GeoJSON3DMultiLineString = {
     ...singleGeoJsonMultiLineString3D,
     bbox: geoJsonLineString3DWithBbox.bbox,
-};
-
-export const singleGeoJsonMultiLineString5D: GeoJSONMultiLineString = {
-    type: "MultiLineString",
-    coordinates: [geoJsonLineString5D.coordinates],
 };

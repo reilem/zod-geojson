@@ -1,22 +1,26 @@
 import { z } from "zod";
-import { GeoJSONBbox, GeoJSONBboxSchema, GeoJSONBboxSchemaType } from "./bbox";
+import { GeoJSONBboxGenericSchema, GeoJSONBboxSchemaType, GeoJSONBboxGeneric } from "./bbox";
+import { GeoJSONPosition } from "./geometry/position";
 
-export type GeoJSONBase = {
-    bbox?: GeoJSONBbox;
+export type GeoJSONBase<P extends GeoJSONPosition> = {
+    bbox?: GeoJSONBboxGeneric<P>;
 };
 
-export type GeoJSONBaseSchemaInnerType = {
-    bbox: z.ZodOptional<GeoJSONBboxSchemaType>;
+export type GeoJSONBaseSchemaInnerType<P extends GeoJSONPosition> = {
+    bbox: z.ZodOptional<GeoJSONBboxSchemaType<P>>;
 };
 
-export type GeoJSONBaseSchemaType = z.ZodObject<
-    GeoJSONBaseSchemaInnerType,
+export type GeoJSONBaseSchemaType<P extends GeoJSONPosition> = z.ZodObject<
+    GeoJSONBaseSchemaInnerType<P>,
     "strip",
     z.ZodTypeAny,
-    GeoJSONBase,
-    GeoJSONBase
+    GeoJSONBase<P>,
+    GeoJSONBase<P>
 >;
 
-export const GeoJSONBaseSchema: GeoJSONBaseSchemaType = z.object({
-    bbox: GeoJSONBboxSchema.optional(),
-});
+export const GeoJSONBaseSchema = <P extends GeoJSONPosition>(
+    positionSchema: z.ZodSchema<P>,
+): GeoJSONBaseSchemaType<P> =>
+    z.object({
+        bbox: GeoJSONBboxGenericSchema(positionSchema).optional(),
+    });

@@ -13,7 +13,7 @@ const position2D: GeoJSONPosition = [0, 0];
 
 const position3D: GeoJSONPosition = [1, 2, 3];
 
-const position4D: GeoJSONPosition = [1, 2, 3, 4];
+const position4D = [1, 2, 3, 4];
 
 describe("GeoJSONPosition", () => {
     it("allows 2D positions", () => {
@@ -22,12 +22,12 @@ describe("GeoJSONPosition", () => {
     it("allows 3D positions", () => {
         expect(GeoJSONPositionSchema.parse(position3D)).toEqual(position3D);
     });
-    it("allows unknown 4D positions", () => {
-        expect(GeoJSONPositionSchema.parse(position4D)).toEqual(position4D);
-    });
 
     it("does not allow 1D positions", () => {
         expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
+    });
+    it("does not allow 4D positions", () => {
+        expect(() => GeoJSONPositionSchema.parse(position4D)).toThrow(ZodError);
     });
 
     it("does not allow empty positions", () => {
@@ -63,7 +63,9 @@ describe("GeoJSONPosition", () => {
  * Invalid GeoJSON position to test types
  */
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPosition: GeoJSONPosition = [1];
+export const invalidGeoJsonPositionTooSmall: GeoJSONPosition = [1];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPositionTooBig: GeoJSONPosition = [1, 2, 3, 4];
 
 /**
  * Invalid 2D GeoJSON positions to test types

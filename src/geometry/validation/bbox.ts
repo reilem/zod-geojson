@@ -1,4 +1,3 @@
-import { GeoJSONPosition } from "../position";
 import {
     ValidatableCollection,
     ValidatableCoordinate,
@@ -13,9 +12,6 @@ export const INVALID_BBOX_ISSUE = {
     message:
         "Invalid bbox. Bbox length must be 2 * n, where n is the dimension of the geometry. Bbox must be a valid extent for the geometry.",
 };
-
-// Easier to work with a simple array than a GeoJSONBbox object
-type ValidatableBbox = number[];
 
 /**
  * Checks if given bbox is valid for the given position.
@@ -91,7 +87,7 @@ export function validBboxForCollection({ bbox, geometries }: ValidatableCollecti
     return bboxEquals(bbox, expectedBbox);
 }
 
-export function getBboxForGeometry(geometry: ValidatableGeometry): ValidatableBbox {
+export function getBboxForGeometry(geometry: ValidatableGeometry): number[] {
     switch (geometry.type) {
         case "Point":
             return updateBboxForPosition([], geometry.coordinates);
@@ -108,11 +104,11 @@ export function getBboxForGeometry(geometry: ValidatableGeometry): ValidatableBb
     }
 }
 
-export function getBboxForGeometries(geometries: ValidatableGeometry[]): ValidatableBbox {
+export function getBboxForGeometries(geometries: ValidatableGeometry[]): number[] {
     return mergeBboxs(geometries.map(getBboxForGeometry));
 }
 
-export function bboxEquals(bbox1: ValidatableBbox, bbox2: ValidatableBbox): boolean {
+export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
     if (bbox1.length !== bbox2.length) {
         return false;
     }
@@ -122,10 +118,7 @@ export function bboxEquals(bbox1: ValidatableBbox, bbox2: ValidatableBbox): bool
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGridList(
-    currentBbox: ValidatableBbox,
-    positions?: GeoJSONPosition[][][] | null,
-): ValidatableBbox {
+function updateBboxForPositionGridList(currentBbox: number[], positions?: number[][][][] | null): number[] {
     positions?.forEach((positionGrid) => updateBboxForPositionGrid(currentBbox, positionGrid));
     return currentBbox;
 }
@@ -133,10 +126,7 @@ function updateBboxForPositionGridList(
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGrid(
-    currentBbox: ValidatableBbox,
-    positions?: GeoJSONPosition[][] | null,
-): ValidatableBbox {
+function updateBboxForPositionGrid(currentBbox: number[], positions?: number[][][] | null): number[] {
     positions?.forEach((positionList) => updateBboxForPositionList(currentBbox, positionList));
     return currentBbox;
 }
@@ -144,10 +134,7 @@ function updateBboxForPositionGrid(
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionList(
-    currentBbox: ValidatableBbox,
-    positions?: GeoJSONPosition[] | null,
-): ValidatableBbox {
+function updateBboxForPositionList(currentBbox: number[], positions?: number[][] | null): number[] {
     positions?.forEach((position) => updateBboxForPosition(currentBbox, position));
     return currentBbox;
 }
@@ -155,7 +142,7 @@ function updateBboxForPositionList(
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPosition(currentBbox: ValidatableBbox, position?: GeoJSONPosition | null): ValidatableBbox {
+function updateBboxForPosition(currentBbox: number[], position?: number[] | null): number[] {
     const dimension = position?.length ?? 0;
     position?.forEach((value, index) => {
         const iMin = currentBbox[index];
@@ -170,7 +157,7 @@ function updateBboxForPosition(currentBbox: ValidatableBbox, position?: GeoJSONP
     return currentBbox;
 }
 
-function mergeBboxs(bboxs: ValidatableBbox[]): ValidatableBbox {
+function mergeBboxs(bboxs: number[][]): number[] {
     const dimension = bboxs[0].length / 2;
     const mergedBbox = [];
     for (let i = 0; i < dimension; i++) {

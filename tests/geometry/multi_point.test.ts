@@ -5,7 +5,6 @@ import {
     geoJsonMultiPoint2DWithBbox,
     geoJsonMultiPoint3D,
     geoJsonMultiPoint3DWithBbox,
-    geoJsonMultiPoint6D,
 } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
 import {
@@ -17,6 +16,12 @@ import {
     GeoJSONMultiPointSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
+import { geoJsonPoint4D } from "./point.test";
+
+export const geoJsonMultiPoint4D = {
+    type: "MultiPoint",
+    coordinates: [geoJsonPoint4D.coordinates],
+};
 
 function passGeoJSONMultiPointTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema], value);
@@ -44,9 +49,6 @@ describe("GeoJSONMultiPoint", () => {
     it("allows a 3D multi-point", () => {
         passGeoJSON3DMultiPointTest(geoJsonMultiPoint3D);
     });
-    it("allows a 6D multi-point", () => {
-        passGeoJSONMultiPointTest(geoJsonMultiPoint6D);
-    });
     it("allows a 2D multi-point with a valid bbox", () => {
         passGeoJSON2DMultiPointTest(geoJsonMultiPoint2DWithBbox);
     });
@@ -65,6 +67,9 @@ describe("GeoJSONMultiPoint", () => {
 
     it("does not allow a 1D multi-point", () => {
         failGeoJSONMultiPointTest({ type: "MultiPoint", coordinates: [[0.0], [1.0]] });
+    });
+    it("does not allow a 4D multi-point", () => {
+        failGeoJSONMultiPointTest(geoJsonMultiPoint4D);
     });
     it("does not allow a multi-point without coordinates key", () => {
         failGeoJSONMultiPointTest({ type: "MultiPoint" });
@@ -148,8 +153,8 @@ describe("GeoJSONMultiPoint", () => {
         it("does not allow a 3D multi-point", () => {
             expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint3D)).toThrow(ZodError);
         });
-        it("does not allow a 6D multi-point", () => {
-            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint6D)).toThrow(ZodError);
+        it("does not allow a 4D multi-point", () => {
+            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(ZodError);
         });
     });
 
@@ -160,8 +165,8 @@ describe("GeoJSONMultiPoint", () => {
         it("does not allow a 2D multi-point", () => {
             expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint2D)).toThrow(ZodError);
         });
-        it("does not allow a 6D multi-point", () => {
-            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint6D)).toThrow(ZodError);
+        it("does not allow a 4D multi-point", () => {
+            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(ZodError);
         });
     });
 });
@@ -186,6 +191,8 @@ export const invalidGeoJsonMultiPoint: GeoJSONMultiPoint = {
     geometry: {},
     otherKey: "allowed",
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonMultiPointPositionsTooBig: GeoJSONMultiPoint = geoJsonMultiPoint4D;
 
 /**
  * Invalid 2D GeoJSON MultiPoint to test types

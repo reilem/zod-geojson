@@ -1,4 +1,3 @@
-import { GeoJSONPosition } from "../position";
 import { ValidatableCollection, ValidatableGeometry } from "./types";
 
 export const INVALID_DIMENSIONS_ISSUE = {
@@ -11,17 +10,17 @@ export const INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE = {
     message: "Invalid geometry collection dimensions. All geometries must have the same dimension.",
 };
 
-export function validDimensionsForPositionList({ coordinates }: { coordinates: GeoJSONPosition[] }): boolean {
+export function validDimensionsForPositionList({ coordinates }: { coordinates: number[][] }): boolean {
     const dimension = coordinates[0].length;
     return sameDimensionsForPositions(dimension)(coordinates);
 }
 
-export function validDimensionsForPositionGrid({ coordinates }: { coordinates: GeoJSONPosition[][] }): boolean {
+export function validDimensionsForPositionGrid({ coordinates }: { coordinates: number[][][] }): boolean {
     let dimension = coordinates[0][0].length;
     return sameDimensionsForPositionGrid(dimension)(coordinates);
 }
 
-export function validDimensionsForPositionGridList({ coordinates }: { coordinates: GeoJSONPosition[][][] }): boolean {
+export function validDimensionsForPositionGridList({ coordinates }: { coordinates: number[][][][] }): boolean {
     let dimension = coordinates[0][0][0].length;
     return sameDimensionsForPositionGrids(dimension)(coordinates);
 }
@@ -49,18 +48,18 @@ export function getDimensionForGeometry(geometry: ValidatableGeometry): number {
     }
 }
 
-function sameDimensionsForPosition(dimension: number): (position: GeoJSONPosition) => boolean {
+function sameDimensionsForPosition(dimension: number): (position: number[]) => boolean {
     return (position) => position.length === dimension;
 }
 
-function sameDimensionsForPositions(dimension: number): (positions: GeoJSONPosition[]) => boolean {
+function sameDimensionsForPositions(dimension: number): (positions: number[][]) => boolean {
     return (positions) => positions.every(sameDimensionsForPosition(dimension));
 }
 
-function sameDimensionsForPositionGrid(dimension: number): (positionGrid: GeoJSONPosition[][]) => boolean {
+function sameDimensionsForPositionGrid(dimension: number): (positionGrid: number[][][]) => boolean {
     return (positionGrid) => positionGrid.every(sameDimensionsForPositions(dimension));
 }
 
-function sameDimensionsForPositionGrids(dimension: number): (positionGrids: GeoJSONPosition[][][]) => boolean {
+function sameDimensionsForPositionGrids(dimension: number): (positionGrids: number[][][][]) => boolean {
     return (positionGrids) => positionGrids.every(sameDimensionsForPositionGrid(dimension));
 }
