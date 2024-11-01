@@ -1,5 +1,5 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
-// TODO: Add negative typing examples for all types (like in point tests)
+// TODO: Make compatible with @types/geojson
 // TODO: Make sure each exposed type & schema is tested
 
 export {
