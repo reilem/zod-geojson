@@ -1,11 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     geoJsonPoint2D,
     geoJsonPoint2DWithBbox,
     geoJsonPoint3D,
     geoJsonPoint3DWithBbox,
-    geoJsonPoint6D,
 } from "../../examples/geometry/point";
 import {
     GeoJSON2DPoint,
@@ -17,9 +17,10 @@ import {
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
-function passGeoJSONPointTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONPointSchema], value);
-}
+export const geoJsonPoint4D = {
+    ...geoJsonPoint2D,
+    coordinates: [1.0, 2.0, 3.0, 4.0],
+};
 
 function passGeoJSON2DPointTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONPointSchema, GeoJSON2DPointSchema], value);
@@ -40,9 +41,6 @@ describe("GeoJSONPoint", () => {
     it("allows a 3D point", () => {
         passGeoJSON3DPointTest(geoJsonPoint3D);
     });
-    it("allows a 6D point", () => {
-        passGeoJSONPointTest(geoJsonPoint6D);
-    });
     it("allows a 2D point with valid bbox", () => {
         passGeoJSON2DPointTest(geoJsonPoint2DWithBbox);
     });
@@ -59,6 +57,9 @@ describe("GeoJSONPoint", () => {
 
     it("does not allow a 1D point", () => {
         failGeoJSONPointTest({ type: "Point", coordinates: [1.0] });
+    });
+    it("does not allow a 4D point", () => {
+        failGeoJSONPointTest(geoJsonPoint4D);
     });
     it("does not allow a point with empty coordinates", () => {
         failGeoJSONPointTest({ type: "Point", coordinates: [] });
@@ -131,8 +132,8 @@ describe("GeoJSONPoint", () => {
         it("does not allow a 3D point", () => {
             expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
         });
-        it("does not allow a 6D point", () => {
-            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint6D)).toThrow(ZodError);
+        it("does not allow a 4D point", () => {
+            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint4D)).toThrow(ZodError);
         });
     });
 
@@ -143,8 +144,8 @@ describe("GeoJSONPoint", () => {
         it("does not allow a 2D point", () => {
             expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint2D)).toThrow(ZodError);
         });
-        it("does not allow a 6D point", () => {
-            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint6D)).toThrow(ZodError);
+        it("does not allow a 4D point", () => {
+            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint4D)).toThrow(ZodError);
         });
     });
 });
@@ -169,6 +170,8 @@ export const invalidGeoJsonPoint: GeoJSONPoint = {
     geometry: {},
     otherKey: "allowed",
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPointPositionsTooBig: GeoJSONPoint = geoJsonPoint4D;
 
 /**
  * Invalid 2D GeoJSON Points to test types
@@ -227,3 +230,12 @@ export const invalidGeoJsonPoint3DPositionTooBig: GeoJSON3DPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const point1: GeoJSONTypes.Point = geoJsonPoint2DWithBbox;
+export const point2: GeoJSONTypes.Point = geoJsonPoint3DWithBbox;
+export const point3: GeoJSONTypes.Point = geoJsonPoint2D;
+export const point4: GeoJSONTypes.Point = geoJsonPoint3D;
+export const point5: GeoJSONTypes.Point = geoJsonPoint3D as GeoJSONPoint;

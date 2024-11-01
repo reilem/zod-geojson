@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     multiGeoJsonGeometryCollection2D,
@@ -7,7 +8,6 @@ import {
     multiGeoJsonGeometryCollection3DWithBbox,
     singleGeoJsonGeometryCollection2D,
     singleGeoJsonGeometryCollection2DWithBbox,
-    singleGeoJsonGeometryCollection6D,
 } from "../../examples/geometry/geometry_collection";
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { geoJsonMultiPoint2D } from "../../examples/geometry/multi_point";
@@ -21,9 +21,18 @@ import {
     GeoJSONGeometryCollectionSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
+import { geoJsonPoint4D } from "./point.test";
+
+export const singleGeoJsonGeometryCollection4D = {
+    type: "GeometryCollection",
+    geometries: [geoJsonPoint4D],
+};
 
 function passGeoJSONGeometryCollectionTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONGeometryCollectionSchema, GeoJSON2DGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DGeometryCollectionTest(value: unknown): void {
@@ -51,9 +60,7 @@ describe("GeoJSONGeometryCollection", () => {
     it("allows a geometry collection with multiple 3D geometries", () => {
         passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3D);
     });
-    it("allows a geometry collection with one 6D geometry", () => {
-        passGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection6D);
-    });
+
     it("allows a geometry collection with one 2D geometry and valid bbox", () => {
         passGeoJSON2DGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBbox);
     });
@@ -64,7 +71,7 @@ describe("GeoJSONGeometryCollection", () => {
         passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
     });
     it("allows a geometry collection and preserves extra keys", () => {
-        passGeoJSONGeometryCollectionTest({
+        passGeoJSON2DGeometryCollectionTest({
             ...singleGeoJsonGeometryCollection2D,
             extraKey: "extra",
         });
@@ -78,6 +85,9 @@ describe("GeoJSONGeometryCollection", () => {
             type: "GeometryCollection",
             geometries: [{ type: "Point", coordinates: [0.0] }],
         });
+    });
+    it("does not allow a geometry collection with a 4D geometry", () => {
+        failGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection4D);
     });
     it("does not allow a geometry collection without geometries key", () => {
         failGeoJSONGeometryCollectionTest({ type: "GeometryCollection" });
@@ -184,7 +194,7 @@ describe("GeoJSONGeometryCollection", () => {
             expect(() => GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toThrow(ZodError);
         });
         it("does not allow a 6D geometry collection", () => {
-            expect(() => GeoJSON2DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection6D)).toThrow(ZodError);
+            expect(() => GeoJSON2DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
         });
     });
 
@@ -198,7 +208,7 @@ describe("GeoJSONGeometryCollection", () => {
             expect(() => GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toThrow(ZodError);
         });
         it("does not allow a 6D geometry collection", () => {
-            expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection6D)).toThrow(ZodError);
+            expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
         });
     });
 });
@@ -229,6 +239,9 @@ export const invalidGeoJsonGeometryCollection: GeoJSONGeometryCollection = {
     geometry: {},
     otherKey: "allowed",
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonGeometryCollectionPositionsTooBig: GeoJSONGeometryCollection =
+    singleGeoJsonGeometryCollection4D;
 
 /**
  * Invalid 2D GeoJSON GeometryCollection to test types
@@ -311,3 +324,12 @@ export const invalidGeoJsonGeometryCollection3DPositionTooBig: GeoJSON3DGeometry
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 0.0, 0.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const geometryCollection1: GeoJSONTypes.GeometryCollection = multiGeoJsonGeometryCollection2D;
+export const geometryCollection2: GeoJSONTypes.GeometryCollection = multiGeoJsonGeometryCollection3D;
+export const geometryCollection3: GeoJSONTypes.GeometryCollection = singleGeoJsonGeometryCollection2DWithBbox;
+export const geometryCollection4: GeoJSONTypes.GeometryCollection =
+    singleGeoJsonGeometryCollection2DWithBbox as GeoJSONGeometryCollection;

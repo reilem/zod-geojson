@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     GeoJSON2DPosition,
@@ -13,7 +14,7 @@ const position2D: GeoJSONPosition = [0, 0];
 
 const position3D: GeoJSONPosition = [1, 2, 3];
 
-const position4D: GeoJSONPosition = [1, 2, 3, 4];
+const position4D = [1, 2, 3, 4];
 
 describe("GeoJSONPosition", () => {
     it("allows 2D positions", () => {
@@ -22,12 +23,12 @@ describe("GeoJSONPosition", () => {
     it("allows 3D positions", () => {
         expect(GeoJSONPositionSchema.parse(position3D)).toEqual(position3D);
     });
-    it("allows unknown 4D positions", () => {
-        expect(GeoJSONPositionSchema.parse(position4D)).toEqual(position4D);
-    });
 
     it("does not allow 1D positions", () => {
         expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
+    });
+    it("does not allow 4D positions", () => {
+        expect(() => GeoJSONPositionSchema.parse(position4D)).toThrow(ZodError);
     });
 
     it("does not allow empty positions", () => {
@@ -63,7 +64,9 @@ describe("GeoJSONPosition", () => {
  * Invalid GeoJSON position to test types
  */
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPosition: GeoJSONPosition = [1];
+export const invalidGeoJsonPositionTooSmall: GeoJSONPosition = [1];
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPositionTooBig: GeoJSONPosition = [1, 2, 3, 4];
 
 /**
  * Invalid 2D GeoJSON positions to test types
@@ -80,3 +83,10 @@ export const invalidGeoJsonPosition2DTooSmall: GeoJSON2DPosition = [1];
 export const invalidGeoJsonPosition3DTooBig: GeoJSON3DPosition = [1, 2, 3, 4];
 // @ts-expect-error -- THIS SHOULD FAIL
 export const invalidGeoJsonPosition3DTooSmall: GeoJSON3DPosition = [1, 2];
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const position1: GeoJSONTypes.Position = position2D;
+export const position2: GeoJSONTypes.Position = position3D;
+export const position3: GeoJSONTypes.Position = position3D as GeoJSONPosition;

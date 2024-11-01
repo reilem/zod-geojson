@@ -1,11 +1,11 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithHole,
     geoJsonPolygon2DWithHoleAndBbox,
     geoJsonPolygon3D,
-    geoJsonPolygon4D,
 } from "../../examples/geometry/polygon";
 import {
     GeoJSON2DPolygon,
@@ -17,8 +17,21 @@ import {
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
+export const geoJsonPolygon4D = {
+    type: "Polygon",
+    coordinates: [
+        [
+            [0.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [1.0, 1.0, 2.0, 0.0],
+            [0.0, 2.0, 2.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+        ],
+    ],
+};
+
 function passGeoJSONPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema], value);
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON2DPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
 
 function passGeoJSON2DPolygonTest(value: unknown): void {
@@ -40,9 +53,6 @@ describe("GeoJSONPolygon", () => {
     it("allows a 3D polygon", () => {
         passGeoJSON3DPolygonTest(geoJsonPolygon3D);
     });
-    it("allows a 4D polygon", () => {
-        passGeoJSONPolygonTest(geoJsonPolygon4D);
-    });
     it("allows a 2D polygon with a hole", () => {
         passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHole);
     });
@@ -62,7 +72,7 @@ describe("GeoJSONPolygon", () => {
         passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHoleAndBbox);
     });
     it("allows a polygon and preserves extra keys", () => {
-        passGeoJSONPolygonTest({
+        passGeoJSON2DPolygonTest({
             ...geoJsonPolygon2D,
             extraKey: "extra",
         });
@@ -76,6 +86,9 @@ describe("GeoJSONPolygon", () => {
 
     it("does not allow a 1D polygon", () => {
         failGeoJSONPolygonTest({ type: "Polygon", coordinates: [[[0.0], [1.0], [0.0], [0.0]]] });
+    });
+    it("does not allow a 4D polygon", () => {
+        failGeoJSONPolygonTest(geoJsonPolygon4D);
     });
     it("does not allow a polygon without coordinates key", () => {
         failGeoJSONPolygonTest({ type: "Polygon" });
@@ -246,6 +259,8 @@ export const invalidGeoJsonPolygonPositionsTooSmall: GeoJSONPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0, 0.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPolygonPositionsTooBig: GeoJSONPolygon = geoJsonPolygon4D;
 
 /**
  * Invalid 2D GeoJSON Polygon to test types
@@ -362,3 +377,12 @@ export const invalidGeoJsonPolygon3DPositionsTooBig: GeoJSON3DPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0, 0.0, 0.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const polygon1: GeoJSONTypes.Polygon = geoJsonPolygon2D;
+export const polygon2: GeoJSONTypes.Polygon = geoJsonPolygon3D;
+export const polygon3: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHole;
+export const polygon4: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox;
+export const polygon5: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox as GeoJSONPolygon;

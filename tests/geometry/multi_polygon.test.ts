@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import {
     multiGeoJsonMultiPolygon2D,
@@ -7,7 +8,6 @@ import {
     singleGeoJsonMultiPolygon2DWithBbox,
     singleGeoJsonMultiPolygon3D,
     singleGeoJsonMultiPolygon3DWithBbox,
-    singleGeoJsonMultiPolygon4D,
 } from "../../examples/geometry/multi_polygon";
 import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
 import {
@@ -19,9 +19,18 @@ import {
     GeoJSONMultiPolygonSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
+import { geoJsonPolygon4D } from "./polygon.test";
+
+export const singleGeoJsonMultiPolygon4D = {
+    type: "MultiPolygon",
+    coordinates: [geoJsonPolygon4D.coordinates],
+};
 
 function passGeoJSONMultiPolygonTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiPolygonSchema, GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DMultiPolygonTest(value: unknown): void {
@@ -58,9 +67,6 @@ describe("GeoJSONMultiPolygon", () => {
     it("allows a 3D multi-polygon with one polygon and bbox", () => {
         passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBbox);
     });
-    it("allows a 4D multi-polygon", () => {
-        passGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon4D);
-    });
     it("allows a multi-polygon and preserves extra keys", () => {
         passGeoJSON2DMultiPolygonTest({
             ...singleGeoJsonMultiPolygon2D,
@@ -73,6 +79,9 @@ describe("GeoJSONMultiPolygon", () => {
 
     it("does not allow a 1D multi-polygon", () => {
         failGeoJSONMultiPolygonTest({ type: "MultiPolygon", coordinates: [[[[0.0], [1.0], [0.0], [0.0]]]] });
+    });
+    it("does not allow a 4D multi-polygon", () => {
+        failGeoJSONMultiPolygonTest(singleGeoJsonMultiPolygon4D);
     });
     it("does not allow a multi-polygon without coordinates key", () => {
         failGeoJSONMultiPolygonTest({ type: "MultiPolygon" });
@@ -255,6 +264,8 @@ export const invalidGeoJsonMultiPolygonPositionsTooSmall: GeoJSONMultiPolygon = 
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0, 0.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonMultiPolygonPositionsTooBig: GeoJSONMultiPolygon = singleGeoJsonMultiPolygon4D;
 
 /**
  * Invalid 2D GeoJSON MultiPolygon to test types
@@ -379,3 +390,10 @@ export const invalidGeoJsonMultiPolygon3DPositionsTooBig: GeoJSON3DMultiPolygon 
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0, 0.0, 0.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const multiPolygon1: GeoJSONTypes.MultiPolygon = multiGeoJsonMultiPolygon2D;
+export const multiPolygon2: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D;
+export const multiPolygon3: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D as GeoJSONMultiPolygon;

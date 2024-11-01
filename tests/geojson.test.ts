@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
-import { geoJsonFeaturePolygon2D } from "../examples/feature";
+import { geoJsonFeatureGeometryCollection3D, geoJsonFeaturePolygon2D } from "../examples/feature";
 import { multiGeoJsonFeatureCollection2D } from "../examples/feature_collection";
 import { geoJsonPoint3D } from "../examples/geometry/point";
 import {
@@ -14,6 +15,9 @@ import {
     GeoJSONGeometry,
     GeoJSONSchema,
 } from "../src";
+import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
+import { singleGeoJsonGeometryCollection4D } from "./geometry/geometry_collection.test";
+import { geoJsonPoint4D } from "./geometry/point.test";
 
 describe("GeoJSONSchema", () => {
     it("allows a basic geometry", () => {
@@ -27,7 +31,7 @@ describe("GeoJSONSchema", () => {
     });
 
     it("does not allow a geojson with invalid type", () => {
-        expect(() => GeoJSONSchema.parse({ type: "SkippityBoop" })).toThrow(ZodError);
+        expect(() => GeoJSONSchema.parse({ type: "Foo" })).toThrow(ZodError);
     });
 
     describe("2D", () => {
@@ -37,6 +41,9 @@ describe("GeoJSONSchema", () => {
         it("does not allow a 3D geojson", () => {
             expect(() => GeoJSON2DSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D geojson", () => {
+            expect(() => GeoJSON2DSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -45,6 +52,9 @@ describe("GeoJSONSchema", () => {
         });
         it("does not allow a 2D geojson", () => {
             expect(() => GeoJSON3DSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D geojson", () => {
+            expect(() => GeoJSON3DSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
         });
     });
 });
@@ -142,6 +152,8 @@ export const invalidGeoJsonFeatureCollection: GeoJSON = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonPositionsTooBig: GeoJSON = geoJsonPoint4D;
 
 /**
  * Invalid 2D GeoJSON to test types
@@ -332,3 +344,14 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
     // @ts-expect-error -- THIS SHOULD FAIL
     geometry: {},
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonFeaturePolygon2D;
+// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
+export const geoJson3: GeoJSONTypes.GeoJSON = geoJsonFeatureGeometryCollection3D;

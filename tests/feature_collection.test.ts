@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
@@ -15,34 +16,62 @@ import {
     GeoJSONFeatureCollection,
     GeoJSONFeatureCollectionSchema,
 } from "../src";
+import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
+import { geoJsonFeaturePoint4D } from "./feature.test";
+
+export const singleGeoJsonFeatureCollection4D = {
+    type: "FeatureCollection",
+    features: [geoJsonFeaturePoint4D],
+};
 
 function passGeoJSONFeatureCollectionSchemaTest(object: unknown) {
-    expect(GeoJSONFeatureCollectionSchema.parse(object)).toEqual(object);
+    passGeoJSONSchemaTest(
+        [GeoJSONFeatureCollectionSchema, GeoJSON2DFeatureCollectionSchema, GeoJSON3DFeatureCollectionSchema],
+        object,
+    );
 }
+
+function passGeoJSON2DFeatureCollectionSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureCollectionSchema, GeoJSON2DFeatureCollectionSchema], object);
+}
+
+function passGeoJSON3DFeatureCollectionSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureCollectionSchema, GeoJSON3DFeatureCollectionSchema], object);
+}
+
 function failGeoJSONFeatureCollectionSchemaTest(object: unknown) {
-    expect(() => GeoJSONFeatureCollectionSchema.parse(object)).toThrow(ZodError);
+    failGeoJSONSchemaTest(
+        [GeoJSONFeatureCollectionSchema, GeoJSON2DFeatureCollectionSchema, GeoJSON3DFeatureCollectionSchema],
+        object,
+    );
 }
 
 describe("GeoJSONFeatureCollection", () => {
     it("allows a feature collection with one feature", () => {
-        passGeoJSONFeatureCollectionSchemaTest(singleGeoJsonFeatureCollection2D);
+        passGeoJSON3DFeatureCollectionSchemaTest(singleGeoJsonFeatureCollection3D);
     });
     it("allows a feature collection with multiple features", () => {
-        passGeoJSONFeatureCollectionSchemaTest(multiGeoJsonFeatureCollection2D);
+        passGeoJSON2DFeatureCollectionSchemaTest(multiGeoJsonFeatureCollection2D);
     });
     it("allows a feature collection and preserves extra keys", () => {
-        passGeoJSONFeatureCollectionSchemaTest({
+        passGeoJSON2DFeatureCollectionSchemaTest({
             ...singleGeoJsonFeatureCollection2D,
             color: "#00FF00",
         });
     });
     it("allows a feature collection with multiple features and bbox", () => {
-        passGeoJSONFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox2D);
+        passGeoJSON2DFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox2D);
     });
     it("allows a feature collection with empty features array", () => {
         passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection2D, features: [] });
     });
 
+    it("does not allow a feature collection with a 1D feature", () => {
+        failGeoJSONFeatureCollectionSchemaTest({});
+    });
+    it("does not allow a feature collection with a 4D feature", () => {
+        failGeoJSONFeatureCollectionSchemaTest(singleGeoJsonFeatureCollection4D);
+    });
     it("does not allow a feature collection without features key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ type: "FeatureCollection" });
     });
@@ -92,6 +121,9 @@ describe("GeoJSONFeatureCollection", () => {
         it("does not allow a 3D feature collection", () => {
             expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(ZodError);
         });
+        it("does not allow a 4D feature collection", () => {
+            expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -102,6 +134,9 @@ describe("GeoJSONFeatureCollection", () => {
         });
         it("does not allow a 2D feature collection", () => {
             expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection2D)).toThrow(ZodError);
+        });
+        it("does not allow a 4D feature collection", () => {
+            expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
         });
     });
 });
@@ -152,6 +187,9 @@ export const invalidGeoJsonFeatureCollection: GeoJSONFeatureCollection = {
     properties: {},
     otherKey: "allowed",
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonFeatureCollectionPositionsTooBig: GeoJSONFeatureCollection =
+    singleGeoJsonFeatureCollection4D;
 
 /**
  * Invalid 2D GeoJSON Feature Collection to test types
@@ -278,3 +316,14 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
         },
     ],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
+export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    singleGeoJsonFeatureCollection3D as GeoJSONFeatureCollection;
+export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    singleGeoJsonFeatureCollection3D;
+export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+    multiGeoJsonFeatureCollectionWithBbox2D;

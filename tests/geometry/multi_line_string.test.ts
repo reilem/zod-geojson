@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
@@ -8,7 +9,6 @@ import {
     singleGeoJsonMultiLineString2DWithBbox,
     singleGeoJsonMultiLineString3D,
     singleGeoJsonMultiLineString3DWithBbox,
-    singleGeoJsonMultiLineString5D,
 } from "../../examples/geometry/multi_line_string";
 import {
     GeoJSON2DMultiLineString,
@@ -19,9 +19,18 @@ import {
     GeoJSONMultiLineStringSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
+import { geoJsonLineString4D } from "./line_string.test";
+
+export const singleGeoJsonMultiLineString4D = {
+    type: "MultiLineString",
+    coordinates: [geoJsonLineString4D.coordinates],
+};
 
 function passGeoJSONMultiLineStringTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema], value);
+    passGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiLineStringSchema, GeoJSON2DMultiLineStringSchema, GeoJSON3DMultiLineStringSchema],
+        value,
+    );
 }
 
 function passGeoJSON2DMultiLineStringTest(value: unknown): void {
@@ -49,9 +58,6 @@ describe("GeoJSONMultiLineString", () => {
     it("allows a 3D multi-line string", () => {
         passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3D);
     });
-    it("allows a 5D multi-line string", () => {
-        passGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString5D);
-    });
     it("allows a 2D multi-line string with one line and bbox", () => {
         passGeoJSON2DMultiLineStringTest(singleGeoJsonMultiLineString2DWithBbox);
     });
@@ -62,7 +68,7 @@ describe("GeoJSONMultiLineString", () => {
         passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3DWithBbox);
     });
     it("allows a multi-line string and preserves extra keys", () => {
-        passGeoJSONMultiLineStringTest({
+        passGeoJSON2DMultiLineStringTest({
             ...singleGeoJsonMultiLineString2D,
             extraKey: "extra",
         });
@@ -73,6 +79,9 @@ describe("GeoJSONMultiLineString", () => {
 
     it("does not allow a 1D multi-line string", () => {
         failGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [[[0.0], [1.0]]] });
+    });
+    it("does not allow a 4D multi-line string", () => {
+        failGeoJSONMultiLineStringTest(singleGeoJsonMultiLineString4D);
     });
     it("does not allow a multi-line string without coordinates key", () => {
         failGeoJSONMultiLineStringTest({ type: "MultiLineString" });
@@ -166,8 +175,8 @@ describe("GeoJSONMultiLineString", () => {
         it("does not allow a 3D multi-line string", () => {
             expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toThrow(ZodError);
         });
-        it("does not allow a 5D multi-line string", () => {
-            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString5D)).toThrow(ZodError);
+        it("does not allow a 4D multi-line string", () => {
+            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(ZodError);
         });
     });
 
@@ -180,8 +189,8 @@ describe("GeoJSONMultiLineString", () => {
         it("does not allow a 2D multi-line string", () => {
             expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toThrow(ZodError);
         });
-        it("does not allow a 5D multi-line string", () => {
-            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString5D)).toThrow(ZodError);
+        it("does not allow a 4D multi-line string", () => {
+            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(ZodError);
         });
     });
 });
@@ -220,6 +229,8 @@ export const invalidGeoJsonMultiLineStringPositionTooSmall: GeoJSONMultiLineStri
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 0.0],
 };
+// @ts-expect-error -- THIS SHOULD FAIL
+export const invalidGeoJsonMultiLineStringPositionTooBig: GeoJSONMultiLineString = singleGeoJsonMultiLineString4D;
 
 /**
  * Invalid 2D GeoJSON MultiLineString to test types
@@ -309,3 +320,12 @@ export const invalidGeoJsonMultiLineString3DPositionTooBig: GeoJSON3DMultiLineSt
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0, 3.0],
 };
+
+/**
+ * Test that types match with @types/geojson
+ */
+export const multiLineString1: GeoJSONTypes.MultiLineString = multiGeoJsonMultiLineString2D;
+export const multiLineString2: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString3D;
+export const multiLineString3: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString2DWithBbox;
+export const multiLineString4: GeoJSONTypes.MultiLineString =
+    singleGeoJsonMultiLineString2DWithBbox as GeoJSONMultiLineString;

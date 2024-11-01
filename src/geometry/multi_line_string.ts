@@ -12,19 +12,21 @@ type GeoJSONMultiLineStringGenericSchemaInnerType<P extends GeoJSONPosition> = {
 };
 
 export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONMultiLineStringGenericSchemaInnerType<P>
+    GeoJSONMultiLineStringGenericSchemaInnerType<P>,
+    P
 >;
 
 export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
 ): GeoJSONMultiLineStringGenericSchemaType<P> =>
-    GeoJSONGeometryBaseSchema.extend({
-        type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiLineString),
-        // We allow an empty coordinates array
-        // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
-        //   arrays as null objects. (RFC 7946, section 3.1)
-        coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates),
-    })
+    GeoJSONGeometryBaseSchema(positionSchema)
+        .extend({
+            type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiLineString),
+            // We allow an empty coordinates array
+            // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
+            //   arrays as null objects. (RFC 7946, section 3.1)
+            coordinates: z.array(GeoJSONLineStringGenericSchema(positionSchema).innerType().shape.coordinates),
+        })
         .passthrough()
         .superRefine((val, ctx) => {
             // Skip remaining checks if coordinates array is empty

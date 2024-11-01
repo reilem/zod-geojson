@@ -1,6 +1,4 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
-// TODO: Make compatible with @types/geojson
-// TODO: Make sure each exposed type & schema is tested
 
 export {
     GeoJSONGeometryGenericSchema,
@@ -93,7 +91,14 @@ export {
 
 export { GeoJSONGeometryTypeSchema, type GeoJSONGeometryEnumType, type GeoJSONGeometryType } from "./geometry/type";
 
-export { GeoJSONBboxSchema, type GeoJSONBbox } from "./bbox";
+export {
+    GeoJSONBboxSchema,
+    type GeoJSONBbox,
+    GeoJSON2DBboxSchema,
+    type GeoJSON2DBbox,
+    GeoJSON3DBboxSchema,
+    type GeoJSON3DBbox,
+} from "./bbox";
 
 export {
     GeoJSONFeatureGenericSchema,
