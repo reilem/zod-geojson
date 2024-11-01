@@ -343,7 +343,7 @@ export const invalidGeoJsonFeature3DPositionTooBig: GeoJSON3DFeature = {
 /**
  * Test that types match with @types/geojson
  */
-// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types
+// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
 export const feature1: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D as GeoJSONFeature;
 export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D;
 export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePolygon3DWithBbox;
