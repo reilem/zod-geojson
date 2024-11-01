@@ -1,17 +1,20 @@
+import { describe, it } from "@jest/globals";
 import { singleGeoJsonGeometryCollection2D } from "../../examples/geometry/geometry_collection";
 import { geoJsonPoint2D } from "../../examples/geometry/point";
-import { GeoJSON2DGeometry, GeoJSON3DGeometry, GeoJSONGeometry, GeoJSONGeometrySchema } from "../../src";
-import { describe, expect, it } from "@jest/globals";
+import { GeoJSON2DGeometry, GeoJSON3DGeometry, GeoJSONGeometry } from "../../src";
+import { passGeoJSONGeometrySchemaTest } from "./_helpers";
+
+function passGeoJSONGeometryTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([], value);
+}
 
 describe("GeoJSONGeometry", () => {
     it("allows a valid simple geometry", () => {
-        expect(GeoJSONGeometrySchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
+        passGeoJSONGeometryTest(geoJsonPoint2D);
     });
 
     it("allows a valid geometry collection", () => {
-        expect(GeoJSONGeometrySchema.parse(singleGeoJsonGeometryCollection2D)).toEqual(
-            singleGeoJsonGeometryCollection2D,
-        );
+        passGeoJSONGeometryTest(singleGeoJsonGeometryCollection2D);
     });
 });
 

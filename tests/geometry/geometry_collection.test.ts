@@ -7,6 +7,7 @@ import {
     multiGeoJsonGeometryCollection3DWithBbox,
     singleGeoJsonGeometryCollection2D,
     singleGeoJsonGeometryCollection2DWithBbox,
+    singleGeoJsonGeometryCollection6D,
 } from "../../examples/geometry/geometry_collection";
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { geoJsonMultiPoint2D } from "../../examples/geometry/multi_point";
@@ -22,31 +23,45 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONGeometryCollectionTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONGeometryCollectionSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema], value);
+}
+
+function passGeoJSON2DGeometryCollectionTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema, GeoJSON2DGeometryCollectionSchema], value);
+}
+
+function passGeoJSON3DGeometryCollectionTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema], value);
 }
 
 function failGeoJSONGeometryCollectionTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONGeometryCollectionSchema, value);
+    failGeoJSONGeometrySchemaTest(
+        [GeoJSONGeometryCollectionSchema, GeoJSON2DGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema],
+        value,
+    );
 }
 
 describe("GeoJSONGeometryCollection", () => {
     it("allows a geometry collection with one 2D geometry", () => {
-        passGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection2D);
+        passGeoJSON2DGeometryCollectionTest(singleGeoJsonGeometryCollection2D);
     });
     it("allows a geometry collection with multiple 2D geometries", () => {
-        passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection2D);
+        passGeoJSON2DGeometryCollectionTest(multiGeoJsonGeometryCollection2D);
     });
     it("allows a geometry collection with multiple 3D geometries", () => {
-        passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection3D);
+        passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3D);
+    });
+    it("allows a geometry collection with one 6D geometry", () => {
+        passGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection6D);
     });
     it("allows a geometry collection with one 2D geometry and valid bbox", () => {
-        passGeoJSONGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBbox);
+        passGeoJSON2DGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBbox);
     });
     it("allows a geometry collection with multiple 2D geometries and valid bbox", () => {
-        passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection2DWithBbox);
+        passGeoJSON2DGeometryCollectionTest(multiGeoJsonGeometryCollection2DWithBbox);
     });
     it("allows a geometry collection with multiple 3D geometries and valid bbox", () => {
-        passGeoJSONGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
+        passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
     });
     it("allows a geometry collection and preserves extra keys", () => {
         passGeoJSONGeometryCollectionTest({
@@ -168,6 +183,9 @@ describe("GeoJSONGeometryCollection", () => {
         it("does not allow a 3D geometry collection", () => {
             expect(() => GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toThrow(ZodError);
         });
+        it("does not allow a 6D geometry collection", () => {
+            expect(() => GeoJSON2DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection6D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -178,6 +196,9 @@ describe("GeoJSONGeometryCollection", () => {
         });
         it("does not allow a 2D geometry collection", () => {
             expect(() => GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toThrow(ZodError);
+        });
+        it("does not allow a 6D geometry collection", () => {
+            expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection6D)).toThrow(ZodError);
         });
     });
 });

@@ -5,6 +5,7 @@ import {
     geoJsonPoint2DWithBbox,
     geoJsonPoint3D,
     geoJsonPoint3DWithBbox,
+    geoJsonPoint6D,
 } from "../../examples/geometry/point";
 import {
     GeoJSON2DPoint,
@@ -17,38 +18,43 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONPointTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONPointSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONPointSchema], value);
+}
+
+function passGeoJSON2DPointTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONPointSchema, GeoJSON2DPointSchema], value);
+}
+
+function passGeoJSON3DPointTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONPointSchema, GeoJSON3DPointSchema], value);
 }
 
 function failGeoJSONPointTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONPointSchema, value);
+    failGeoJSONGeometrySchemaTest([GeoJSONPointSchema, GeoJSON2DPointSchema, GeoJSON3DPointSchema], value);
 }
 
 describe("GeoJSONPoint", () => {
-    it("allows a 2d point", () => {
-        passGeoJSONPointTest(geoJsonPoint2D);
+    it("allows a 2D point", () => {
+        passGeoJSON2DPointTest(geoJsonPoint2D);
     });
     it("allows a 3D point", () => {
-        passGeoJSONPointTest(geoJsonPoint3D);
+        passGeoJSON3DPointTest(geoJsonPoint3D);
     });
     it("allows a 6D point", () => {
-        passGeoJSONPointTest({
-            ...geoJsonPoint2D,
-            coordinates: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-        });
+        passGeoJSONPointTest(geoJsonPoint6D);
     });
     it("allows a 2D point with valid bbox", () => {
-        passGeoJSONPointTest(geoJsonPoint2DWithBbox);
+        passGeoJSON2DPointTest(geoJsonPoint2DWithBbox);
     });
     it("allows a 3D point with valid bbox", () => {
-        passGeoJSONPointTest(geoJsonPoint3DWithBbox);
+        passGeoJSON3DPointTest(geoJsonPoint3DWithBbox);
     });
     it("allows a point and preserves extra keys", () => {
         const geoJsonPointWithExtraKeys = {
             ...geoJsonPoint2D,
             extraKey: "extra",
         };
-        passGeoJSONPointTest(geoJsonPointWithExtraKeys);
+        passGeoJSON2DPointTest(geoJsonPointWithExtraKeys);
     });
 
     it("does not allow a 1D point", () => {
@@ -125,6 +131,9 @@ describe("GeoJSONPoint", () => {
         it("does not allow a 3D point", () => {
             expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
         });
+        it("does not allow a 6D point", () => {
+            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint6D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -133,6 +142,9 @@ describe("GeoJSONPoint", () => {
         });
         it("does not allow a 2D point", () => {
             expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint2D)).toThrow(ZodError);
+        });
+        it("does not allow a 6D point", () => {
+            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint6D)).toThrow(ZodError);
         });
     });
 });

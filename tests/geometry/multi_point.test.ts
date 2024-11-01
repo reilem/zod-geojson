@@ -5,6 +5,7 @@ import {
     geoJsonMultiPoint2DWithBbox,
     geoJsonMultiPoint3D,
     geoJsonMultiPoint3DWithBbox,
+    geoJsonMultiPoint6D,
 } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
 import {
@@ -18,25 +19,39 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 function passGeoJSONMultiPointTest(value: unknown): void {
-    passGeoJSONGeometrySchemaTest(GeoJSONMultiPointSchema, value);
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema], value);
+}
+
+function passGeoJSON2DMultiPointTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema, GeoJSON2DMultiPointSchema], value);
+}
+
+function passGeoJSON3DMultiPointTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema, GeoJSON3DMultiPointSchema], value);
 }
 
 function failGeoJSONMultiPointTest(value: unknown): void {
-    failGeoJSONGeometrySchemaTest(GeoJSONMultiPointSchema, value);
+    failGeoJSONGeometrySchemaTest(
+        [GeoJSONMultiPointSchema, GeoJSON2DMultiPointSchema, GeoJSON3DMultiPointSchema],
+        value,
+    );
 }
 
 describe("GeoJSONMultiPoint", () => {
     it("allows a 2D multi-point", () => {
-        passGeoJSONMultiPointTest(geoJsonMultiPoint2D);
+        passGeoJSON2DMultiPointTest(geoJsonMultiPoint2D);
     });
     it("allows a 3D multi-point", () => {
-        passGeoJSONMultiPointTest(geoJsonMultiPoint3D);
+        passGeoJSON3DMultiPointTest(geoJsonMultiPoint3D);
+    });
+    it("allows a 6D multi-point", () => {
+        passGeoJSONMultiPointTest(geoJsonMultiPoint6D);
     });
     it("allows a 2D multi-point with a valid bbox", () => {
-        passGeoJSONMultiPointTest(geoJsonMultiPoint2DWithBbox);
+        passGeoJSON2DMultiPointTest(geoJsonMultiPoint2DWithBbox);
     });
     it("allows a 3D multi-point with valid bbox", () => {
-        passGeoJSONMultiPointTest(geoJsonMultiPoint3DWithBbox);
+        passGeoJSON3DMultiPointTest(geoJsonMultiPoint3DWithBbox);
     });
     it("allows a multi point and preserves extra keys", () => {
         passGeoJSONMultiPointTest({
@@ -133,6 +148,9 @@ describe("GeoJSONMultiPoint", () => {
         it("does not allow a 3D multi-point", () => {
             expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint3D)).toThrow(ZodError);
         });
+        it("does not allow a 6D multi-point", () => {
+            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint6D)).toThrow(ZodError);
+        });
     });
 
     describe("3D", () => {
@@ -141,6 +159,9 @@ describe("GeoJSONMultiPoint", () => {
         });
         it("does not allow a 2D multi-point", () => {
             expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint2D)).toThrow(ZodError);
+        });
+        it("does not allow a 6D multi-point", () => {
+            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint6D)).toThrow(ZodError);
         });
     });
 });

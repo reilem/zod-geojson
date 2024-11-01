@@ -1,4 +1,4 @@
-import { GeoJSON2DPolygon, GeoJSON3DPolygon } from "../../src";
+import { GeoJSON2DPolygon, GeoJSON3DPolygon, GeoJSONPolygon } from "../../src";
 
 export const geoJsonPolygon2D: GeoJSON2DPolygon = {
     type: "Polygon",
@@ -59,4 +59,17 @@ export const geoJsonPolygon3DWithBbox: GeoJSON3DPolygon = {
 export const geoJsonPolygon2DWithHoleAndBbox: GeoJSON2DPolygon = {
     ...geoJsonPolygon2DWithHole,
     bbox: [0.0, 0.0, 10.0, 10.0],
+};
+
+export const geoJsonPolygon4D: GeoJSONPolygon = {
+    type: "Polygon",
+    coordinates: [
+        [
+            [0.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [1.0, 1.0, 2.0, 0.0],
+            [0.0, 2.0, 2.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+        ],
+    ],
 };
