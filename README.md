@@ -1,9 +1,14 @@
 # Zod GeoJSON
 
-This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library.
+<a href="https://github.com/reilem/zod-geojson/actions/workflows/checks.yaml"><img src="https://github.com/reilem/zod-geojson/actions/workflows/checks.yaml/badge.svg?branch=main"/></a>
+<a href="https://www.npmjs.com/package/zod-geojson"><img src="https://img.shields.io/npm/dm/zod-geojson" alt="License"/></a>
+<a href="https://github.com/reilem/zod-geojson/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/zod-geojson" alt="License"/></a>
+<a href="https://github.com/reilem/zod-geojson"><img src="https://img.shields.io/github/stars/reilem/zod-geojson" alt="License"/></a>
 
-The schemas are based on the GeoJSON specification found in this RFC: https://datatracker.ietf.org/doc/html/rfc7946. The
-schemas do not only validate the basic structure of the GeoJSON objects but also the validity of the geometries and
+This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library by [@colinhacks](https://x.com/colinhacks). Now compatible with Zod v4!
+
+The schemas are based on the GeoJSON specification [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946). The
+schemas validate the structure of the GeoJSON objects, types, and the validity of the dimensions, geometries and
 bounding boxes.
 
 ## Getting Started
