@@ -21,10 +21,10 @@ export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>
         .extend({
             type: z.literal(GeoJSONTypeSchema.enum.FeatureCollection),
             features: z.array(GeoJSONFeatureGenericSchema(positionSchema)),
-            coordinates: z.never({ message: "GeoJSON feature collection cannot have a 'coordinates' key" }).optional(),
-            geometry: z.never({ message: "GeoJSON feature collection cannot have a 'geometry' key" }).optional(),
-            properties: z.never({ message: "GeoJSON feature collection cannot have a 'properties' key" }).optional(),
-            geometries: z.never({ message: "GeoJSON feature collection cannot have a 'geometries' key" }).optional(),
+            coordinates: z.never({ error: "GeoJSON feature collection cannot have a 'coordinates' key" }).optional(),
+            geometry: z.never({ error: "GeoJSON feature collection cannot have a 'geometry' key" }).optional(),
+            properties: z.never({ error: "GeoJSON feature collection cannot have a 'properties' key" }).optional(),
+            geometries: z.never({ error: "GeoJSON feature collection cannot have a 'geometries' key" }).optional(),
         })
         .passthrough()
         .superRefine((val, ctx) => {

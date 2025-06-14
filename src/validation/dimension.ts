@@ -1,10 +1,13 @@
+import type { z } from "zod/v4";
 import { getDimensionForGeometry } from "../geometry/validation/dimension";
 import { getGeometries, ValidatableFeatureCollection } from "./types";
 
-export const INVALID_FEATURE_COLLECTION_DIMENSIONS_ISSUE = {
+export const getInvalidFeatureCollectionDimensionsIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message: "Invalid dimensions. All features in feature collection must have the same dimension.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
 export function validDimensionsForFeatureCollection(collection: ValidatableFeatureCollection): boolean {
     const geometries = getGeometries(collection);

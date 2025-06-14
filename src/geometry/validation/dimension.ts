@@ -1,14 +1,19 @@
+import type { z } from "zod/v4";
 import { ValidatableCollection, ValidatableGeometry } from "./types";
 
-export const INVALID_DIMENSIONS_ISSUE = {
+export const getInvalidDimensionIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message: "Invalid dimensions. All positions in the geometry must have the same dimension.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
-export const INVALID_GEOMETRY_COLLECTION_DIMENSION_ISSUE = {
+export const getInvalidGeometryCollectionDimensionIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message: "Invalid geometry collection dimensions. All geometries must have the same dimension.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
 export function validDimensionsForPositionList({ coordinates }: { coordinates: number[][] }): boolean {
     const dimension = coordinates[0].length;

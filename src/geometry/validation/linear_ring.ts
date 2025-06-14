@@ -1,12 +1,18 @@
-export const INVALID_POLYGON_LINEAR_RING_MESSAGE = {
+import { z } from "zod/dist/types/v4";
+
+export const getInvalidPolygonLinearRingIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message: "Invalid polygon. Each ring inside a polygon must form a linear ring.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
-export const INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE = {
+export const getInvalidMultiPolygonLinearRingIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message: "Invalid multi polygon. Each polygon inside the multi polygon must be made out of linear rings.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
 function validLinearRing(linearRing: number[][]): boolean {
     const firstPosition = linearRing[0];
