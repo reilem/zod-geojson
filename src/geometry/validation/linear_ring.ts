@@ -1,4 +1,4 @@
-import { z } from "zod/dist/types/v4";
+import type { z } from "zod/v4";
 
 export const getInvalidPolygonLinearRingIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
