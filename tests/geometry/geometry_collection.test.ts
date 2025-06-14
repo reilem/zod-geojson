@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 import {
     multiGeoJsonGeometryCollection2D,
     multiGeoJsonGeometryCollection2DWithBbox,
