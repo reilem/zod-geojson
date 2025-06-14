@@ -1,6 +1,6 @@
 /**
  * The bare essential types required to validate features & feature collections
- * Mainly used to prevent circular dependencies between feature type definitions and validation functions
+ * This is split off to prevent circular dependencies between feature type definitions and validation functions
  */
 
 import { ValidatableCollection, ValidatableGeometry } from "../geometry/validation/types";

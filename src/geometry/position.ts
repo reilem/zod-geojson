@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 // Specific 2D GeoJSON position
 export const GeoJSON2DPositionSchema = z.tuple([z.number(), z.number()]);

@@ -1,26 +1,12 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { GeoJSONGeometryTypeSchema } from "./type";
-import { INVALID_BBOX_ISSUE, validBboxForPositionGrid } from "./validation/bbox";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGrid } from "./validation/dimension";
-import { INVALID_POLYGON_LINEAR_RING_MESSAGE, validPolygonRings } from "./validation/linear_ring";
+import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
+import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
+import { getInvalidPolygonLinearRingIssue, validPolygonRings } from "./validation/linear_ring";
 
-export type GeoJSONPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.Polygon>;
-    coordinates: z.ZodArray<
-        z.ZodTuple<[z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>, z.ZodSchema<P>], z.ZodSchema<P>>
-    >;
-};
-
-export type GeoJSONPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONPolygonGenericSchemaInnerType<P>,
-    P
->;
-
-export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): GeoJSONPolygonGenericSchemaType<P> =>
+export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema(positionSchema)
         .extend({
             type: z.literal(GeoJSONGeometryTypeSchema.enum.Polygon),
@@ -32,23 +18,22 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONPosition>(
                 z.tuple([positionSchema, positionSchema, positionSchema, positionSchema]).rest(positionSchema),
             ),
         })
-        .passthrough()
-        .superRefine((val, ctx) => {
+        .check((ctx) => {
             // Skip remaining checks if coordinates array is empty
-            if (!val.coordinates.length) {
+            if (!ctx.value.coordinates.length) {
                 return;
             }
 
-            if (!validDimensionsForPositionGrid(val)) {
-                ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
+            if (!validDimensionsForPositionGrid(ctx.value)) {
+                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
-            if (!validPolygonRings(val)) {
-                ctx.addIssue(INVALID_POLYGON_LINEAR_RING_MESSAGE);
+            if (!validPolygonRings(ctx.value)) {
+                ctx.issues.push(getInvalidPolygonLinearRingIssue(ctx));
                 return;
             }
-            if (!validBboxForPositionGrid(val)) {
-                ctx.addIssue(INVALID_BBOX_ISSUE);
+            if (!validBboxForPositionGrid(ctx.value)) {
+                ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }
         });

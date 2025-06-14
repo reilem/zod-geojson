@@ -1,18 +1,9 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONSimpleGeometryGenericSchema, GeoJSONSimpleGeometryGenericSchemaType } from "./helper/simple";
-import {
-    GeoJSONGeometryCollectionGenericSchema,
-    GeoJSONGeometryCollectionGenericSchemaType,
-} from "./geometry_collection";
+import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
+import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
 
-export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONPosition> = z.ZodUnion<
-    [GeoJSONSimpleGeometryGenericSchemaType<P>, GeoJSONGeometryCollectionGenericSchemaType<P>]
->;
-
-export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): GeoJSONGeometryGenericSchemaType<P> =>
+export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     z.union([
         GeoJSONSimpleGeometryGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),

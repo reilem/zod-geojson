@@ -1,24 +1,11 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { GeoJSONGeometryTypeSchema } from "./type";
-import { GeoJSONPointGenericSchemaInnerType } from "./point";
-import { INVALID_BBOX_ISSUE, validBboxForPositionList } from "./validation/bbox";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionList } from "./validation/dimension";
+import { getInvalidBBoxIssue, validBboxForPositionList } from "./validation/bbox";
+import { getInvalidDimensionIssue, validDimensionsForPositionList } from "./validation/dimension";
 
-type GeoJSONMultiPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiPoint>;
-    coordinates: z.ZodArray<GeoJSONPointGenericSchemaInnerType<P>["coordinates"]>;
-};
-
-export type GeoJSONMultiPointGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONMultiPointGenericSchemaInnerType<P>,
-    P
->;
-
-export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): GeoJSONMultiPointGenericSchemaType<P> =>
+export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema(positionSchema)
         .extend({
             type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPoint),
@@ -27,19 +14,17 @@ export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONPosition>(
             //   arrays as null objects. (RFC 7946, section 3.1)
             coordinates: z.array(positionSchema),
         })
-        .passthrough()
-        .superRefine((val, ctx) => {
+        .check((ctx) => {
             // Skip remaining checks if coordinates empty
-            if (!val.coordinates.length) {
+            if (!ctx.value.coordinates.length) {
                 return;
             }
-
-            if (!validDimensionsForPositionList(val)) {
-                ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
+            if (!validDimensionsForPositionList(ctx.value)) {
+                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
-            if (!validBboxForPositionList(val)) {
-                ctx.addIssue(INVALID_BBOX_ISSUE);
+            if (!validBboxForPositionList(ctx.value)) {
+                ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }
         });

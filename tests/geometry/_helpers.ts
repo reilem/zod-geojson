@@ -1,5 +1,5 @@
 import { expect } from "@jest/globals";
-import { ZodError, ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod/v4";
 import { GeoJSONGeometrySchema, GeoJSONSchema } from "../../src";
 
 export function passGeoJSONGeometrySchemaTest(schemas: ZodSchema[], value: unknown): void {

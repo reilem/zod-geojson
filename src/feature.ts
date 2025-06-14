@@ -1,16 +1,15 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { GeoJSONBaseSchema } from "./base";
 import { GeoJSONGeometryGenericSchema } from "./geometry/geometry";
-import { INVALID_BBOX_ISSUE } from "./geometry/validation/bbox";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONPosition,
     GeoJSONPositionSchema,
 } from "./geometry/position";
+import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
-import { ValidatableFeature } from "./validation/types";
 
 export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONBaseSchema(positionSchema)
@@ -18,15 +17,14 @@ export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionS
             id: z.string().or(z.number()).optional(),
             type: z.literal(GeoJSONTypeSchema.enum.Feature),
             geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
-            properties: z.object({}).passthrough().nullable(),
-            coordinates: z.never({ message: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
-            features: z.never({ message: "GeoJSON Feature cannot have a 'features' key" }).optional(),
-            geometries: z.never({ message: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
+            properties: z.looseObject({}).nullable(),
+            coordinates: z.never({ error: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
+            features: z.never({ error: "GeoJSON Feature cannot have a 'features' key" }).optional(),
+            geometries: z.never({ error: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
         })
-        .passthrough()
-        .superRefine((val, ctx) => {
-            if (!validBboxForFeature(val as ValidatableFeature)) {
-                ctx.addIssue(INVALID_BBOX_ISSUE);
+        .check((ctx) => {
+            if (!validBboxForFeature(ctx.value)) {
+                ctx.issues.push(getInvalidBBoxIssue(ctx));
             }
         });
 

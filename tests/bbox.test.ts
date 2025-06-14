@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod";
+import { ZodError } from "zod/v4";
 import { bbox2D, bbox3D } from "../examples/bbox";
 import { GeoJSONBboxSchema, GeoJSONBbox } from "../src";
 import { GeoJSON2DBbox, GeoJSON2DBboxSchema, GeoJSON3DBbox, GeoJSON3DBboxSchema } from "../src/bbox";

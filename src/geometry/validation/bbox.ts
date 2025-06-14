@@ -1,3 +1,4 @@
+import type { z } from "zod/v4";
 import {
     ValidatableCollection,
     ValidatableCoordinate,
@@ -7,11 +8,13 @@ import {
     ValidatableList,
 } from "./types";
 
-export const INVALID_BBOX_ISSUE = {
+export const getInvalidBBoxIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message:
         "Invalid bbox. Bbox length must be 2 * n, where n is the dimension of the geometry. Bbox must be a valid extent for the geometry.",
-};
+    input: ctx.value,
+    continue: true,
+});
 
 /**
  * Checks if given bbox is valid for the given position.
