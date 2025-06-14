@@ -1,52 +1,39 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { GeoJSONGeometryTypeSchema } from "./type";
-import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaInnerType } from "./polygon";
-import { INVALID_BBOX_ISSUE, validBboxForPositionGridList } from "./validation/bbox";
-import { INVALID_DIMENSIONS_ISSUE, validDimensionsForPositionGridList } from "./validation/dimension";
-import { INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE, validMultiPolygonLinearRings } from "./validation/linear_ring";
+import { GeoJSONPolygonGenericSchema } from "./polygon";
+import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/bbox";
+import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
+import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-type GeoJSONMultiPolygonGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.MultiPolygon>;
-    coordinates: z.ZodArray<GeoJSONPolygonGenericSchemaInnerType<P>["coordinates"]>;
-};
-
-export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONMultiPolygonGenericSchemaInnerType<P>,
-    P
->;
-
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): GeoJSONMultiPolygonGenericSchemaType<P> =>
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema(positionSchema)
         .extend({
             type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
             // We allow an empty coordinates array:
             // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
             //   arrays as null objects. (RFC 7946, section 3.1)
-            coordinates: z.array(GeoJSONPolygonGenericSchema(positionSchema).innerType().shape.coordinates),
+            coordinates: GeoJSONPolygonGenericSchema(positionSchema).shape.coordinates.array(),
         })
-        .passthrough()
-        .superRefine((val, ctx) => {
+        .check((ctx) => {
             // Skip remaining checks if coordinates array is empty
-            if (!val.coordinates.length) {
+            if (!ctx.value.coordinates.length) {
                 return;
             }
 
-            if (!validDimensionsForPositionGridList(val)) {
-                ctx.addIssue(INVALID_DIMENSIONS_ISSUE);
+            if (!validDimensionsForPositionGridList(ctx.value)) {
+                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
 
-            if (!validMultiPolygonLinearRings(val)) {
-                ctx.addIssue(INVALID_MULTI_POLYGON_LINEAR_RING_MESSAGE);
+            if (!validMultiPolygonLinearRings(ctx.value)) {
+                ctx.issues.push(getInvalidMultiPolygonLinearRingIssue(ctx));
                 return;
             }
 
-            if (!validBboxForPositionGridList(val)) {
-                ctx.addIssue(INVALID_BBOX_ISSUE);
+            if (!validBboxForPositionGridList(ctx.value)) {
+                ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }
         });

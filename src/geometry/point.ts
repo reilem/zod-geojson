@@ -1,31 +1,18 @@
-import { z } from "zod";
-import { GeoJSONGeometryBaseGenericSchemaType, GeoJSONGeometryBaseSchema } from "./helper/base";
+import { z } from "zod/v4";
+import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONGeometryTypeSchema } from "./type";
-import { INVALID_BBOX_ISSUE, validBboxForPosition } from "./validation/bbox";
+import { getInvalidBBoxIssue, validBboxForPosition } from "./validation/bbox";
 
-export type GeoJSONPointGenericSchemaInnerType<P extends GeoJSONPosition> = {
-    type: z.ZodLiteral<typeof GeoJSONGeometryTypeSchema.enum.Point>;
-    coordinates: z.ZodSchema<P>;
-};
-
-export type GeoJSONPointGenericSchemaType<P extends GeoJSONPosition> = GeoJSONGeometryBaseGenericSchemaType<
-    GeoJSONPointGenericSchemaInnerType<P>,
-    P
->;
-
-export const GeoJSONPointGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): GeoJSONPointGenericSchemaType<P> =>
+export const GeoJSONPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
     GeoJSONGeometryBaseSchema(positionSchema)
         .extend({
             type: z.literal(GeoJSONGeometryTypeSchema.enum.Point),
             coordinates: positionSchema,
         })
-        .passthrough()
-        .superRefine((val, ctx) => {
-            if (!validBboxForPosition(val)) {
-                ctx.addIssue(INVALID_BBOX_ISSUE);
+        .check((ctx) => {
+            if (!validBboxForPosition(ctx.value)) {
+                ctx.issues.push(getInvalidBBoxIssue(ctx));
             }
         });
 
