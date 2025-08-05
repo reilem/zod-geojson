@@ -15,17 +15,28 @@
         "validation"
     ],
     "main": "lib/index.js",
+    "module": "lib/esm/index.js",
     "types": "lib/index.d.ts",
+    "sideEffects": false,
     "packageManager": "pnpm@8.10.4",
     "files": [
         "lib",
         "README.md",
         "LICENSE"
     ],
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/esm/index.js",
+            "require": "./lib/index.js"
+        }
+    },
     "scripts": {
         "test": "jest",
         "clean": "rimraf lib",
-        "build": "pnpm clean && tsc -p tsconfig.build.json",
+        "build": "pnpm clean && pnpm build:cjs && pnpm build:esm",
+        "build:cjs": "tsc -p tsconfig.build.json",
+        "build:esm": "tsc -p tsconfig.esm.json",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
         "circularcheck": "madge --circular --extensions ts ./src"
