@@ -19,10 +19,10 @@
     "types": "lib/types/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/types/index.d.ts",
-            "import": "./dist/esm/index.js",
-            "require": "./dist/cjs/index.js",
-            "default": "./dist/esm/index.js"
+            "types": "./lib/types/index.d.ts",
+            "import": "./lib/esm/index.js",
+            "require": "./lib/cjs/index.js",
+            "default": "./lib/esm/index.js"
         }
     },
     "sideEffects": false,
