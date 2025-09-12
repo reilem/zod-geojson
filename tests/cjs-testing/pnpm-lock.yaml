@@ -17,7 +17,7 @@ devDependencies:
     specifier: ^24.3.1
     version: 24.3.1
   typescript:
-    specifier: 5.9.2
+    specifier: ~5.9.2
     version: 5.9.2
 
 packages:
