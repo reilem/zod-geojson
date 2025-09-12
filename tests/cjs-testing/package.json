@@ -1,0 +1,15 @@
+{
+    "name": "zod-geojson-cjs-testing",
+    "type": "commonjs",
+    "scripts": {
+        "start": "pnpm tsc && node lib/index.js"
+    },
+    "devDependencies": {
+        "@types/node": "^24.3.1",
+        "typescript": "~5.9.2"
+    },
+    "dependencies": {
+        "zod": "~3.25.64",
+        "zod-geojson": "link:../.."
+    }
+}

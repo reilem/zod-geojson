@@ -177,6 +177,23 @@ collections feel free to open an issue and we can discuss possible solutions.
 
 If you find any issues with the schemas or want to add new features, feel free to open an issue or a pull request.
 
+### Installing
+
+It is recommended to use [pnpm](https://pnpm.io/) to install the dependencies using the `-r` flag to install
+the root and the test package dependencies.
+
+```bash
+pnpm install -r
+```
+
+### Running checks
+
+A convenience script is provided to run all checks so you don't have to run them separately. Please ensure all tests pass if you open a pull request.
+
+```bash
+pnpm checks
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

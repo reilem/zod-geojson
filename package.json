@@ -14,21 +14,34 @@
         "schema",
         "validation"
     ],
-    "main": "lib/index.js",
-    "types": "lib/index.d.ts",
     "packageManager": "pnpm@8.10.4",
+    "zshy": "./src/index.ts",
+    "main": "./lib/index.js",
+    "module": "./lib/index.mjs",
+    "types": "./lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.mjs",
+            "require": "./lib/index.js"
+        }
+    },
+    "sideEffects": false,
     "files": [
         "lib",
         "README.md",
         "LICENSE"
     ],
     "scripts": {
-        "test": "jest",
+        "test": "jest && pnpm test:esm && pnpm test:cjs",
+        "test:esm": "pnpm -C tests/esm-testing i --frozen-lockfile && pnpm -C tests/esm-testing start",
+        "test:cjs": "pnpm -C tests/cjs-testing i --frozen-lockfile && pnpm -C tests/cjs-testing start",
         "clean": "rimraf lib",
-        "build": "pnpm clean && tsc -p tsconfig.build.json",
+        "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
-        "circularcheck": "madge --circular --extensions ts ./src"
+        "circularcheck": "madge --circular --extensions ts ./src",
+        "checks": "pnpm typecheck && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
         "@jest/globals": "^29.7.0",
@@ -38,7 +51,8 @@
         "prettier": "^3.2.5",
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.2",
-        "typescript": "~5.8.3",
-        "zod": "~3.25.64"
+        "typescript": "~5.9.2",
+        "zod": "~3.25.64",
+        "zshy": "^0.4.1"
     }
 }
