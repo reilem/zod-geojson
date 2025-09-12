@@ -30,8 +30,8 @@ devDependencies:
     specifier: ~5.9.2
     version: 5.9.2
   zod:
-    specifier: ~3.25.64
-    version: 3.25.64
+    specifier: ~4.1.8
+    version: 4.1.8
   zshy:
     specifier: ^0.4.1
     version: 0.4.1(typescript@5.9.2)
@@ -3471,8 +3471,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /zod@3.25.64:
-    resolution: {integrity: sha512-hbP9FpSZf7pkS7hRVUrOjhwKJNyampPgtXKc3AN6DsWtoHsg2Sb4SQaS4Tcay380zSwd2VPo9G9180emBACp5g==}
+  /zod@4.1.8:
+    resolution: {integrity: sha512-5R1P+WwQqmmMIEACyzSvo4JXHY5WiAFHRMg+zBZKgKS+Q1viRa0C1hmUKtHltoIFKtIdki3pRxkmpP74jnNYHQ==}
     dev: true
 
   /zshy@0.4.1(typescript@5.9.2):
