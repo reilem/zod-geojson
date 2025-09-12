@@ -14,19 +14,19 @@
         "schema",
         "validation"
     ],
-    "main": "lib/cjs/index.js",
-    "module": "lib/esm/index.js",
-    "types": "lib/types/index.d.ts",
+    "packageManager": "pnpm@8.10.4",
+    "zshy": "./src/index.ts",
+    "main": "./lib/index.js",
+    "module": "./lib/index.mjs",
+    "types": "./lib/index.d.ts",
     "exports": {
         ".": {
-            "types": "./lib/types/index.d.ts",
-            "import": "./lib/esm/index.js",
-            "require": "./lib/cjs/index.js",
-            "default": "./lib/esm/index.js"
+            "types": "./lib/index.d.ts",
+            "import": "./lib/index.mjs",
+            "require": "./lib/index.js"
         }
     },
     "sideEffects": false,
-    "packageManager": "pnpm@8.10.4",
     "files": [
         "lib",
         "README.md",
@@ -35,10 +35,7 @@
     "scripts": {
         "test": "jest",
         "clean": "rimraf lib",
-        "build": "pnpm clean && pnpm build:commonjs && pnpm build:esm && pnpm build:types",
-        "build:commonjs": "tsc -p tsconfig.build.cjs.json",
-        "build:esm": "tsc -p tsconfig.build.esm.json",
-        "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
+        "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
         "circularcheck": "madge --circular --extensions ts ./src"
@@ -52,6 +49,7 @@
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.2",
         "typescript": "~5.8.3",
-        "zod": "~3.25.64"
+        "zod": "~3.25.64",
+        "zshy": "^0.4.1"
     }
 }
