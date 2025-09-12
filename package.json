@@ -33,12 +33,15 @@
         "LICENSE"
     ],
     "scripts": {
-        "test": "jest",
+        "test": "jest && pnpm test:esm && pnpm test:cjs",
+        "test:esm": "pnpm -C tests/esm-testing i --frozen-lockfile && pnpm -C tests/esm-testing start",
+        "test:cjs": "pnpm -C tests/cjs-testing i --frozen-lockfile && pnpm -C tests/cjs-testing start",
         "clean": "rimraf lib",
         "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
-        "circularcheck": "madge --circular --extensions ts ./src"
+        "circularcheck": "madge --circular --extensions ts ./src",
+        "checks": "pnpm typecheck && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
         "@jest/globals": "^29.7.0",
