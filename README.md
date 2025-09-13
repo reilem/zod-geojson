@@ -91,7 +91,7 @@ import type {
 } from "zod-geojson";
 ```
 
-If you wish the use a different dimension, the generic schemas are also exposed and you can
+If you wish to use a different dimension, the generic schemas are also exposed and you can
 use them to create your own schemas and types:
 
 ```typescript
