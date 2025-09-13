@@ -3,7 +3,8 @@ import { GeoJSONBaseSchema } from "../../base";
 import { GeoJSONPosition } from "../position";
 
 export const GeoJSONGeometryBaseSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema(positionSchema).extend({
+    z.looseObject({
+        ...GeoJSONBaseSchema(positionSchema).shape,
         geometry: z.never({ error: "GeoJSON geometry cannot have a 'geometry' key" }).optional(),
         properties: z.never({ error: "GeoJSON geometry cannot have a 'properties' key" }).optional(),
         features: z.never({ error: "GeoJSON geometry cannot have a 'features' key" }).optional(),

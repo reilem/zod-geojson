@@ -1,10 +1,10 @@
 import { z } from "zod/v4";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
 import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
+import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 
 export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    z.union([
+    z.discriminatedUnion("type", [
         GeoJSONSimpleGeometryGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),
     ]);

@@ -16,8 +16,9 @@ import {
 } from "./validation/dimension";
 
 export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema(positionSchema)
-        .extend({
+    z
+        .looseObject({
+            ...GeoJSONBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONTypeSchema.enum.FeatureCollection),
             features: z.array(GeoJSONFeatureGenericSchema(positionSchema)),
             coordinates: z.never({ error: "GeoJSON feature collection cannot have a 'coordinates' key" }).optional(),

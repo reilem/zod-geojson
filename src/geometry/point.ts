@@ -5,8 +5,9 @@ import { GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPosition } from "./validation/bbox";
 
 export const GeoJSONPointGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONGeometryBaseSchema(positionSchema)
-        .extend({
+    z
+        .looseObject({
+            ...GeoJSONGeometryBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONGeometryTypeSchema.enum.Point),
             coordinates: positionSchema,
         })
