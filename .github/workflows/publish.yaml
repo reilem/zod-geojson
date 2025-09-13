@@ -23,7 +23,10 @@ jobs:
                   registry-url: https://registry.npmjs.org
 
             - name: Install Dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install -r --frozen-lockfile
+
+            - name: Build
+              run: pnpm run build
 
             - name: Typecheck
               run: pnpm run typecheck
@@ -36,9 +39,6 @@ jobs:
 
             - name: Test
               run: pnpm run test
-
-            - name: Build
-              run: pnpm run build
 
             - name: Publish
               run: pnpm publish --access public --no-git-checks # Disable checks because this will run on a headless release
