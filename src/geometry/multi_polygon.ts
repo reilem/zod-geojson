@@ -1,15 +1,16 @@
 import { z } from "zod/v4";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONGeometryBaseSchema } from "./helper/base";
-import { GeoJSONGeometryTypeSchema } from "./type";
 import { GeoJSONPolygonGenericSchema } from "./polygon";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import { GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
 export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONGeometryBaseSchema(positionSchema)
-        .extend({
+    z
+        .looseObject({
+            ...GeoJSONGeometryBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONGeometryTypeSchema.enum.MultiPolygon),
             // We allow an empty coordinates array:
             // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"

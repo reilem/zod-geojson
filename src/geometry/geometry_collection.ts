@@ -1,14 +1,15 @@
 import { z } from "zod/v4";
+import { GeoJSONBaseSchema } from "../base";
 import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
+import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 import { GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForCollection } from "./validation/bbox";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
-import { GeoJSONBaseSchema } from "../base";
 import { getInvalidGeometryCollectionDimensionIssue, validDimensionsForCollection } from "./validation/dimension";
 
 export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema(positionSchema)
-        .extend({
+    z
+        .looseObject({
+            ...GeoJSONBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
             coordinates: z.never({ error: "GeoJSON geometry collection cannot have a 'coordinates' key" }).optional(),
             geometry: z.never({ error: "GeoJSON geometry collection cannot have a 'geometry' key" }).optional(),

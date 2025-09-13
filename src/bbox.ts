@@ -14,8 +14,6 @@ export type GeoJSONBboxGeneric<P extends GeoJSONPosition> = P extends GeoJSON3DP
       ? [number, number, number, number]
       : [number, number, number, number] | [number, number, number, number, number, number];
 
-export type GeoJSONBboxSchemaType<P extends GeoJSONPosition> = z.ZodSchema<GeoJSONBboxGeneric<P>>;
-
 const _2DBboxSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
 const _3DBboxSchema = z.tuple([z.number(), z.number(), z.number(), z.number(), z.number(), z.number()]);
 
@@ -26,7 +24,7 @@ const _3DBboxSchema = z.tuple([z.number(), z.number(), z.number(), z.number(), z
  */
 export const GeoJSONBboxGenericSchema = <P extends GeoJSONPosition>(
     positionSchema: z.ZodSchema<P>,
-): GeoJSONBboxSchemaType<P> => {
+): z.ZodSchema<GeoJSONBboxGeneric<P>> => {
     // Because zod cannot do conditional typing we need to do some hacky type casts to make this work
     if (positionSchema instanceof z.ZodTuple) {
         const itemCount = positionSchema.def.items.length;

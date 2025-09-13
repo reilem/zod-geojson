@@ -12,8 +12,9 @@ import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
 
 export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    GeoJSONBaseSchema(positionSchema)
-        .extend({
+    z
+        .looseObject({
+            ...GeoJSONBaseSchema(positionSchema).shape,
             id: z.string().or(z.number()).optional(),
             type: z.literal(GeoJSONTypeSchema.enum.Feature),
             geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
