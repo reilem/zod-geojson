@@ -30,6 +30,12 @@ jobs:
             - name: Test
               run: pnpm run test
 
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22.13.1
+                  registry-url: "https://registry.npmjs.org"
+                  always-auth: true # writes an .npmrc that reads NODE_AUTH_TOKEN
+
             - name: Publish
               run: pnpm publish --access public --no-git-checks # Disable checks because this will run on a headless release
               env:
