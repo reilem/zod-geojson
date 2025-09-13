@@ -10,7 +10,7 @@ import {
 } from "./geometry/position";
 
 export const GeoJSONGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
-    z.union([
+    z.discriminatedUnion("type", [
         GeoJSONGeometryGenericSchema(positionSchema),
         GeoJSONFeatureGenericSchema(positionSchema),
         GeoJSONFeatureCollectionGenericSchema(positionSchema),
