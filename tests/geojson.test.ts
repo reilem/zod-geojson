@@ -348,10 +348,7 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 /**
  * Test that types match with @types/geojson
  */
-export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonFeaturePolygon2D;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson3: GeoJSONTypes.GeoJSON = geoJsonFeatureGeometryCollection3D;
+export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
+export const geoJson3: GeoJSONTypes.GeoJSON = geoJsonFeaturePolygon2D;
+export const geoJson4: GeoJSONTypes.GeoJSON = geoJsonFeatureGeometryCollection3D;

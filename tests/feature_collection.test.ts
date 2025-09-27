@@ -320,10 +320,7 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
 /**
  * Test that types match with @types/geojson
  */
-// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+export const featureCollection1: GeoJSONTypes.FeatureCollection =
     singleGeoJsonFeatureCollection3D as GeoJSONFeatureCollection;
-export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
-    singleGeoJsonFeatureCollection3D;
-export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
-    multiGeoJsonFeatureCollectionWithBbox2D;
+export const featureCollection2: GeoJSONTypes.FeatureCollection = singleGeoJsonFeatureCollection3D;
+export const featureCollection3: GeoJSONTypes.FeatureCollection = multiGeoJsonFeatureCollectionWithBbox2D;
