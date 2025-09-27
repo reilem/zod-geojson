@@ -1,133 +1,135 @@
 // Derived from the GeoJSON spec: https://datatracker.ietf.org/doc/html/rfc7946
 
 export {
+    GeoJSON2DGeometrySchema,
+    GeoJSON3DGeometrySchema,
     GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
-    type GeoJSONGeometry,
-    GeoJSON2DGeometrySchema,
     type GeoJSON2DGeometry,
-    GeoJSON3DGeometrySchema,
     type GeoJSON3DGeometry,
+    type GeoJSONGeometry,
 } from "./geometry/geometry";
 
 export {
+    GeoJSON2DGeometryCollectionSchema,
+    GeoJSON3DGeometryCollectionSchema,
     GeoJSONGeometryCollectionGenericSchema,
     GeoJSONGeometryCollectionSchema,
-    type GeoJSONGeometryCollection,
-    GeoJSON2DGeometryCollectionSchema,
     type GeoJSON2DGeometryCollection,
-    GeoJSON3DGeometryCollectionSchema,
     type GeoJSON3DGeometryCollection,
+    type GeoJSONGeometryCollection,
 } from "./geometry/geometry_collection";
 
 export {
+    GeoJSON2DLineStringSchema,
+    GeoJSON3DLineStringSchema,
     GeoJSONLineStringGenericSchema,
     GeoJSONLineStringSchema,
-    type GeoJSONLineString,
-    GeoJSON2DLineStringSchema,
     type GeoJSON2DLineString,
-    GeoJSON3DLineStringSchema,
     type GeoJSON3DLineString,
+    type GeoJSONLineString,
 } from "./geometry/line_string";
 
 export {
+    GeoJSON2DMultiLineStringSchema,
+    GeoJSON3DMultiLineStringSchema,
     GeoJSONMultiLineStringGenericSchema,
     GeoJSONMultiLineStringSchema,
-    type GeoJSONMultiLineString,
-    GeoJSON2DMultiLineStringSchema,
     type GeoJSON2DMultiLineString,
-    GeoJSON3DMultiLineStringSchema,
     type GeoJSON3DMultiLineString,
+    type GeoJSONMultiLineString,
 } from "./geometry/multi_line_string";
 
 export {
+    GeoJSON2DMultiPointSchema,
+    GeoJSON3DMultiPointSchema,
     GeoJSONMultiPointGenericSchema,
     GeoJSONMultiPointSchema,
-    type GeoJSONMultiPoint,
-    GeoJSON2DMultiPointSchema,
     type GeoJSON2DMultiPoint,
-    GeoJSON3DMultiPointSchema,
     type GeoJSON3DMultiPoint,
+    type GeoJSONMultiPoint,
 } from "./geometry/multi_point";
 
 export {
+    GeoJSON2DMultiPolygonSchema,
+    GeoJSON3DMultiPolygonSchema,
     GeoJSONMultiPolygonGenericSchema,
     GeoJSONMultiPolygonSchema,
-    type GeoJSONMultiPolygon,
-    GeoJSON2DMultiPolygonSchema,
     type GeoJSON2DMultiPolygon,
-    GeoJSON3DMultiPolygonSchema,
     type GeoJSON3DMultiPolygon,
+    type GeoJSONMultiPolygon,
 } from "./geometry/multi_polygon";
 
 export {
+    GeoJSON2DPointSchema,
+    GeoJSON3DPointSchema,
     GeoJSONPointGenericSchema,
     GeoJSONPointSchema,
-    type GeoJSONPoint,
-    GeoJSON2DPointSchema,
     type GeoJSON2DPoint,
-    GeoJSON3DPointSchema,
     type GeoJSON3DPoint,
+    type GeoJSONPoint,
 } from "./geometry/point";
 
 export {
+    GeoJSON2DPolygonSchema,
+    GeoJSON3DPolygonSchema,
     GeoJSONPolygonGenericSchema,
     GeoJSONPolygonSchema,
-    type GeoJSONPolygon,
-    GeoJSON2DPolygonSchema,
     type GeoJSON2DPolygon,
-    GeoJSON3DPolygonSchema,
     type GeoJSON3DPolygon,
+    type GeoJSONPolygon,
 } from "./geometry/polygon";
 
 export {
-    GeoJSONPositionSchema,
-    type GeoJSONPosition,
     GeoJSON2DPositionSchema,
-    type GeoJSON2DPosition,
     GeoJSON3DPositionSchema,
+    GeoJSONPositionSchema,
+    type GeoJSON2DPosition,
     type GeoJSON3DPosition,
+    type GeoJSONPosition,
 } from "./geometry/position";
 
 export { GeoJSONGeometryTypeSchema, type GeoJSONGeometryEnumType, type GeoJSONGeometryType } from "./geometry/type";
 
 export {
-    GeoJSONBboxSchema,
-    type GeoJSONBbox,
     GeoJSON2DBboxSchema,
-    type GeoJSON2DBbox,
     GeoJSON3DBboxSchema,
+    GeoJSONBboxSchema,
+    type GeoJSON2DBbox,
     type GeoJSON3DBbox,
+    type GeoJSONBbox,
 } from "./bbox";
 
 export {
+    GeoJSON2DFeatureSchema,
+    GeoJSON3DFeatureSchema,
     GeoJSONFeatureGenericSchema,
     GeoJSONFeatureSchema,
-    type GeoJSONFeature,
-    GeoJSON2DFeatureSchema,
     type GeoJSON2DFeature,
-    GeoJSON3DFeatureSchema,
     type GeoJSON3DFeature,
+    type GeoJSONFeature,
 } from "./feature";
 
 export {
+    GeoJSON2DFeatureCollectionSchema,
+    GeoJSON3DFeatureCollectionSchema,
     GeoJSONFeatureCollectionGenericSchema,
     GeoJSONFeatureCollectionSchema,
-    type GeoJSONFeatureCollection,
-    GeoJSON2DFeatureCollectionSchema,
     type GeoJSON2DFeatureCollection,
-    GeoJSON3DFeatureCollectionSchema,
     type GeoJSON3DFeatureCollection,
+    type GeoJSONFeatureCollection,
 } from "./feature_collection";
 
 export {
+    GeoJSON2DSchema,
+    GeoJSON3DSchema,
     GeoJSONGenericSchema,
     GeoJSONSchema,
     type GeoJSON,
-    GeoJSON2DSchema,
     type GeoJSON2D,
-    GeoJSON3DSchema,
     type GeoJSON3D,
 } from "./geojson";
+
+export { GeoJSONPropertiesSchema, type GeoJSONProperties } from "./properties";
 
 export { GeoJSONTypeSchema, type GeoJSONType } from "./type";
