@@ -21,7 +21,7 @@ export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition, R extends
             ...GeoJSONBaseSchema(positionSchema).shape,
             id: z.string().or(z.number()).optional(),
             type: z.literal(GeoJSONTypeSchema.enum.Feature),
-            geometry: GeoJSONGeometryGenericSchema(positionSchema),
+            geometry: GeoJSONGeometryGenericSchema(positionSchema).nullable(),
             properties: propertiesSchema.nullable(),
             coordinates: z.never({ error: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
             features: z.never({ error: "GeoJSON Feature cannot have a 'features' key" }).optional(),
