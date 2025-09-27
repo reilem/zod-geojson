@@ -7,7 +7,7 @@ import { GeoJSONPointGenericSchema } from "../point";
 import { GeoJSONPolygonGenericSchema } from "../polygon";
 import { GeoJSONPosition } from "../position";
 
-export const GeoJSONSimpleGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export const GeoJSONSimpleGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
     z.discriminatedUnion("type", [
         GeoJSONPointGenericSchema(positionSchema),
         GeoJSONLineStringGenericSchema(positionSchema),

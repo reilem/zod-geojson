@@ -15,7 +15,7 @@ import {
     validDimensionsForFeatureCollection,
 } from "./validation/dimension";
 
-export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
     z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,

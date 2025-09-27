@@ -23,20 +23,20 @@ const _3DBboxSchema = z.tuple([z.number(), z.number(), z.number(), z.number(), z
  * If the position schema is not a tuple with 2 or 3 items, it returns a union of both 2D and 3D bounding box schemas.
  */
 export const GeoJSONBboxGenericSchema = <P extends GeoJSONPosition>(
-    positionSchema: z.ZodSchema<P>,
-): z.ZodSchema<GeoJSONBboxGeneric<P>> => {
+    positionSchema: z.ZodType<P>,
+): z.ZodType<GeoJSONBboxGeneric<P>> => {
     // Because zod cannot do conditional typing we need to do some hacky type casts to make this work
     if (positionSchema instanceof z.ZodTuple) {
         const itemCount = positionSchema.def.items.length;
         if (itemCount === 2) {
-            return _2DBboxSchema as unknown as z.ZodSchema<GeoJSONBboxGeneric<P>>;
+            return _2DBboxSchema as unknown as z.ZodType<GeoJSONBboxGeneric<P>>;
         }
         if (itemCount === 3) {
-            return _3DBboxSchema as unknown as z.ZodSchema<GeoJSONBboxGeneric<P>>;
+            return _3DBboxSchema as unknown as z.ZodType<GeoJSONBboxGeneric<P>>;
         }
     }
     // If the position is not a tuple, we can't infer the dimension, and we return a union of 2D and 3D bbox
-    return z.union([_2DBboxSchema, _3DBboxSchema]) as unknown as z.ZodSchema<GeoJSONBboxGeneric<P>>;
+    return z.union([_2DBboxSchema, _3DBboxSchema]) as unknown as z.ZodType<GeoJSONBboxGeneric<P>>;
 };
 
 export const GeoJSON2DBboxSchema = GeoJSONBboxGenericSchema(GeoJSON2DPositionSchema);

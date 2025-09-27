@@ -11,7 +11,7 @@ import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
 
-export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export const GeoJSONFeatureGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
     z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,
