@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod/v4";
+import z, { ZodError } from "zod/v4";
 import {
     geoJsonFeatureGeometryCollection2D,
     geoJsonFeatureGeometryCollection3D,
@@ -15,7 +15,9 @@ import {
     GeoJSON3DFeature,
     GeoJSON3DFeatureSchema,
     GeoJSONFeature,
+    GeoJSONFeatureGenericSchema,
     GeoJSONFeatureSchema,
+    GeoJSONPositionSchema,
 } from "../src";
 import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
 import { geoJsonPoint4D } from "./geometry/point.test";
@@ -214,6 +216,38 @@ describe("GeoJSONFeature", () => {
             expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
         });
     });
+
+    describe("Custom properties", () => {
+        const GeoJSONFeatureWithCustomProperties = GeoJSONFeatureGenericSchema(
+            GeoJSONPositionSchema,
+            z.object({ name: z.string(), age: z.number(), meta: z.object({ firstLogin: z.boolean() }) }),
+        );
+
+        it("allows feature with custom properties", () => {
+            const feature = {
+                ...geoJsonFeaturePoint2D,
+                properties: {
+                    name: "John Doe",
+                    age: 30,
+                    meta: {
+                        firstLogin: true,
+                    },
+                },
+            };
+            expect(GeoJSONFeatureWithCustomProperties.parse(feature)).toEqual(feature);
+        });
+
+        it("does not allow feature with missing properties", () => {
+            const feature = {
+                ...geoJsonFeaturePoint2D,
+                properties: {
+                    name: "John Doe",
+                    age: 30,
+                },
+            };
+            expect(() => GeoJSONFeatureWithCustomProperties.parse(feature)).toThrow(ZodError);
+        });
+    });
 });
 
 /**
@@ -343,7 +377,6 @@ export const invalidGeoJsonFeature3DPositionTooBig: GeoJSON3DFeature = {
 /**
  * Test that types match with @types/geojson
  */
-// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
 export const feature1: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D as GeoJSONFeature;
 export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D;
 export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePolygon3DWithBbox;

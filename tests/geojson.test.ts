@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod/v4";
+import z, { ZodError } from "zod/v4";
 import { geoJsonFeatureGeometryCollection3D, geoJsonFeaturePolygon2D } from "../examples/feature";
 import { multiGeoJsonFeatureCollection2D } from "../examples/feature_collection";
 import { geoJsonPoint3D } from "../examples/geometry/point";
@@ -12,7 +12,9 @@ import {
     GeoJSON3D,
     GeoJSON3DGeometry,
     GeoJSON3DSchema,
+    GeoJSONGenericSchema,
     GeoJSONGeometry,
+    GeoJSONPositionSchema,
     GeoJSONSchema,
 } from "../src";
 import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
@@ -55,6 +57,26 @@ describe("GeoJSONSchema", () => {
         });
         it("does not allow a 4D geojson", () => {
             expect(() => GeoJSON3DSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom properties", () => {
+        const GeoJSONWithCustomProperties = GeoJSONGenericSchema(GeoJSONPositionSchema, z.object({ foo: z.string() }));
+
+        it("allows geojson with custom properties", () => {
+            const geojson: GeoJSON = {
+                ...geoJsonFeaturePolygon2D,
+                properties: { foo: "bar" },
+            };
+            expect(GeoJSONWithCustomProperties.parse(geojson)).toEqual(geojson);
+        });
+
+        it("does not allow geojson with invalid custom properties", () => {
+            const geojson: GeoJSON = {
+                ...geoJsonFeaturePolygon2D,
+                properties: { invalid: "bar" },
+            };
+            expect(() => GeoJSONWithCustomProperties.parse(geojson)).toThrow(ZodError);
         });
     });
 });
@@ -348,10 +370,7 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 /**
  * Test that types match with @types/geojson
  */
-export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonFeaturePolygon2D;
-// @ts-expect-error -- THIS IS A BUG IN THE TYPES https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
-export const geoJson3: GeoJSONTypes.GeoJSON = geoJsonFeatureGeometryCollection3D;
+export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;
+export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
+export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonFeaturePolygon2D;
+export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonFeatureGeometryCollection3D;

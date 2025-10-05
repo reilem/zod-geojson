@@ -3,7 +3,7 @@ import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
 import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
 
-export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
     z.discriminatedUnion("type", [
         GeoJSONSimpleGeometryGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),

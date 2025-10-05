@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod/v4";
+import z, { ZodError } from "zod/v4";
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
     multiGeoJsonFeatureCollection2D,
@@ -14,7 +14,9 @@ import {
     GeoJSON3DFeatureCollection,
     GeoJSON3DFeatureCollectionSchema,
     GeoJSONFeatureCollection,
+    GeoJSONFeatureCollectionGenericSchema,
     GeoJSONFeatureCollectionSchema,
+    GeoJSONPositionSchema,
 } from "../src";
 import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
 import { geoJsonFeaturePoint4D } from "./feature.test";
@@ -137,6 +139,39 @@ describe("GeoJSONFeatureCollection", () => {
         });
         it("does not allow a 4D feature collection", () => {
             expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom properties", () => {
+        const GeoJSONFeatureCollectionWithCustomProperties = GeoJSONFeatureCollectionGenericSchema(
+            GeoJSONPositionSchema,
+            z.object({ name: z.string() }),
+        );
+
+        it("allows feature collection with custom properties", () => {
+            const featureCollection = {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        ...geoJsonFeaturePoint2D,
+                        properties: { name: "A name" },
+                    },
+                ],
+            };
+            expect(GeoJSONFeatureCollectionWithCustomProperties.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("does not allow feature collection with missing custom properties", () => {
+            const featureCollection = {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        ...geoJsonFeaturePoint2D,
+                        properties: { wrongKey: "A name" },
+                    },
+                ],
+            };
+            expect(() => GeoJSONFeatureCollectionWithCustomProperties.parse(featureCollection)).toThrow(ZodError);
         });
     });
 });
@@ -320,7 +355,6 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
 /**
  * Test that types match with @types/geojson
  */
-// This type parameter <GeoJSONTypes.Geometry | null> is necessary to work around the current bug in the types https://github.com/DefinitelyTyped/DefinitelyTyped/pull/71066
 export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
     singleGeoJsonFeatureCollection3D as GeoJSONFeatureCollection;
 export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =

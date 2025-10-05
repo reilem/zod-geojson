@@ -7,7 +7,7 @@ import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/
 import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodSchema<P>) =>
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,

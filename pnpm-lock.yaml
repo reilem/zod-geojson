@@ -9,8 +9,8 @@ devDependencies:
     specifier: ^29.7.0
     version: 29.7.0
   '@types/geojson':
-    specifier: ^7946.0.14
-    version: 7946.0.14
+    specifier: ^7946.0.16
+    version: 7946.0.16
   jest:
     specifier: ^29.7.0
     version: 29.7.0
@@ -791,8 +791,8 @@ packages:
       '@babel/types': 7.23.9
     dev: true
 
-  /@types/geojson@7946.0.14:
-    resolution: {integrity: sha512-WCfD5Ht3ZesJUsONdhvm84dmzWOiOzOAqOncN0++w0lBw1o8OuDNJF2McvvCef/yBqb/HYRahp1BYtODFQ8bRg==}
+  /@types/geojson@7946.0.16:
+    resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
     dev: true
 
   /@types/graceful-fs@4.1.9:
