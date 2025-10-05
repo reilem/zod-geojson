@@ -14,7 +14,7 @@
         "schema",
         "validation"
     ],
-    "packageManager": "pnpm@8.10.4",
+    "packageManager": "pnpm@10.18.0",
     "zshy": "./src/index.ts",
     "main": "./lib/index.js",
     "module": "./lib/index.mjs",
