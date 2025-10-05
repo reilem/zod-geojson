@@ -88,20 +88,45 @@ import type {
     // ...
     GeoJSON2DPointSchema,
     GeoJSON2DPoint,
+    // ...
+    GeoJSON3DFeatureSchema,
+    GeoJSON3DFeature,
+    // ...
+    GeoJSON3DPointSchema,
+    GeoJSON3DPoint,
 } from "zod-geojson";
 ```
 
-If you wish to use a different dimension, the generic schemas are also exposed and you can
-use them to create your own schemas and types:
+If you wish to use a different dimension (e.g. 4D geometries), you can pass a custom dimension schema
+as the first parameter to the generic schema functions which are also exposed by this library.
 
 ```typescript
-import { GeoJSONGeometryGenericSchema } from "zod-geojson";
+import { GeoJSONGeometryGenericSchema, GeoJSONPropertiesSchema } from "zod-geojson";
 
 const GeoJSON4DPositionSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
 type GeoJSON4DPosition = z.infer<typeof GeoJSON4DPositionSchema>;
 
-const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema);
+const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema, GeoJSONPropertiesSchema);
 type GeoJSON4DGeometry = z.infer<typeof GeoJSON4DGeometrySchema>;
+```
+
+### Custom Properties
+
+By default, the `properties` field of a GeoJSON Feature is defined as any valid JSON object or `null`. If you want to
+enforce a specific structure for the `properties` field, you can pass a custom `properties` Zod schema as the second parameter to the
+`GeoJSONFeatureGenericSchema`, `GeoJSONFeatureCollectionGenericSchema`, or `GeoJSONGenericSchema` functions.
+
+```typescript
+import { GeoJSONGenericSchema, GeoJSONPositionSchema } from "zod-geojson";
+
+const CustomPropertiesSchema = z.object({
+    name: z.string(),
+    description: z.string().optional(),
+});
+type CustomProperties = z.infer<typeof CustomPropertiesSchema>;
+
+const CustomGeoJSONSchema = GeoJSONGenericSchema(GeoJSONPositionSchema, CustomPropertiesSchema);
+type CustomGeoJSON = z.infer<typeof CustomGeoJSONSchema>;
 ```
 
 ## Error Cases
