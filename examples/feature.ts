@@ -1,5 +1,6 @@
 import { GeoJSON2DFeature, GeoJSON3DFeature, GeoJSONFeature } from "../src";
 import { multiGeoJsonGeometryCollection2D, multiGeoJsonGeometryCollection3D } from "./geometry/geometry_collection";
+import { geoJsonLineString2D } from "./geometry/line_string";
 import { geoJsonPoint2D, geoJsonPoint3D } from "./geometry/point";
 import { geoJsonPolygon2D, geoJsonPolygon3D, geoJsonPolygon3DWithBbox } from "./geometry/polygon";
 import { geoJsonPropertiesComplex, geoJsonPropertiesEmpty, geoJsonPropertiesSimple } from "./properties";
@@ -20,6 +21,12 @@ export const geoJsonFeaturePolygon2D = {
     type: "Feature",
     properties: geoJsonPropertiesComplex,
     geometry: geoJsonPolygon2D,
+} satisfies GeoJSONFeature;
+
+export const geoJsonFeatureLineString2D = {
+    type: "Feature",
+    properties: geoJsonPropertiesSimple,
+    geometry: geoJsonLineString2D,
 } satisfies GeoJSONFeature;
 
 export const geoJsonFeaturePolygon3DWithBbox = {

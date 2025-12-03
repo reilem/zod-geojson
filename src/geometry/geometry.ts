@@ -8,6 +8,9 @@ export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(position
         GeoJSONSimpleGeometryGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),
     ]);
+export type GeoJSONGeometryGeneric<P extends GeoJSONPosition> = z.infer<
+    ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
+>;
 
 export const GeoJSONGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSONPositionSchema);
 export type GeoJSONGeometry = z.infer<typeof GeoJSONGeometrySchema>;

@@ -15,16 +15,27 @@ import {
     getInvalidFeatureCollectionDimensionsIssue,
     validDimensionsForFeatureCollection,
 } from "./validation/dimension";
+import {
+    GeoJSON2DGeometrySchema,
+    GeoJSON3DGeometrySchema,
+    GeoJSONGeometryGeneric,
+    GeoJSONGeometrySchema,
+} from "./geometry/geometry";
 
-export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition, R extends GeoJSONProperties>(
+export const GeoJSONFeatureCollectionGenericSchema = <
+    P extends GeoJSONPosition,
+    R extends GeoJSONProperties,
+    G extends GeoJSONGeometryGeneric<P>,
+>(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
+    geometrySchema: z.ZodType<G>,
 ) =>
     z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONTypeSchema.enum.FeatureCollection),
-            features: z.array(GeoJSONFeatureGenericSchema(positionSchema, propertiesSchema)),
+            features: z.array(GeoJSONFeatureGenericSchema(positionSchema, propertiesSchema, geometrySchema)),
             coordinates: z.never({ error: "GeoJSON feature collection cannot have a 'coordinates' key" }).optional(),
             geometry: z.never({ error: "GeoJSON feature collection cannot have a 'geometry' key" }).optional(),
             properties: z.never({ error: "GeoJSON feature collection cannot have a 'properties' key" }).optional(),
@@ -43,21 +54,29 @@ export const GeoJSONFeatureCollectionGenericSchema = <P extends GeoJSONPosition,
                 return;
             }
         });
+export type GeoJSONFeatureCollectionGeneric<
+    P extends GeoJSONPosition,
+    R extends GeoJSONProperties,
+    G extends GeoJSONGeometryGeneric<P>,
+> = z.infer<ReturnType<typeof GeoJSONFeatureCollectionGenericSchema<P, R, G>>>;
 
 export const GeoJSONFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSONPositionSchema,
     GeoJSONPropertiesSchema,
+    GeoJSONGeometrySchema,
 );
 export type GeoJSONFeatureCollection = z.infer<typeof GeoJSONFeatureCollectionSchema>;
 
 export const GeoJSON2DFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSON2DPositionSchema,
     GeoJSONPropertiesSchema,
+    GeoJSON2DGeometrySchema,
 );
 export type GeoJSON2DFeatureCollection = z.infer<typeof GeoJSON2DFeatureCollectionSchema>;
 
 export const GeoJSON3DFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSON3DPositionSchema,
     GeoJSONPropertiesSchema,
+    GeoJSON3DGeometrySchema,
 );
 export type GeoJSON3DFeatureCollection = z.infer<typeof GeoJSON3DFeatureCollectionSchema>;
