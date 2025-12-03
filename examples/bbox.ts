@@ -1,5 +1,5 @@
 import { GeoJSON2DBbox, GeoJSON3DBbox } from "../src/bbox";
 
-export const bbox2D: GeoJSON2DBbox = [0.0, 0.0, 1.0, 1.0];
+export const bbox2D = [0.0, 0.0, 1.0, 1.0] satisfies GeoJSON2DBbox;
 
-export const bbox3D: GeoJSON3DBbox = [0.0, 0.0, 1.0, 1.0, 2.0, 2.0];
+export const bbox3D = [0.0, 0.0, 1.0, 1.0, 2.0, 2.0] satisfies GeoJSON3DBbox;
