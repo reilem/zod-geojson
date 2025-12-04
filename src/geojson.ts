@@ -31,6 +31,11 @@ export const GeoJSONGenericSchema = <
         GeoJSONFeatureGenericSchema(positionSchema, propertiesSchema, geometrySchema),
         GeoJSONFeatureCollectionGenericSchema(positionSchema, propertiesSchema, geometrySchema),
     ]);
+export type GeoJSONGeneric<
+    P extends GeoJSONPosition,
+    R extends GeoJSONProperties,
+    G extends GeoJSONGeometryGeneric<P>,
+> = z.infer<ReturnType<typeof GeoJSONGenericSchema<P, R, G>>>;
 
 export const GeoJSONSchema = GeoJSONGenericSchema(
     GeoJSONPositionSchema,
