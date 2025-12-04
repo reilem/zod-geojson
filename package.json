@@ -41,7 +41,7 @@
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
         "circularcheck": "madge --circular --extensions ts ./src",
-        "checks": "pnpm typecheck && pnpm prettiercheck && pnpm circularcheck && pnpm test"
+        "checks": "pnpm typecheck && pnpm build && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
         "@jest/globals": "^30.0.2",
