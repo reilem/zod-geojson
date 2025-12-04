@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { core as zCore } from "zod/v4/classic/external";
 import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
 import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
 import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
@@ -10,6 +11,12 @@ export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(position
     ]);
 export type GeoJSONGeometryGeneric<P extends GeoJSONPosition> = z.infer<
     ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
+>;
+
+export type DiscriminableGeometrySchema<P extends GeoJSONPosition, G extends GeoJSONGeometryGeneric<P>> = z.ZodType<
+    G,
+    unknown,
+    zCore.$ZodTypeInternals<G> & zCore.$ZodTypeDiscriminableInternals
 >;
 
 export const GeoJSONGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSONPositionSchema);

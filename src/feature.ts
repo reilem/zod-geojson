@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
 import { GeoJSONBaseSchema } from "./base";
 import {
+    DiscriminableGeometrySchema,
     GeoJSON2DGeometrySchema,
     GeoJSON3DGeometrySchema,
     GeoJSONGeometryGeneric,
@@ -24,7 +25,7 @@ export const GeoJSONFeatureGenericSchema = <
 >(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
-    geometrySchema: z.ZodType<G>,
+    geometrySchema: DiscriminableGeometrySchema<P, G>,
 ) =>
     z
         .looseObject({

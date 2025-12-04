@@ -1,9 +1,8 @@
-import { core as zCore } from "zod";
 import { z } from "zod/v4";
-import { PropValues } from "zod/v4/core/util";
 import { GeoJSONFeatureGenericSchema } from "./feature";
 import { GeoJSONFeatureCollectionGenericSchema } from "./feature_collection";
 import {
+    DiscriminableGeometrySchema,
     GeoJSON2DGeometrySchema,
     GeoJSON3DGeometrySchema,
     GeoJSONGeometryGeneric,
@@ -24,7 +23,7 @@ export const GeoJSONGenericSchema = <
 >(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
-    geometrySchema: z.ZodType<G, unknown, zCore.$ZodTypeInternals<G> & { propValues: PropValues }>,
+    geometrySchema: DiscriminableGeometrySchema<P, G>,
 ) =>
     z.discriminatedUnion("type", [
         geometrySchema,
