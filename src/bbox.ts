@@ -1,14 +1,14 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import {
     GeoJSON2DPosition,
     GeoJSON2DPositionSchema,
     GeoJSON3DPosition,
     GeoJSON3DPositionSchema,
-    GeoJSONPosition,
+    GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./geometry/position";
 
-export type GeoJSONBboxGeneric<P extends GeoJSONPosition> = P extends GeoJSON3DPosition
+export type GeoJSONBboxGeneric<P extends GeoJSONAnyPosition> = P extends GeoJSON3DPosition
     ? [number, number, number, number, number, number]
     : P extends GeoJSON2DPosition
       ? [number, number, number, number]
@@ -22,7 +22,7 @@ const _3DBboxSchema = z.tuple([z.number(), z.number(), z.number(), z.number(), z
  * Zod tuples with 2 or 3 items are used to represent 2D and 3D bounding boxes respectively.
  * If the position schema is not a tuple with 2 or 3 items, it returns a union of both 2D and 3D bounding box schemas.
  */
-export const GeoJSONBboxGenericSchema = <P extends GeoJSONPosition>(
+export const GeoJSONBboxGenericSchema = <P extends GeoJSONAnyPosition>(
     positionSchema: z.ZodType<P>,
 ): z.ZodType<GeoJSONBboxGeneric<P>> => {
     // Because zod cannot do conditional typing we need to do some hacky type casts to make this work

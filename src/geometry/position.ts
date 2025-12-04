@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 
 // Specific 2D GeoJSON position
 export const GeoJSON2DPositionSchema = z.tuple([z.number(), z.number()]);
@@ -19,3 +19,7 @@ export type GeoJSON3DPosition = z.infer<typeof GeoJSON3DPositionSchema>;
 //   ambiguous. (RFC 7946, Section 3.1.1)
 export const GeoJSONPositionSchema = z.union([GeoJSON2DPositionSchema, GeoJSON3DPositionSchema]);
 export type GeoJSONPosition = z.infer<typeof GeoJSONPositionSchema>;
+
+// Any GeoJSON position (2D or 3D or more) used mainly for generic schemas
+export const GeoJSONAnyPositionSchema = z.tuple([z.number(), z.number()], z.number());
+export type GeoJSONAnyPosition = z.infer<typeof GeoJSONAnyPositionSchema>;

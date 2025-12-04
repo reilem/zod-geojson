@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { GeoJSONBaseSchema } from "./base";
 import {
     DiscriminableGeometrySchema,
@@ -10,7 +10,7 @@ import {
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
-    GeoJSONPosition,
+    GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./geometry/position";
 import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
@@ -19,7 +19,7 @@ import { GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
 
 export const GeoJSONFeatureGenericSchema = <
-    P extends GeoJSONPosition,
+    P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
     G extends GeoJSONGeometryGeneric<P>,
 >(
@@ -44,7 +44,7 @@ export const GeoJSONFeatureGenericSchema = <
             }
         });
 export type GeoJSONFeatureGeneric<
-    P extends GeoJSONPosition,
+    P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
     G extends GeoJSONGeometryGeneric<P>,
 > = z.infer<ReturnType<typeof GeoJSONFeatureGenericSchema<P, R, G>>>;

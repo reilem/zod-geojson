@@ -24,6 +24,7 @@ import {
     GeoJSONFeature,
     GeoJSONFeatureGenericSchema,
     GeoJSONFeatureSchema,
+    GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     GeoJSONPoint,
     GeoJSONPointSchema,
@@ -228,6 +229,44 @@ describe("GeoJSONFeature", () => {
         });
         it("does not allow a 4D feature", () => {
             expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom 4D position", () => {
+        const GeoJSON4DPositionSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+
+        const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema);
+
+        const GeoJSON4DFeatureSchema = GeoJSONFeatureGenericSchema(
+            GeoJSON4DPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSON4DGeometrySchema,
+        );
+
+        it("allows feature with 4D positions", () => {
+            const feature = {
+                ...geoJsonFeaturePoint2D,
+                geometry: {
+                    type: "Point",
+                    coordinates: [1.0, 2.0, 3.0, 4.0],
+                },
+            };
+            expect(GeoJSON4DFeatureSchema.parse(feature)).toEqual(feature);
+        });
+
+        it("does not allow feature with 3D positions", () => {
+            expect(() => GeoJSON4DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+        });
+
+        it("does not allow feature with 5D positions", () => {
+            const feature = {
+                ...geoJsonFeaturePoint2D,
+                geometry: {
+                    type: "Point",
+                    coordinates: [1.0, 2.0, 3.0, 4.0, 5.0],
+                },
+            };
+            expect(() => GeoJSON4DFeatureSchema.parse(feature)).toThrow(ZodError);
         });
     });
 
