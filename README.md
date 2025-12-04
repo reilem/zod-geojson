@@ -47,8 +47,10 @@ This library exposes schemas for the individual GeoJSON types:
 
 ```typescript
 import {
+    GeoJSONSchema,
     GeoJSONFeatureSchema,
     GeoJSONFeatureCollectionSchema,
+    // Geometries
     GeoJSONGeometrySchema,
     GeoJSONGeometryCollectionSchema,
     GeoJSONMultiPolygonSchema,
@@ -57,6 +59,9 @@ import {
     GeoJSONPolygonSchema,
     GeoJSONLineStringSchema,
     GeoJSONPointSchema,
+    // Utilities
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
 } from "zod-geojson";
 ```
 
@@ -64,8 +69,10 @@ It also exposes the resulting types from the schemas:
 
 ```typescript
 import type {
+    GeoJSON,
     GeoJSONFeature,
     GeoJSONFeatureCollection,
+    // Geometries
     GeoJSONGeometry,
     GeoJSONGeometryCollection,
     GeoJSONMultiPolygon,
@@ -74,31 +81,96 @@ import type {
     GeoJSONPolygon,
     GeoJSONLineString,
     GeoJSONPoint,
+    // Utilities
+    GeoJSONPosition,
+    GeoJSONProperties,
 } from "zod-geojson";
 ```
 
 ### Dimensionality
 
-This library exports specific schemas for 2D and 3D geometries, and their accompanying types:
+This library exports specific schemas for 2D and 3D GeoJSONs, and their accompanying types:
 
 ```typescript
 import type {
+    // 2D GeoJSON Schemas
     GeoJSON2DFeatureSchema,
     GeoJSON2DFeature,
     // ...
+    // 2D GeoJSON Types
     GeoJSON2DPointSchema,
     GeoJSON2DPoint,
     // ...
+    // 3D GeoJSON Schemas
     GeoJSON3DFeatureSchema,
     GeoJSON3DFeature,
     // ...
+    // 3D GeoJSON Types
     GeoJSON3DPointSchema,
     GeoJSON3DPoint,
 } from "zod-geojson";
 ```
 
-If you wish to use a different dimension (e.g. 4D geometries), you can pass a custom dimension schema
-as the first parameter to the generic schema functions which are also exposed by this library.
+## Customizing Schemas
+
+Each GeoJSON schemas in this library has a generic version that allows you to customize certain aspects
+of the GeoJSON validation.
+
+```typescript
+import {
+    GeoJSONGenericSchema,
+    GeoJSONFeatureGenericSchema,
+    GeoJSONFeatureCollectionGenericSchema,
+    // Geometries
+    GeoJSONGeometryGenericSchema,
+    GeoJSONGeometryCollectionGenericSchema,
+    GeoJSONMultiPolygonGenericSchema,
+    GeoJSONMultiLineStringGenericSchema,
+    GeoJSONMultiPointGenericSchema,
+    GeoJSONPolygonGenericSchema,
+    GeoJSONLineStringGenericSchema,
+    GeoJSONPointGenericSchema,
+    // Utilities
+    GeoJSONPositionGenericSchema,
+    GeoJSONPropertiesGenericSchema,
+} from "zod-geojson";
+```
+
+At geometry level you can customize:
+
+- The dimension of the coordinates (e.g. 4D geometries)
+
+At geojson, feature & feature collection level you can customize:
+
+- The dimension of the coordinates (e.g. 4D geometries)
+- The structure of the `properties` field
+- The type of geometries allowed in the features
+
+For example, to customize the main GeoJSON schema you would use the `GeoJSONGenericSchema` function.
+This function takes three parameters:
+
+1. A Zod schema defining the structure of the positions (coordinates)
+2. A Zod schema defining the structure of the properties field
+3. A Zod schema defining the structure of the geometries allowed in the GeoJSON
+
+Even if you wish to only customize one of these aspects, you will still need to pass all three parameters to the
+schema function. For convenience, this library exposes the default schemas which you can use as a base for your
+custom schemas. There are the following "default" main schemas that you can use if you do not wish to customize
+a certain aspect of the schema:
+
+- `GeoJSONPositionSchema` - The main GeoJSON position schema which allows both 2D and 3D positions
+- `GeoJSONPropertiesSchema` - The main GeoJSON properties schema which allows any valid JSON object or `null`
+- `GeoJSONGeometrySchema` - The main GeoJSON geometry schema which allows all valid GeoJSON geometries with 2D or 3D coordinates
+
+### Custom Dimensions
+
+If you wish to use a different dimension (e.g. 4D geometries), you can pass a custom `position` schema
+as the first parameter to the generic schema functions.
+
+As discussed above, if you only wish to customize the `position` field, you will still need to pass valid schemas for
+the `properties` and `geometries`. You can use the default schema `GeoJSONPropertiesSchema` exposed by this library for
+this purpose, and you will need to create a custom geometry schema that uses your custom position schema and then
+use this custom geometry schema as the third parameter.
 
 ```typescript
 import { GeoJSONGeometryGenericSchema, GeoJSONPropertiesSchema } from "zod-geojson";
@@ -106,8 +178,11 @@ import { GeoJSONGeometryGenericSchema, GeoJSONPropertiesSchema } from "zod-geojs
 const GeoJSON4DPositionSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
 type GeoJSON4DPosition = z.infer<typeof GeoJSON4DPositionSchema>;
 
-const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema, GeoJSONPropertiesSchema);
+const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema);
 type GeoJSON4DGeometry = z.infer<typeof GeoJSON4DGeometrySchema>;
+
+const GeoJSON4DSchema = GeoJSONGenericSchema(GeoJSON4DPositionSchema, GeoJSONPropertiesSchema, GeoJSON4DGeometrySchema);
+type GeoJSON4D = z.infer<typeof GeoJSON4DSchema>;
 ```
 
 ### Custom Properties
@@ -116,8 +191,12 @@ By default, the `properties` field of a GeoJSON Feature is defined as any valid 
 enforce a specific structure for the `properties` field, you can pass a custom `properties` Zod schema as the second parameter to the
 `GeoJSONFeatureGenericSchema`, `GeoJSONFeatureCollectionGenericSchema`, or `GeoJSONGenericSchema` functions.
 
+As discussed above, if you only wish to customize the properties field, you will still need to pass valid schemas for the
+positions and geometries. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONGeometrySchema` exposed
+by this library for this purpose.
+
 ```typescript
-import { GeoJSONGenericSchema, GeoJSONPositionSchema } from "zod-geojson";
+import { GeoJSONFeatureGenericSchema, GeoJSONPositionSchema, GeoJSONGeometrySchema } from "zod-geojson";
 
 const CustomPropertiesSchema = z.object({
     name: z.string(),
@@ -125,8 +204,49 @@ const CustomPropertiesSchema = z.object({
 });
 type CustomProperties = z.infer<typeof CustomPropertiesSchema>;
 
-const CustomGeoJSONSchema = GeoJSONGenericSchema(GeoJSONPositionSchema, CustomPropertiesSchema);
-type CustomGeoJSON = z.infer<typeof CustomGeoJSONSchema>;
+const CustomGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    CustomPropertiesSchema,
+    GeoJSONGeometrySchema,
+);
+type CustomGeoJSONFeature = z.infer<typeof CustomGeoJSONFeatureSchema>;
+```
+
+### Custom Geometries
+
+If you want to restrict the types of geometries allowed in a GeoJSON Feature, Feature Collection or GeoJSON object,
+you can pass a custom `geometry` Zod schema as the third parameter to the `GeoJSONFeatureGenericSchema`,
+`GeoJSONFeatureCollectionGenericSchema`, or `GeoJSONGenericSchema` functions.
+
+If you wish to restrict the geometry to a collection of possible geometries, you can use Zod's
+[`discriminatedUnion`](https://zod.dev/?id=discriminated-unions) function to create a union of the allowed
+geometry schemas and pass this union schema as the third parameter.
+
+As discussed above, if you only wish to customize the geometries field, you will still need to pass valid schemas for the
+positions and properties. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONPropertiesSchema` exposed
+by this library for this purpose.
+
+```typescript
+import {
+    GeoJSONFeatureGenericSchema,
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSONPointSchema,
+} from "zod-geojson";
+
+// A GeoJSON Feature that only allows Point geometries
+const PointGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSONPointSchema,
+);
+type PointGeoJSONFeature = z.infer<typeof PointGeoJSONFeatureSchema>;
+
+const PointOrPolygonGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    z.discriminatedUnion("type", [GeoJSONPointSchema, GeoJSONPolygonSchema]),
+);
 ```
 
 ## Error Cases

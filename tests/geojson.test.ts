@@ -1,20 +1,43 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import z, { ZodError } from "zod/v4";
-import { geoJsonFeatureGeometryCollection3D, geoJsonFeaturePolygon2D } from "../examples/feature";
-import { multiGeoJsonFeatureCollection2D } from "../examples/feature_collection";
-import { geoJsonPoint3D } from "../examples/geometry/point";
+import {
+    geoJsonFeatureGeometryCollection3D,
+    geoJsonFeatureLineString2D,
+    geoJsonFeaturePoint2D,
+    geoJsonFeaturePoint3D,
+    geoJsonFeaturePolygon2D,
+    geoJsonFeaturePolygon3DWithBbox,
+} from "../examples/feature";
+import {
+    multiGeoJsonFeatureCollection2D,
+    multiGeoJsonFeatureCollectionPolygon3D,
+    singleGeoJsonFeatureCollection2D,
+    singleGeoJsonFeatureCollection3D,
+    singleGeoJsonFeatureCollectionPolygon2D,
+} from "../examples/feature_collection";
+import { geoJsonLineString2D } from "../examples/geometry/line_string";
+import { geoJsonPoint2D, geoJsonPoint3D } from "../examples/geometry/point";
+import { geoJsonPolygon2D, geoJsonPolygon3D } from "../examples/geometry/polygon";
 import {
     GeoJSON,
     GeoJSON2D,
     GeoJSON2DGeometry,
+    GeoJSON2DPointSchema,
+    GeoJSON2DPolygonSchema,
+    GeoJSON2DPositionSchema,
     GeoJSON2DSchema,
     GeoJSON3D,
     GeoJSON3DGeometry,
+    GeoJSON3DPolygonSchema,
+    GeoJSON3DPositionSchema,
     GeoJSON3DSchema,
     GeoJSONGenericSchema,
     GeoJSONGeometry,
+    GeoJSONGeometrySchema,
+    GeoJSONPointSchema,
     GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
     GeoJSONSchema,
 } from "../src";
 import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
@@ -61,7 +84,11 @@ describe("GeoJSONSchema", () => {
     });
 
     describe("Custom properties", () => {
-        const GeoJSONWithCustomProperties = GeoJSONGenericSchema(GeoJSONPositionSchema, z.object({ foo: z.string() }));
+        const GeoJSONWithCustomProperties = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            z.object({ foo: z.string() }),
+            GeoJSONGeometrySchema,
+        );
 
         it("allows geojson with custom properties", () => {
             const geojson: GeoJSON = {
@@ -77,6 +104,89 @@ describe("GeoJSONSchema", () => {
                 properties: { invalid: "bar" },
             };
             expect(() => GeoJSONWithCustomProperties.parse(geojson)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom geometries", () => {
+        const GeoJSONPointGeoJSONSchema = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONPointSchema,
+        );
+
+        const GeoJSON3DPolygonGeoJSONSchema = GeoJSONGenericSchema(
+            GeoJSON3DPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSON3DPolygonSchema,
+        );
+
+        const GeoJSON2DPointOrPolygonGeoJSONSchema = GeoJSONGenericSchema(
+            GeoJSON2DPositionSchema,
+            GeoJSONPropertiesSchema,
+            z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DPolygonSchema]),
+        );
+
+        it("allows any point containing geojson to be parsed by a point geojson schema", () => {
+            expect(GeoJSONPointGeoJSONSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
+            expect(GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSONPointGeoJSONSchema.parse(singleGeoJsonFeatureCollection2D)).toEqual(
+                singleGeoJsonFeatureCollection2D,
+            );
+        });
+
+        it("allows any 3D polygon containing geojson to be parsed by a 3D polygon geojson schema", () => {
+            expect(GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonPolygon3D)).toEqual(geoJsonPolygon3D);
+            expect(GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonFeaturePolygon3DWithBbox)).toEqual(
+                geoJsonFeaturePolygon3DWithBbox,
+            );
+            expect(GeoJSON3DPolygonGeoJSONSchema.parse(multiGeoJsonFeatureCollectionPolygon3D)).toEqual(
+                multiGeoJsonFeatureCollectionPolygon3D,
+            );
+        });
+
+        it("allows any 2D point or polygon containing geojson to be parsed by a 2D point or polygon geojson schema", () => {
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonPolygon2D)).toEqual(geoJsonPolygon2D);
+
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeaturePolygon2D)).toEqual(
+                geoJsonFeaturePolygon2D,
+            );
+
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollection2D)).toEqual(
+                singleGeoJsonFeatureCollection2D,
+            );
+            expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollectionPolygon2D)).toEqual(
+                singleGeoJsonFeatureCollectionPolygon2D,
+            );
+        });
+
+        it("does not allow a polygon containing geojson to be parsed by a point geojson schema", () => {
+            expect(() => GeoJSONPointGeoJSONSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSONPointGeoJSONSchema.parse(singleGeoJsonFeatureCollectionPolygon2D)).toThrow(ZodError);
+        });
+
+        it("does not allow a 2D polygon containing geojson to be parsed by a 3D polygon geojson schema", () => {
+            expect(() => GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollectionPolygon2D)).toThrow(
+                ZodError,
+            );
+        });
+
+        it("does not allow a 2D line string containing geojson to be parsed by a 2D point or polygon geojson schema", () => {
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonLineString2D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeatureLineString2D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(multiGeoJsonFeatureCollection2D)).toThrow(ZodError);
+        });
+
+        it("does not allow a 3D point containing geojson to be parsed by a 2D point or polygon geojson schema", () => {
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(
+                ZodError,
+            );
         });
     });
 });
@@ -371,6 +481,7 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
  * Test that types match with @types/geojson
  */
 export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;
-export const geoJson2: GeoJSONTypes.GeoJSON = geoJsonPoint3D;
-export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonFeaturePolygon2D;
-export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonFeatureGeometryCollection3D;
+export const geoJson2: GeoJSONTypes.Point = geoJsonPoint3D;
+export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon2D;
+export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection | null> =
+    geoJsonFeatureGeometryCollection3D;

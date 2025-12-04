@@ -9,17 +9,31 @@ import {
     geoJsonFeaturePolygon2D,
     geoJsonFeaturePolygon3DWithBbox,
 } from "../examples/feature";
+import { geoJsonLineString2D } from "../examples/geometry/line_string";
 import {
     GeoJSON2DFeature,
     GeoJSON2DFeatureSchema,
+    GeoJSON2DPointSchema,
+    GeoJSON2DPolygonSchema,
+    GeoJSON2DPositionSchema,
     GeoJSON3DFeature,
     GeoJSON3DFeatureSchema,
+    GeoJSON3DPointSchema,
+    GeoJSON3DPolygonSchema,
+    GeoJSON3DPositionSchema,
     GeoJSONFeature,
     GeoJSONFeatureGenericSchema,
     GeoJSONFeatureSchema,
+    GeoJSONGeometrySchema,
+    GeoJSONPoint,
+    GeoJSONPointSchema,
+    GeoJSONPosition,
     GeoJSONPositionSchema,
+    GeoJSONProperties,
+    GeoJSONPropertiesSchema,
 } from "../src";
-import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
+import { GeoJSONFeatureGeneric } from "../src/feature";
+import { Equals, failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
 import { geoJsonPoint4D } from "./geometry/point.test";
 
 export const geoJsonFeaturePoint4D = {
@@ -221,6 +235,7 @@ describe("GeoJSONFeature", () => {
         const GeoJSONFeatureWithCustomProperties = GeoJSONFeatureGenericSchema(
             GeoJSONPositionSchema,
             z.object({ name: z.string(), age: z.number(), meta: z.object({ firstLogin: z.boolean() }) }),
+            GeoJSONGeometrySchema,
         );
 
         it("allows feature with custom properties", () => {
@@ -246,6 +261,66 @@ describe("GeoJSONFeature", () => {
                 },
             };
             expect(() => GeoJSONFeatureWithCustomProperties.parse(feature)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom geometry", () => {
+        const GeoJSONPointFeatureSchema = GeoJSONFeatureGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONPointSchema,
+        );
+
+        const GeoJSON3DPolygonFeatureSchema = GeoJSONFeatureGenericSchema(
+            GeoJSON3DPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSON3DPolygonSchema,
+        );
+
+        const GeoJSON2DPointOrPolygonFeatureSchema = GeoJSONFeatureGenericSchema(
+            GeoJSON2DPositionSchema,
+            GeoJSONPropertiesSchema,
+            z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DPolygonSchema]),
+        );
+
+        it("allows any point feature to be parsed by a point feature schema", () => {
+            expect(GeoJSONPointFeatureSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSONPointFeatureSchema.parse(geoJsonFeaturePoint3D)).toEqual(geoJsonFeaturePoint3D);
+        });
+
+        it("allows a 3D polygon feature to be parsed by a 3D polygon feature schema ", () => {
+            expect(GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon3DWithBbox)).toEqual(
+                geoJsonFeaturePolygon3DWithBbox,
+            );
+        });
+
+        it("allows either a 2D point or 2D polygon feature to be parsed by a 2D point or polygon feature schema", () => {
+            expect(GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePolygon2D)).toEqual(
+                geoJsonFeaturePolygon2D,
+            );
+        });
+
+        it("does not allow a polygon feature to be parsed by a point feature schema", () => {
+            expect(() => GeoJSONPointFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+        });
+
+        it("does not allow a 2D polygon feature to be parsed by a 3D polygon feature schema", () => {
+            expect(() => GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+        });
+
+        it("does not allow a 2D line string feature to be parsed by a 2D point or polygon feature schema", () => {
+            expect(() =>
+                GeoJSON2DPointOrPolygonFeatureSchema.parse({
+                    type: "Feature",
+                    properties: {},
+                    geometry: geoJsonLineString2D,
+                }),
+            ).toThrow(ZodError);
+        });
+
+        it("does not allow a 3D point feature to be parsed by a 2D point or polygon feature schema", () => {
+            expect(() => GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
         });
     });
 });
@@ -375,8 +450,66 @@ export const invalidGeoJsonFeature3DPositionTooBig: GeoJSON3DFeature = {
 };
 
 /**
+ * Test inferred types of feature schema with custom properties
+ */
+export const FeatureWithCustomPropertiesSchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    z.object({ name: z.string(), age: z.number() }),
+    GeoJSONGeometrySchema,
+);
+export type FeatureWithCustomProperties = z.infer<typeof FeatureWithCustomPropertiesSchema>;
+
+export const testPropertiesEquals: Equals<
+    FeatureWithCustomProperties["properties"],
+    {
+        name: string;
+        age: number;
+    }
+> = true;
+
+export const testPropertiesDoesNotEqual: Equals<
+    FeatureWithCustomProperties["properties"],
+    {
+        name: string;
+        age: string;
+    }
+> = false;
+
+/**
+ * Test inferred types of feature schema with custom geometry
+ */
+export const FeatureWithCustomGeometrySchema = GeoJSONFeatureGenericSchema(
+    GeoJSON3DPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSON3DPointSchema,
+);
+export type FeatureWithCustomGeometry = z.infer<typeof FeatureWithCustomGeometrySchema>;
+
+export const testGeometryEquals: Equals<
+    FeatureWithCustomGeometry["geometry"],
+    { type: "Point"; coordinates: [number, number, number] }
+> = true;
+
+export const testGeometryDoesNotEqual1: Equals<
+    FeatureWithCustomGeometry["geometry"],
+    { type: "Point"; coordinates: [number, number] }
+> = false;
+
+export const testGeometryDoesNotEqual2: Equals<
+    FeatureWithCustomGeometry["geometry"],
+    { type: "LineString"; coordinates: [number, number, number][] }
+> = false;
+
+/**
  * Test that types match with @types/geojson
  */
 export const feature1: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D as GeoJSONFeature;
-export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D;
-export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePolygon3DWithBbox;
+export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D;
+export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon3DWithBbox;
+
+export const feature4: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D;
+export const feature5: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D as GeoJSONFeatureGeneric<
+    GeoJSONPosition,
+    GeoJSONProperties,
+    GeoJSONPoint
+>;
