@@ -36,8 +36,8 @@ importers:
         specifier: ~5.9.2
         version: 5.9.3
       zod:
-        specifier: ~4.1.8
-        version: 4.1.11
+        specifier: ~4.1.13
+        version: 4.1.13
       zshy:
         specifier: ^0.4.1
         version: 0.4.3(typescript@5.9.3)
@@ -1889,8 +1889,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod@4.1.11:
-    resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
+  zod@4.1.13:
+    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
   zshy@0.4.3:
     resolution: {integrity: sha512-onhD/E4OVAOFION4DmXza93+x8XItEdyZibxrtDu2rpAYIg63cKhmYqLwXmK0UNfqchvyabbBDUcJbQg097dZA==}
@@ -4038,7 +4038,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod@4.1.11: {}
+  zod@4.1.13: {}
 
   zshy@0.4.3(typescript@5.9.3):
     dependencies:

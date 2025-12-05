@@ -23,6 +23,7 @@ import {
     GeoJSONFeatureCollection,
     GeoJSONFeatureCollectionGenericSchema,
     GeoJSONFeatureCollectionSchema,
+    GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     GeoJSONPointSchema,
     GeoJSONPositionSchema,
@@ -149,6 +150,54 @@ describe("GeoJSONFeatureCollection", () => {
         });
         it("does not allow a 4D feature collection", () => {
             expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom 4D position", () => {
+        const GeoJSON4DPositionSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+
+        const GeoJSON4DGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON4DPositionSchema);
+
+        const GeoJSON4DFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
+            GeoJSON4DPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSON4DGeometrySchema,
+        );
+
+        it("allows feature collection with 4D positions", () => {
+            const featureCollection = {
+                ...singleGeoJsonFeatureCollection3D,
+                features: [
+                    {
+                        ...geoJsonFeaturePoint2D,
+                        geometry: {
+                            type: "Point",
+                            coordinates: [1.0, 2.0, 3.0, 4.0],
+                        },
+                    },
+                ],
+            };
+            expect(GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("does not allow feature collection with 3D positions", () => {
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(ZodError);
+        });
+
+        it("does not allow feature collection with 5D positions", () => {
+            const featureCollection = {
+                ...singleGeoJsonFeatureCollection3D,
+                features: [
+                    {
+                        ...geoJsonFeaturePoint2D,
+                        geometry: {
+                            type: "Point",
+                            coordinates: [1.0, 2.0, 3.0, 4.0, 5.0],
+                        },
+                    },
+                ],
+            };
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toThrow(ZodError);
         });
     });
 

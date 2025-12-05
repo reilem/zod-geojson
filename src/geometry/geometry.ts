@@ -1,19 +1,24 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { core as zCore } from "zod/v4";
 import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
 import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import {
+    GeoJSON2DPositionSchema,
+    GeoJSON3DPositionSchema,
+    GeoJSONAnyPosition,
+    GeoJSONPositionSchema,
+} from "./position";
 
-export const GeoJSONGeometryGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
+export const GeoJSONGeometryGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
     z.discriminatedUnion("type", [
         GeoJSONSimpleGeometryGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),
     ]);
-export type GeoJSONGeometryGeneric<P extends GeoJSONPosition> = z.infer<
+export type GeoJSONGeometryGeneric<P extends GeoJSONAnyPosition> = z.infer<
     ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
 >;
 
-export type DiscriminableGeometrySchema<P extends GeoJSONPosition, G extends GeoJSONGeometryGeneric<P>> = z.ZodType<
+export type DiscriminableGeometrySchema<P extends GeoJSONAnyPosition, G extends GeoJSONGeometryGeneric<P>> = z.ZodType<
     G,
     unknown,
     zCore.$ZodTypeInternals<G> & zCore.$ZodTypeDiscriminableInternals

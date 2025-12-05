@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod/v4";
+import * as z from "zod/v4";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithHole,
@@ -13,6 +14,7 @@ import {
     GeoJSON3DPolygon,
     GeoJSON3DPolygonSchema,
     GeoJSONPolygon,
+    GeoJSONPolygonGenericSchema,
     GeoJSONPolygonSchema,
 } from "../../src";
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
@@ -221,6 +223,47 @@ describe("GeoJSONPolygon", () => {
         });
         it("does not allow a 4D polygon", () => {
             expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("Custom 4D position", () => {
+        const GeoJSON4DPosition = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+        const GeoJSON4DPolygonSchema = GeoJSONPolygonGenericSchema(GeoJSON4DPosition);
+
+        it("allows a valid 4D geometry", () => {
+            const geoJsonPolygon4D = {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        [0.0, 0.0, 0.0, 0.0],
+                        [1.0, 0.0, 0.0, 0.0],
+                        [1.0, 1.0, 2.0, 0.0],
+                        [0.0, 2.0, 2.0, 0.0],
+                        [0.0, 0.0, 0.0, 0.0],
+                    ],
+                ],
+            };
+            expect(GeoJSON4DPolygonSchema.parse(geoJsonPolygon4D)).toEqual(geoJsonPolygon4D);
+        });
+
+        it("does not allow a 3D polygon", () => {
+            expect(() => GeoJSON4DPolygonSchema.parse(geoJsonPolygon3D)).toThrow(z.ZodError);
+        });
+
+        it("does not allow a 5D polygon", () => {
+            const geoJsonPoint5D = {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        [0.0, 0.0, 0.0, 0.0, 0.0],
+                        [1.0, 0.0, 0.0, 0.0, 0.0],
+                        [1.0, 1.0, 2.0, 0.0, 0.0],
+                        [0.0, 2.0, 2.0, 0.0, 0.0],
+                        [0.0, 0.0, 0.0, 0.0, 0.0],
+                    ],
+                ],
+            };
+            expect(() => GeoJSON4DPolygonSchema.parse(geoJsonPoint5D)).toThrow(z.ZodError);
         });
     });
 });

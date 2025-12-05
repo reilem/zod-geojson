@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { GeoJSONFeatureGenericSchema } from "./feature";
 import { GeoJSONFeatureCollectionGenericSchema } from "./feature_collection";
 import {
@@ -11,13 +11,13 @@ import {
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
-    GeoJSONPosition,
+    GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./geometry/position";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
 
 export const GeoJSONGenericSchema = <
-    P extends GeoJSONPosition,
+    P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
     G extends GeoJSONGeometryGeneric<P>,
 >(
@@ -31,7 +31,7 @@ export const GeoJSONGenericSchema = <
         GeoJSONFeatureCollectionGenericSchema(positionSchema, propertiesSchema, geometrySchema),
     ]);
 export type GeoJSONGeneric<
-    P extends GeoJSONPosition,
+    P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
     G extends GeoJSONGeometryGeneric<P>,
 > = z.infer<ReturnType<typeof GeoJSONGenericSchema<P, R, G>>>;

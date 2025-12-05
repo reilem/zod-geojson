@@ -1,13 +1,18 @@
-import { z } from "zod/v4";
+import * as z from "zod/v4";
 import { GeoJSONGeometryBaseSchema } from "./helper/base";
 import { GeoJSONPolygonGenericSchema } from "./polygon";
-import { GeoJSON2DPositionSchema, GeoJSON3DPositionSchema, GeoJSONPosition, GeoJSONPositionSchema } from "./position";
+import {
+    GeoJSON2DPositionSchema,
+    GeoJSON3DPositionSchema,
+    GeoJSONAnyPosition,
+    GeoJSONPositionSchema,
+} from "./position";
 import { GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONPosition>(positionSchema: z.ZodType<P>) =>
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,
