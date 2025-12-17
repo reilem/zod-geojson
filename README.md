@@ -115,7 +115,7 @@ import type {
 
 ## Customizing Schemas
 
-Each GeoJSON schemas in this library has a generic version that allows you to customize certain aspects
+Each GeoJSON schema in this library has a generic version that allows you to customize certain aspects
 of the GeoJSON validation.
 
 ```typescript
@@ -170,9 +170,8 @@ If you wish to use a different dimension (e.g. 4D geometries), you can pass a cu
 as the first parameter to the generic schema functions.
 
 As discussed above, if you only wish to customize the `position` field, you will still need to pass valid schemas for
-the `properties` and `geometries`. You can use the default schema `GeoJSONPropertiesSchema` exposed by this library for
-this purpose, and you will need to create a custom geometry schema that uses your custom position schema and then
-use this custom geometry schema as the third parameter.
+the `properties` and `geometries` fields. You can use the default `GeoJSONPropertiesSchema` properties schema and you will need to 
+create & pass a custom geometry schema that uses your custom position schema.
 
 ```typescript
 import { GeoJSONGeometryGenericSchema, GeoJSONPropertiesSchema } from "zod-geojson";
@@ -193,8 +192,8 @@ By default, the `properties` field of a GeoJSON Feature is defined as any valid 
 enforce a specific structure for the `properties` field, you can pass a custom `properties` Zod schema as the second parameter to the
 `GeoJSONFeatureGenericSchema`, `GeoJSONFeatureCollectionGenericSchema`, or `GeoJSONGenericSchema` functions.
 
-As discussed above, if you only wish to customize the properties field, you will still need to pass valid schemas for the
-positions and geometries. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONGeometrySchema` exposed
+As discussed above, if you only wish to customize the `properties` field, you will still need to pass valid schemas for the
+`positions` and `geometries` fields. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONGeometrySchema` exposed
 by this library for this purpose.
 
 ```typescript
@@ -224,8 +223,8 @@ If you wish to restrict the geometry to a collection of possible geometries, you
 [`discriminatedUnion`](https://zod.dev/?id=discriminated-unions) function to create a union of the allowed
 geometry schemas and pass this union schema as the third parameter.
 
-As discussed above, if you only wish to customize the geometries field, you will still need to pass valid schemas for the
-positions and properties. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONPropertiesSchema` exposed
+As discussed above, if you only wish to customize the `geometries` field, you will still need to pass valid schemas for the
+`positions` and `properties`. You can use the default schemas `GeoJSONPositionSchema` and `GeoJSONPropertiesSchema` exposed
 by this library for this purpose.
 
 ```typescript
