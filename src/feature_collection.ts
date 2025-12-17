@@ -9,7 +9,7 @@ import {
 } from "./geometry/position";
 import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
-import { GeoJSONEnumType, GeoJSONTypeSchema } from "./type";
+import { GeoJSONType, GeoJSONTypeSchema } from "./type";
 import { validBboxForFeatureCollection } from "./validation/bbox";
 import {
     getInvalidFeatureCollectionDimensionsIssue,
@@ -29,7 +29,7 @@ export type GeoJSONFeatureCollectionGenericSchemaType<
     G extends GeoJSONGeometryGeneric<P>,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONEnumType["FeatureCollection"]>;
+        type: z.ZodLiteral<typeof GeoJSONType.FeatureCollection>;
         features: z.ZodArray<GeoJSONFeatureGenericSchemaType<P, R, G>>;
         coordinates: z.ZodOptional<z.ZodNever>;
         geometry: z.ZodOptional<z.ZodNever>;

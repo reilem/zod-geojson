@@ -15,7 +15,7 @@ import {
 } from "./geometry/position";
 import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
-import { GeoJSONEnumType, GeoJSONTypeSchema } from "./type";
+import { GeoJSONType, GeoJSONTypeSchema } from "./type";
 import { validBboxForFeature } from "./validation/bbox";
 
 export type GeoJSONFeatureGenericSchemaType<
@@ -24,7 +24,7 @@ export type GeoJSONFeatureGenericSchemaType<
     G extends GeoJSONGeometryGeneric<P>,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONEnumType["Feature"]>;
+        type: z.ZodLiteral<typeof GeoJSONType.Feature>;
         geometry: z.ZodNullable<z.ZodType<G>>;
         properties: z.ZodNullable<z.ZodType<R>>;
         coordinates: z.ZodOptional<z.ZodNever>;

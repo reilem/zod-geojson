@@ -6,14 +6,14 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 import { getInvalidPolygonLinearRingIssue, validPolygonRings } from "./validation/linear_ring";
 
 export type GeoJSONPolygonGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["Polygon"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.Polygon>;
         coordinates: z.ZodArray<z.ZodArray<z.ZodType<P>>>;
     }
 >;

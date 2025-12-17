@@ -6,13 +6,13 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionList } from "./validation/dimension";
 
 export type GeoJSONLineStringGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["LineString"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.LineString>;
         coordinates: z.ZodArray<z.ZodType<P>>;
     }
 >;

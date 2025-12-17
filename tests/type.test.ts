@@ -36,9 +36,9 @@ export const invalidGeoJsonType: GeoJSONType = "Foo";
 /**
  * Test that types match with @types/geojson
  */
-export const type1: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.Feature;
-export const type2: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.FeatureCollection;
-export const type3: GeoJSONTypes.GeoJsonTypes = GeoJSONTypeSchema.enum.Polygon;
+export const type1: GeoJSONTypes.GeoJsonTypes = GeoJSONType.Feature;
+export const type2: GeoJSONTypes.GeoJsonTypes = GeoJSONType.FeatureCollection;
+export const type3: GeoJSONTypes.GeoJsonTypes = GeoJSONType.Polygon;
 
 /**
  * Test that @types/geojson matches our types

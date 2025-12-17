@@ -90,7 +90,7 @@ export {
     type GeoJSONPosition,
 } from "./geometry/position";
 
-export { GeoJSONGeometryTypeSchema, type GeoJSONGeometryEnumType, type GeoJSONGeometryType } from "./geometry/type";
+export { GeoJSONGeometryTypeSchema, GeoJSONGeometryType } from "./geometry/type";
 
 export {
     GeoJSON2DBboxSchema,
@@ -136,4 +136,4 @@ export {
 
 export { GeoJSONPropertiesSchema, type GeoJSONProperties } from "./properties";
 
-export { GeoJSONTypeSchema, type GeoJSONType } from "./type";
+export { GeoJSONTypeSchema, GeoJSONType } from "./type";

@@ -7,14 +7,14 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
 export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["MultiPolygon"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.MultiPolygon>;
         coordinates: z.ZodArray<z.ZodArray<z.ZodArray<z.ZodType<P>>>>;
     }
 >;

@@ -6,13 +6,13 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionList } from "./validation/dimension";
 
 export type GeoJSONMultiPointGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["MultiPoint"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.MultiPoint>;
         coordinates: z.ZodArray<z.ZodType<P>>;
     }
 >;

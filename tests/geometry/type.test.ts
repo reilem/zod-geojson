@@ -64,14 +64,14 @@ export const invalidGeoJsonGeometryType: GeoJSONGeometryType = "Foo";
 /**
  * Test that types match with @types/geojson
  */
-export const type1: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.Point;
-export const type2: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.Point as GeoJSONGeometryType;
-export const type3: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.GeometryCollection;
-export const type4: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.MultiLineString;
-export const type5: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.MultiPoint;
-export const type6: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.MultiPolygon;
-export const type7: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.LineString;
-export const type8: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryTypeSchema.enum.Polygon;
+export const type1: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.Point;
+export const type2: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.Point as GeoJSONGeometryType;
+export const type3: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.GeometryCollection;
+export const type4: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.MultiLineString;
+export const type5: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.MultiPoint;
+export const type6: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.MultiPolygon;
+export const type7: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.LineString;
+export const type8: GeoJSONTypes.GeoJsonGeometryTypes = GeoJSONGeometryType.Polygon;
 
 /**
  * Test that @types/geojson match with our types

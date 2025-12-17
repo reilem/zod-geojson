@@ -6,12 +6,12 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPosition } from "./validation/bbox";
 
 export type GeoJSONPointGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["Point"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.Point>;
         coordinates: z.ZodType<P>;
     }
 >;

@@ -7,13 +7,13 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForCollection } from "./validation/bbox";
 import { getInvalidGeometryCollectionDimensionIssue, validDimensionsForCollection } from "./validation/dimension";
 
 export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
-        type: z.ZodLiteral<GeoJSONGeometryEnumType["GeometryCollection"]>;
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.GeometryCollection>;
         coordinates: z.ZodOptional<z.ZodNever>;
         geometry: z.ZodOptional<z.ZodNever>;
         properties: z.ZodOptional<z.ZodNever>;
