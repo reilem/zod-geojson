@@ -12,10 +12,15 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Repository
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: 24.12.0
+                  registry-url: "https://registry.npmjs.org"
 
             - name: Setup PNPM
-              uses: pnpm/action-setup@v3
+              uses: pnpm/action-setup@v4
 
             - name: Install Dependencies
               run: pnpm install -r --frozen-lockfile
@@ -35,10 +40,5 @@ jobs:
             - name: Test
               run: pnpm run test
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 22.13.1
-                  registry-url: "https://registry.npmjs.org"
-
             - name: Publish
-              run: pnpm publish --access public --no-git-checks # Disable checks because this will run on a headless release
+              run: pnpm publish --provenance --access public --no-git-checks # Disable checks because this will run on a headless release
