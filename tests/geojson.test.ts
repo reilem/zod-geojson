@@ -546,6 +546,31 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 };
 
 /**
+ * Test custom strict position typing
+ */
+const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);
+
+const GeoJSON2DStrictGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON2DStrictPositionSchema);
+
+const GeoJSON2DStrictSchema = GeoJSONGenericSchema(
+    GeoJSON2DStrictPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSON2DStrictGeometrySchema,
+);
+type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
+
+export const strict2DPositionGeoJsonPoint: GeoJSON2DStrict = {
+    type: "Point",
+    coordinates: [1.0, 2.0],
+};
+
+export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
+    type: "Point",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 2.0, 3.0],
+};
+
+/**
  * Test that types match with @types/geojson
  */
 export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;

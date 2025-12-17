@@ -5,11 +5,13 @@
 <a href="https://github.com/reilem/zod-geojson/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/zod-geojson" alt="License"/></a>
 <a href="https://github.com/reilem/zod-geojson"><img src="https://img.shields.io/github/stars/reilem/zod-geojson" alt="License"/></a>
 
-This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library by [@colinhacks](https://x.com/colinhacks). Now compatible with Zod v4!
+This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library by [@colinhacks](https://x.com/colinhacks).
 
-The schemas are based on the GeoJSON specification [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946). The
-schemas validate the structure of the GeoJSON objects, types, and the validity of the dimensions, geometries and
+The schemas are based on the GeoJSON specification [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946). They validate the structure of the GeoJSON objects, types, and the validity of the dimensions, geometries and
 bounding boxes.
+
+The schemas and inferred types are designed to be fully compatible with the
+[@types/geojson](https://www.npmjs.com/package/@types/geojson) TypeScript types.
 
 ## Getting Started
 
@@ -249,6 +251,39 @@ const PointOrPolygonGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
 );
 ```
 
+### Strict Position Typing
+
+The default 2D and 3D position schemas exported by this library used to enforce this dimensionality at type-level. For example:
+
+```typescript
+import { GeoJSON2DPoint } from "zod-geojson";
+
+const point2D: GeoJSON2DPoint = {
+    type: "Point",
+    // This is a 3D position, and so would error during compilation!
+    coordinates: [0, 0, 0],
+};
+```
+
+However, to maintain "out of box" compatibility with the `@types/geojson` types, this feature has been removed. If
+you wish to have strict position typing, you can use the generic schemas to create your own custom schemas and types
+that enforce the desired position dimension.
+
+```typescript
+const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);
+type GeoJSON2DStrictPosition = z.infer<typeof GeoJSON2DStrictPositionSchema>;
+
+const GeoJSON2DStrictGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON2DStrictPositionSchema);
+type GeoJSON2DStrictGeometry = z.infer<typeof GeoJSON2DStrictGeometrySchema>;
+
+export const GeoJSON2DStrictSchema = GeoJSONGenericSchema(
+    GeoJSON2DStrictPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSON2DStrictGeometrySchema,
+);
+type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
+```
+
 ## Error Cases
 
 This library will throw an error if the GeoJSON object is not valid. For example, where the coordinates type does
@@ -287,36 +322,17 @@ The error messages are currently very big and not user-friendly due to the defau
 nested zod unions. If you're not using it already, I recommend using
 [zod-validation-error](https://www.npmjs.com/package/zod-validation-error) to simplify the error messages.
 
-### Nested Geometry Collections
+### Large Inferred Types
 
-This library does not support the validation of nested geometry collections. E.g.
+The inferred types from the main schemas (e.g. `GeoJSON`) are quite large due to the nested unions and the recursive
+nature of the geometry collections. Since the inferred zod types only see
+the full union of all possible types, without knowing the names of the intermediate schemas, the resulting types show
+every single possible combination of the subtypes. This can lead to very large types that can be hard to read. Unfortunately,
+I have not found a way to reduce the size of the inferred types while still maintaining the full validation. If
+you know of a way to improve this, please open an issue or a pull request.
 
-```typescript
-// This will fail
-const schema = GeoJSONSchema.parse({
-    type: "GeometryCollection",
-    geometries: [
-        {
-            type: "GeometryCollection",
-            geometries: [
-                {
-                    type: "Point",
-                    coordinates: [0, 0],
-                },
-            ],
-        },
-    ],
-    bbox: [0, 0, 1, 1],
-});
-```
-
-This is per the GeoJSON RFC [recommendation](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.8):
-
-> To maximize interoperability, implementations SHOULD avoid nested GeometryCollections.
-
-and also because the implementation of recursive zod schemas together with generics is quite cumbersome and would
-needlessy complicate both the implementation and usage of this library. If you need to validate nested geometry
-collections feel free to open an issue and we can discuss possible solutions.
+In the meantime, if you really need a smaller type you can always create a custom schema that only contains the
+geometry types that you need. See "Custom Geometries" section for more details.
 
 ## Contributing
 
