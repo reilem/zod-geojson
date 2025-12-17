@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { multiLineString as turfMultiLineString } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
@@ -22,7 +23,7 @@ import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./
 import { geoJsonLineString4D } from "./line_string.test";
 
 export const singleGeoJsonMultiLineString4D = {
-    type: "MultiLineString",
+    type: "MultiLineString" as const,
     coordinates: [geoJsonLineString4D.coordinates],
 };
 
@@ -193,12 +194,42 @@ describe("GeoJSONMultiLineString", () => {
             expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D multi-line string from turf.js", () => {
+            const multiLineString = turfMultiLineString([
+                [
+                    [0, 0],
+                    [1, 1],
+                ],
+                [
+                    [2, 2],
+                    [3, 3],
+                ],
+            ]).geometry;
+            expect(GeoJSONMultiLineStringSchema.parse(multiLineString)).toEqual(multiLineString);
+        });
+
+        it("validates 3D multi-line string from turf.js", () => {
+            const multiLineString = turfMultiLineString([
+                [
+                    [0, 0, 0],
+                    [1, 1, 1],
+                ],
+                [
+                    [2, 2, 2],
+                    [3, 3, 3],
+                ],
+            ]).geometry;
+            expect(GeoJSONMultiLineStringSchema.parse(multiLineString)).toEqual(multiLineString);
+        });
+    });
 });
 
 /**
  * Invalid GeoJSON MultiPoint to test types
  */
-export const invalidGeoJsonMultiLineStringTooFewPositions: GeoJSONMultiLineString = {
+export const invalidGeoJsonMultiLineString: GeoJSONMultiLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
@@ -207,7 +238,7 @@ export const invalidGeoJsonMultiLineStringTooFewPositions: GeoJSONMultiLineStrin
             [1.0, 0.0],
         ],
         // @ts-expect-error -- THIS SHOULD FAIL
-        [[0.0, 0.0]],
+        ["[0.0, 0.0]"],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
@@ -221,25 +252,15 @@ export const invalidGeoJsonMultiLineStringTooFewPositions: GeoJSONMultiLineStrin
     geometry: {},
     otherKey: "allowed",
 };
-export const invalidGeoJsonMultiLineStringPositionTooSmall: GeoJSONMultiLineString = {
-    // @ts-expect-error -- THIS SHOULD FAIL
-    type: "Hello",
-    // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[[1.0, 0.0], [0.0]]],
-    // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [1.0, 0.0],
-};
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonMultiLineStringPositionTooBig: GeoJSONMultiLineString = singleGeoJsonMultiLineString4D;
 
 /**
  * Invalid 2D GeoJSON MultiLineString to test types
  */
-export const invalidGeoJsonMultiLineString2DTooFewPositions: GeoJSON2DMultiLineString = {
+export const invalidGeoJsonMultiLineString2D: GeoJSON2DMultiLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[[1.0, 0.0]]],
+    coordinates: [["[1.0, 0.0]"]],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -277,11 +298,11 @@ export const invalidGeoJsonMultiLineString2DPositionTooBig: GeoJSON2DMultiLineSt
 /**
  * Invalid 3D GeoJSON MultiLineString to test types
  */
-export const invalidGeoJsonMultiLineString3DTooFewPositions: GeoJSON3DMultiLineString = {
+export const invalidGeoJsonMultiLineString3D: GeoJSON3DMultiLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[[1.0, 2.0, 0.0]]],
+    coordinates: [["[1.0, 2.0, 0.0]"]],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -329,3 +350,32 @@ export const multiLineString2: GeoJSONTypes.MultiLineString = singleGeoJsonMulti
 export const multiLineString3: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString2DWithBbox;
 export const multiLineString4: GeoJSONTypes.MultiLineString =
     singleGeoJsonMultiLineString2DWithBbox as GeoJSONMultiLineString;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const multiLineString5: GeoJSONMultiLineString = multiLineString1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const multiLineString6: GeoJSONMultiLineString = turfMultiLineString([
+    [
+        [0, 0],
+        [1, 1],
+    ],
+    [
+        [2, 2],
+        [3, 3],
+    ],
+]).geometry;
+export const multiLineString7: GeoJSONMultiLineString = turfMultiLineString([
+    [
+        [0, 0, 0],
+        [1, 1, 1],
+    ],
+    [
+        [2, 2, 2],
+        [3, 3, 3],
+    ],
+]).geometry;

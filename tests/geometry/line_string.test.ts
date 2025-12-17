@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { lineString as turfLineString } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonLineString2D,
@@ -171,16 +172,35 @@ describe("GeoJSONLineString", () => {
             expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D line string from turf.js", () => {
+            const lineString = turfLineString([
+                [0, 0],
+                [1, 1],
+            ]).geometry;
+            expect(GeoJSONLineStringSchema.parse(lineString)).toEqual(lineString);
+        });
+
+        it("validates 3D line string from turf.js", () => {
+            const lineString = turfLineString([
+                [0, 0, 0],
+                [1, 1, 1],
+                [2, 2, 2],
+            ]).geometry;
+            expect(GeoJSONLineStringSchema.parse(lineString)).toEqual(lineString);
+        });
+    });
 });
 
 /**
  * Invalid GeoJSON MultiPoint to test types
  */
-export const invalidGeoJsonLineStringTooFewPositions: GeoJSONLineString = {
+export const invalidGeoJsonLineString: GeoJSONLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[1.0, 0.0]],
+    coordinates: ["[1.0, 0.0]"],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -193,25 +213,15 @@ export const invalidGeoJsonLineStringTooFewPositions: GeoJSONLineString = {
     geometry: {},
     otherKey: "allowed",
 };
-export const invalidGeoJsonLineStringPositionTooSmall: GeoJSONLineString = {
-    // @ts-expect-error -- THIS SHOULD FAIL
-    type: "Hello",
-    // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[1.0, 0.0], [0.0]],
-    // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [1.0],
-};
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonLineStringPositionTooBig: GeoJSONLineString = geoJsonLineString4D;
 
 /**
  * Invalid 2D GeoJSON LineString to test types
  */
-export const invalidGeoJsonLineString2DTooFewPositions: GeoJSON2DLineString = {
+export const invalidGeoJsonLineString2D: GeoJSON2DLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[1.0, 0.0]],
+    coordinates: ["[1.0, 0.0]"],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -247,11 +257,11 @@ export const invalidGeoJsonLineString2DPositionTooBig: GeoJSON2DLineString = {
 /**
  * Invalid 3D GeoJSON LineString to test types
  */
-export const invalidGeoJsonLineString3DTooFewPositions: GeoJSON3DLineString = {
+export const invalidGeoJsonLineString3D: GeoJSON3DLineString = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[1.0, 2.0, 0.0]],
+    coordinates: ["[1.0, 2.0, 0.0]"],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -294,3 +304,20 @@ export const lineString1: GeoJSONTypes.LineString = geoJsonLineString2D;
 export const lineString2: GeoJSONTypes.LineString = geoJsonLineString3D;
 export const lineString3: GeoJSONTypes.LineString = geoJsonLineString2DWithBbox;
 export const lineString4: GeoJSONTypes.LineString = geoJsonLineString2DWithBbox as GeoJSONLineString;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const lineString5: GeoJSONLineString = lineString1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const lineString6: GeoJSONLineString = turfLineString([
+    [0, 0],
+    [1, 1],
+]).geometry;
+export const lineString7: GeoJSONLineString = turfLineString([
+    [0, 0, 0],
+    [1, 1, 1],
+]).geometry;

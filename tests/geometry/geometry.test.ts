@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { point as turfPoint, lineString as turfLineString, polygon as turfPolygon } from "@turf/helpers";
 import z from "zod/v4";
 import { singleGeoJsonGeometryCollection2D } from "../../examples/geometry/geometry_collection";
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
@@ -54,6 +55,34 @@ describe("GeoJSONGeometry", () => {
             expect(() => GeoJSON4DGeometrySchema.parse(geoJsonPoint5D)).toThrow(z.ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates point geometry from turf.js", () => {
+            const geometry = turfPoint([1, 2, 3]).geometry;
+            expect(passGeoJSONGeometryTest(geometry));
+        });
+
+        it("validates line string geometry from turf.js", () => {
+            const geometry = turfLineString([
+                [0, 0],
+                [1, 1],
+            ]).geometry;
+            expect(passGeoJSONGeometryTest(geometry));
+        });
+
+        it("validates polygon geometry from turf.js", () => {
+            const geometry = turfPolygon([
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1],
+                    [0, 0],
+                ],
+            ]).geometry;
+            expect(passGeoJSONGeometryTest(geometry));
+        });
+    });
 });
 
 /**
@@ -63,7 +92,7 @@ export const invalidGeoJsonGeometry: GeoJSONGeometry = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [1.0],
+    coordinates: ["1.0"],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -77,7 +106,7 @@ export const invalidGeoJsonGeometry: GeoJSONGeometry = {
 export const invalidGeoJsonGeometryAsCollection: GeoJSONGeometry = {
     type: "GeometryCollection",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [1.0, 0.0],
+    coordinates: [1.0, 0.0] as const,
     geometries: [],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0],
@@ -185,3 +214,26 @@ export const geometry5: GeoJSONTypes.Geometry = multiGeoJsonMultiLineString2D;
 export const geometry6: GeoJSONTypes.Geometry = singleGeoJsonMultiPolygon3D;
 export const geometry7: GeoJSONTypes.Geometry = singleGeoJsonGeometryCollection2D;
 export const geometry8: GeoJSONTypes.Geometry = singleGeoJsonGeometryCollection2D as GeoJSONGeometryCollection;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const geometry9: GeoJSONGeometry = geometry1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const geometry10: GeoJSONGeometry = turfPoint([0, 0]).geometry;
+export const geometry11: GeoJSONGeometry = turfLineString([
+    [0, 0],
+    [1, 1],
+]).geometry;
+export const geometry12: GeoJSONGeometry = turfPolygon([
+    [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+    ],
+]).geometry;

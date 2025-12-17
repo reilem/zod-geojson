@@ -1,5 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
+import GeoJSONTypes from "geojson";
+import {
+    point as turfPoint,
+    lineString as turfLineString,
+    geometryCollection as turfGeometryCollection,
+} from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     multiGeoJsonGeometryCollection2D,
@@ -211,6 +216,30 @@ describe("GeoJSONGeometryCollection", () => {
             expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates geometry collection from turf.js", () => {
+            const geometryCollection = turfGeometryCollection([
+                turfPoint([0, 0]).geometry,
+                turfLineString([
+                    [0, 0],
+                    [1, 1],
+                ]).geometry,
+            ]).geometry;
+            expect(GeoJSONGeometryCollectionSchema.parse(geometryCollection)).toEqual(geometryCollection);
+        });
+
+        it("validates 3D geometry collection from turf.js", () => {
+            const geometryCollection = turfGeometryCollection([
+                turfPoint([0, 0, 0]).geometry,
+                turfLineString([
+                    [0, 0, 0],
+                    [1, 1, 1],
+                ]).geometry,
+            ]).geometry;
+            expect(GeoJSONGeometryCollectionSchema.parse(geometryCollection)).toEqual(geometryCollection);
+        });
+    });
 });
 
 /**
@@ -224,7 +253,7 @@ export const invalidGeoJsonGeometryCollection: GeoJSONGeometryCollection = {
             // @ts-expect-error -- THIS SHOULD FAIL
             type: "Foo",
             // @ts-expect-error -- THIS SHOULD FAIL
-            coordinates: [1.0],
+            coordinates: "[1.0]",
         },
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -333,3 +362,26 @@ export const geometryCollection2: GeoJSONTypes.GeometryCollection = multiGeoJson
 export const geometryCollection3: GeoJSONTypes.GeometryCollection = singleGeoJsonGeometryCollection2DWithBbox;
 export const geometryCollection4: GeoJSONTypes.GeometryCollection =
     singleGeoJsonGeometryCollection2DWithBbox as GeoJSONGeometryCollection;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const geometryCollection5: GeoJSONGeometryCollection = geometryCollection1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const geometryCollection6: GeoJSONGeometryCollection = turfGeometryCollection([
+    turfPoint([0, 0]).geometry,
+    turfLineString([
+        [0, 0],
+        [1, 1],
+    ]).geometry,
+]).geometry;
+export const geometryCollection7: GeoJSONGeometryCollection = turfGeometryCollection([
+    turfPoint([0, 0, 0]).geometry,
+    turfLineString([
+        [0, 0, 0],
+        [1, 1, 1],
+    ]).geometry,
+]).geometry;

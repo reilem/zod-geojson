@@ -1,6 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import z, { ZodError } from "zod/v4";
+import { featureCollection as turfFeatureCollection, point as turfPoint } from "@turf/helpers";
+
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
     multiGeoJsonFeatureCollection2D,
@@ -299,6 +301,21 @@ describe("GeoJSONFeatureCollection", () => {
             ).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates feature collection from turf.js", () => {
+            const featureCollection = turfFeatureCollection([turfPoint([1, 1]), turfPoint([2, 2])]);
+            expect(GeoJSONFeatureCollectionSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("validates feature collection with properties from turf.js", () => {
+            const featureCollection = turfFeatureCollection([
+                turfPoint([1, 1], { extra: "word" }),
+                turfPoint([1, 2], { extra: "hello" }),
+            ]);
+            expect(GeoJSONFeatureCollectionSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+    });
 });
 
 /**
@@ -315,7 +332,7 @@ export const invalidGeoJsonFeatureCollection: GeoJSONFeatureCollection = {
                 // @ts-expect-error -- THIS SHOULD FAIL
                 type: "Bar",
                 // @ts-expect-error -- THIS SHOULD FAIL
-                coordinates: [1.0],
+                coordinates: "[1.0]",
                 // @ts-expect-error -- THIS SHOULD FAIL
                 bbox: [0.0],
                 // @ts-expect-error -- THIS SHOULD FAIL
@@ -481,8 +498,25 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
  * Test that types match with @types/geojson
  */
 export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
-    singleGeoJsonFeatureCollection3D as GeoJSONFeatureCollection;
+    singleGeoJsonFeatureCollection3D;
 export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Point | null> =
     singleGeoJsonFeatureCollection3D;
 export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
-    multiGeoJsonFeatureCollectionWithBbox2D;
+    multiGeoJsonFeatureCollectionWithBbox2D as GeoJSONFeatureCollection;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const featureCollection4: GeoJSONFeatureCollection = featureCollection1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const featureCollection5: GeoJSONFeatureCollection = turfFeatureCollection([
+    turfPoint([1, 1]),
+    turfPoint([2, 2]),
+]);
+export const featureCollection6: GeoJSONFeatureCollection = turfFeatureCollection([
+    turfPoint([1, 1], { extra: "word" }),
+    turfPoint([1, 2], { extra: "hello" }),
+]);
