@@ -1,5 +1,5 @@
 import * as z from "zod/v4";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaShape } from "./helper/base";
 import { GeoJSONPolygonGenericSchema } from "./polygon";
 import {
     GeoJSON2DPositionSchema,
@@ -7,12 +7,21 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGridList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
-export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONGeometryBaseSchemaShape<P> & {
+        type: z.ZodLiteral<GeoJSONGeometryEnumType["MultiPolygon"]>;
+        coordinates: z.ZodArray<z.ZodArray<z.ZodArray<z.ZodType<P>>>>;
+    }
+>;
+
+export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONMultiPolygonGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,

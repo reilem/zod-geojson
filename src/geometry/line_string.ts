@@ -1,23 +1,32 @@
 import * as z from "zod/v4";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaShape } from "./helper/base";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionList } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionList } from "./validation/dimension";
 
-export const GeoJSONLineStringGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONLineStringGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONGeometryBaseSchemaShape<P> & {
+        type: z.ZodLiteral<GeoJSONGeometryEnumType["LineString"]>;
+        coordinates: z.ZodArray<z.ZodType<P>>;
+    }
+>;
+
+export const GeoJSONLineStringGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONLineStringGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONGeometryTypeSchema.enum.LineString),
             // > For type "LineString", the "coordinates" member is an array of two or
             //   more positions. (RFC 7946, section 3.1.4)
-            coordinates: z.tuple([positionSchema, positionSchema]).rest(positionSchema),
+            coordinates: positionSchema.array().min(2),
         })
         .check((ctx) => {
             // Skip remaining checks if coordinates empty

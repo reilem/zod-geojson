@@ -4,4 +4,6 @@ import { GeoJSONGeometryTypeSchema } from "./geometry/type";
 
 export const GeoJSONTypeSchema = z.enum(["Feature", "FeatureCollection", ...GeoJSONGeometryTypeSchema.options]);
 
+export type GeoJSONEnumType = typeof GeoJSONTypeSchema.enum;
+
 export type GeoJSONType = z.infer<typeof GeoJSONTypeSchema>;

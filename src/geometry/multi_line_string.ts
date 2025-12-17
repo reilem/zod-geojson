@@ -1,5 +1,5 @@
 import * as z from "zod/v4";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaShape } from "./helper/base";
 import { GeoJSONLineStringGenericSchema } from "./line_string";
 import {
     GeoJSON2DPositionSchema,
@@ -7,11 +7,20 @@ import {
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 
-export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONGeometryBaseSchemaShape<P> & {
+        type: z.ZodLiteral<GeoJSONGeometryEnumType["MultiLineString"]>;
+        coordinates: z.ZodArray<z.ZodArray<z.ZodType<P>>>;
+    }
+>;
+
+export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONMultiLineStringGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,

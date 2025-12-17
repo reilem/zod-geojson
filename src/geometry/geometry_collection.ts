@@ -1,17 +1,30 @@
 import * as z from "zod/v4";
-import { GeoJSONBaseSchema } from "../base";
-import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
+import { GeoJSONBaseSchema, GeoJSONBaseSchemaShape } from "../base";
+import { GeoJSONGeometryGenericSchema, GeoJSONGeometryGenericSchemaType } from "./geometry";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryEnumType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForCollection } from "./validation/bbox";
 import { getInvalidGeometryCollectionDimensionIssue, validDimensionsForCollection } from "./validation/dimension";
 
-export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONBaseSchemaShape<P> & {
+        type: z.ZodLiteral<GeoJSONGeometryEnumType["GeometryCollection"]>;
+        coordinates: z.ZodOptional<z.ZodNever>;
+        geometry: z.ZodOptional<z.ZodNever>;
+        properties: z.ZodOptional<z.ZodNever>;
+        features: z.ZodOptional<z.ZodNever>;
+        geometries: z.ZodArray<GeoJSONGeometryGenericSchemaType<P>>;
+    }
+>;
+
+export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONGeometryCollectionGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,
@@ -24,7 +37,9 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosit
             //   GeoJSON Geometry object. It is possible for this array to be empty. (RFC 7946, section 3.1.8)
             // > To maximize interoperability, implementations SHOULD avoid nested
             //    GeometryCollections. (RFC 7946, section 3.1.8)
-            geometries: GeoJSONSimpleGeometryGenericSchema(positionSchema).array(),
+            get geometries(): z.ZodArray<GeoJSONGeometryGenericSchemaType<P>> {
+                return z.array(GeoJSONGeometryGenericSchema(positionSchema));
+            },
         })
         .check((ctx) => {
             // Skip remaining checks if geometries array is empty

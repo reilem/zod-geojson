@@ -26,12 +26,15 @@ export type ValidatableGridList = {
     coordinates?: number[][][][] | null;
 };
 
-export type ValidatableSimpleGeometry = ValidatableCoordinate | ValidatableList | ValidatableGrid | ValidatableGridList;
-
 export type ValidatableCollection = {
     type: GeoJSONGeometryEnumType["GeometryCollection"];
-    geometries: ValidatableSimpleGeometry[];
+    geometries: ValidatableGeometry[];
     bbox?: number[] | null;
 };
 
-export type ValidatableGeometry = ValidatableSimpleGeometry | ValidatableCollection;
+export type ValidatableGeometry =
+    | ValidatableCoordinate
+    | ValidatableList
+    | ValidatableGrid
+    | ValidatableGridList
+    | ValidatableCollection;
