@@ -1,17 +1,26 @@
 import * as z from "zod/v4";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaShape } from "./helper/base";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 import { getInvalidPolygonLinearRingIssue, validPolygonRings } from "./validation/linear_ring";
 
-export const GeoJSONPolygonGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONPolygonGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONGeometryBaseSchemaShape<P> & {
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.Polygon>;
+        coordinates: z.ZodArray<z.ZodArray<z.ZodType<P>>>;
+    }
+>;
+
+export const GeoJSONPolygonGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONPolygonGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,
@@ -19,10 +28,8 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONAnyPosition>(positi
             // We allow an empty coordinates array
             // > GeoJSON processors MAY interpret Geometry objects with empty "coordinates"
             //   arrays as null objects. (RFC 7946, section 3.1)
-            coordinates: z.array(
-                // > A linear ring is a closed LineString with four or more positions (RFC 7946, section 3.1.6)
-                z.tuple([positionSchema, positionSchema, positionSchema, positionSchema]).rest(positionSchema),
-            ),
+            // > A linear ring is a closed LineString with four or more positions (RFC 7946, section 3.1.6)
+            coordinates: z.array(positionSchema.array().min(4)),
         })
         .check((ctx) => {
             // Skip remaining checks if coordinates array is empty

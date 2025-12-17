@@ -10,7 +10,8 @@ export const GeoJSONGeometryTypeSchema = z.enum([
     "GeometryCollection",
 ]);
 
-// The type of the enum object
-export type GeoJSONGeometryEnumType = typeof GeoJSONGeometryTypeSchema.enum;
+// The enum of the type values
+export const GeoJSONGeometryType = GeoJSONGeometryTypeSchema.enum;
+
 // The string literal type of the values in the enum
 export type GeoJSONGeometryType = z.infer<typeof GeoJSONGeometryTypeSchema>;

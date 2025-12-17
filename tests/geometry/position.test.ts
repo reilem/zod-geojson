@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { point as turfPoint } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     GeoJSON2DPosition,
@@ -14,7 +15,7 @@ const position2D: GeoJSONPosition = [0, 0];
 
 const position3D: GeoJSONPosition = [1, 2, 3];
 
-const position4D = [1, 2, 3, 4];
+const position4D = [1, 2, 3, 4] as const;
 
 describe("GeoJSONPosition", () => {
     it("allows 2D positions", () => {
@@ -58,16 +59,23 @@ describe("GeoJSONPosition", () => {
             expect(() => GeoJSON3DPositionSchema.parse(position4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D position from turf.js", () => {
+            const position = turfPoint([1, 2]).geometry.coordinates;
+            expect(GeoJSONPositionSchema.parse(position)).toEqual(position);
+        });
+
+        it("validates 3D position from turf.js", () => {
+            const position = turfPoint([1, 2, 3]).geometry.coordinates;
+            expect(GeoJSONPositionSchema.parse(position)).toEqual(position);
+        });
+    });
 });
 
 /**
  * Invalid GeoJSON position to test types
  */
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPositionTooSmall: GeoJSONPosition = [1];
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPositionTooBig: GeoJSONPosition = [1, 2, 3, 4];
-
 /**
  * Invalid 2D GeoJSON positions to test types
  */
@@ -90,3 +98,14 @@ export const invalidGeoJsonPosition3DTooSmall: GeoJSON3DPosition = [1, 2];
 export const position1: GeoJSONTypes.Position = position2D;
 export const position2: GeoJSONTypes.Position = position3D;
 export const position3: GeoJSONTypes.Position = position3D as GeoJSONPosition;
+
+/**
+ * Test that @types/geojson match with our types
+ */
+export const position4: GeoJSONPosition = position1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const position5: GeoJSONPosition = turfPoint([0, 0]).geometry.coordinates;
+export const position6: GeoJSONPosition = turfPoint([0, 0, 0]).geometry.coordinates;

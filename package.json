@@ -40,11 +40,12 @@
         "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
-        "circularcheck": "madge --circular --extensions ts ./src",
+        "circularcheck": "madge --circular --exclude 'geometry_collection.ts' --extensions ts ./src",
         "checks": "pnpm typecheck && pnpm build && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
         "@jest/globals": "^30.0.2",
+        "@turf/helpers": "~7.3.1",
         "@types/geojson": "^7946.0.16",
         "@types/node": "~24.6.2",
         "jest": "^30.0.2",

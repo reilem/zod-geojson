@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { polygon as turfPolygon } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import * as z from "zod/v4";
 import {
@@ -20,7 +21,7 @@ import {
 import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./_helpers";
 
 export const geoJsonPolygon4D = {
-    type: "Polygon",
+    type: "Polygon" as const,
     coordinates: [
         [
             [0.0, 0.0, 0.0, 0.0],
@@ -266,21 +267,65 @@ describe("GeoJSONPolygon", () => {
             expect(() => GeoJSON4DPolygonSchema.parse(geoJsonPoint5D)).toThrow(z.ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D polygon from turf.js", () => {
+            const polygon = turfPolygon([
+                [
+                    [0, 0],
+                    [1, 0],
+                    [1, 1],
+                    [0, 1],
+                    [0, 0],
+                ],
+            ]).geometry;
+            expect(GeoJSONPolygonSchema.parse(polygon)).toEqual(polygon);
+        });
+
+        it("validates 3D polygon from turf.js", () => {
+            const polygon = turfPolygon([
+                [
+                    [0, 0, 0],
+                    [1, 0, 0],
+                    [1, 1, 1],
+                    [0, 1, 1],
+                    [0, 0, 0],
+                ],
+            ]).geometry;
+            expect(GeoJSONPolygonSchema.parse(polygon)).toEqual(polygon);
+        });
+
+        it("validates polygon with hole from turf.js", () => {
+            const polygon = turfPolygon([
+                [
+                    [0, 0],
+                    [4, 0],
+                    [4, 4],
+                    [0, 4],
+                    [0, 0],
+                ],
+                [
+                    [1, 1],
+                    [3, 1],
+                    [3, 3],
+                    [1, 3],
+                    [1, 1],
+                ],
+            ]).geometry;
+            expect(GeoJSONPolygonSchema.parse(polygon)).toEqual(polygon);
+        });
+    });
 });
 
 /**
  * Invalid GeoJSON Polygon to test types
  */
-export const invalidGeoJsonPolygonRingTooSmall: GeoJSONPolygon = {
+export const invalidGeoJsonPolygon: GeoJSONPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         // @ts-expect-error -- THIS SHOULD FAIL
-        [
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 0.0],
-        ],
+        ["[0.0, 0.0]", [1.0, 0.0], [0.0, 0.0]],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0],
@@ -294,30 +339,16 @@ export const invalidGeoJsonPolygonRingTooSmall: GeoJSONPolygon = {
     geometry: {},
     otherKey: "allowed",
 };
-export const invalidGeoJsonPolygonPositionsTooSmall: GeoJSONPolygon = {
-    // @ts-expect-error -- THIS SHOULD FAIL
-    type: "Hello",
-    // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[[0.0], [1.0], [0.0], [0.0]]],
-    // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [0.0, 0.0],
-};
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPolygonPositionsTooBig: GeoJSONPolygon = geoJsonPolygon4D;
 
 /**
  * Invalid 2D GeoJSON Polygon to test types
  */
-export const invalidGeoJsonPolygon2DRingTooSmall: GeoJSON2DPolygon = {
+export const invalidGeoJsonPolygon2D: GeoJSON2DPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         // @ts-expect-error -- THIS SHOULD FAIL
-        [
-            [0.0, 0.0],
-            [1.0, 0.0],
-            [0.0, 0.0],
-        ],
+        ["[0.0, 0.0]", [1.0, 0.0], [0.0, 0.0]],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0],
@@ -361,16 +392,12 @@ export const invalidGeoJsonPolygon2DPositionsTooBig: GeoJSON2DPolygon = {
 /**
  * Invalid 3D GeoJSON Polygon to test types
  */
-export const invalidGeoJsonPolygon3DRingTooSmall: GeoJSON3DPolygon = {
+export const invalidGeoJsonPolygon3D: GeoJSON3DPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         // @ts-expect-error -- THIS SHOULD FAIL
-        [
-            [0.0, 0.0, 0.0],
-            [1.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0],
-        ],
+        ["[0.0, 0.0, 0.0]", [1.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [0.0],
@@ -429,3 +456,30 @@ export const polygon2: GeoJSONTypes.Polygon = geoJsonPolygon3D;
 export const polygon3: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHole;
 export const polygon4: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox;
 export const polygon5: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox as GeoJSONPolygon;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const polygon6: GeoJSONPolygon = polygon1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const polygon7: GeoJSONPolygon = turfPolygon([
+    [
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+    ],
+]).geometry;
+export const polygon8: GeoJSONPolygon = turfPolygon([
+    [
+        [0, 0, 0],
+        [1, 0, 0],
+        [1, 1, 1],
+        [0, 1, 1],
+        [0, 0, 0],
+    ],
+]).geometry;

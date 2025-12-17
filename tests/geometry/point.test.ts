@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { point as turfPoint } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonPoint2D,
@@ -148,6 +149,18 @@ describe("GeoJSONPoint", () => {
             expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D point from turf.js", () => {
+            const point = turfPoint([1, 2]).geometry;
+            expect(GeoJSONPointSchema.parse(point)).toEqual(point);
+        });
+
+        it("validates 3D point from turf.js", () => {
+            const point = turfPoint([1, 2, 3]).geometry;
+            expect(GeoJSONPointSchema.parse(point));
+        });
+    });
 });
 
 /**
@@ -157,7 +170,7 @@ export const invalidGeoJsonPoint: GeoJSONPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [1.0],
+    coordinates: "[1.0]",
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -171,7 +184,7 @@ export const invalidGeoJsonPoint: GeoJSONPoint = {
     otherKey: "allowed",
 };
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPointPositionsTooBig: GeoJSONPoint = geoJsonPoint4D;
+export const invalidGeoJsonPointPositionsTooBig: GeoJSONPoint2D = geoJsonPoint4D;
 
 /**
  * Invalid 2D GeoJSON Points to test types
@@ -239,3 +252,14 @@ export const point2: GeoJSONTypes.Point = geoJsonPoint3DWithBbox;
 export const point3: GeoJSONTypes.Point = geoJsonPoint2D;
 export const point4: GeoJSONTypes.Point = geoJsonPoint3D;
 export const point5: GeoJSONTypes.Point = geoJsonPoint3D as GeoJSONPoint;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const point6: GeoJSONPoint = point1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const point7: GeoJSONPoint = turfPoint([0, 0]).geometry;
+export const point8: GeoJSONPoint = turfPoint([0, 0, 0]).geometry;

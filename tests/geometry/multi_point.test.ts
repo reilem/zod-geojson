@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { multiPoint as turfMultiPoint } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonMultiPoint2D,
@@ -20,7 +21,7 @@ import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./
 import { geoJsonPoint4D } from "./point.test";
 
 export const geoJsonMultiPoint4D = {
-    type: "MultiPoint",
+    type: "MultiPoint" as const,
     coordinates: [geoJsonPoint4D.coordinates],
 };
 
@@ -173,6 +174,26 @@ describe("GeoJSONMultiPoint", () => {
             expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D multi-point from turf.js", () => {
+            const multiPoint = turfMultiPoint([
+                [0, 0],
+                [1, 1],
+                [2, 2],
+            ]).geometry;
+            expect(GeoJSONMultiPointSchema.parse(multiPoint)).toEqual(multiPoint);
+        });
+
+        it("validates 3D multi-point from turf.js", () => {
+            const multiPoint = turfMultiPoint([
+                [0, 0, 0],
+                [1, 1, 1],
+                [2, 2, 2],
+            ]).geometry;
+            expect(GeoJSONMultiPointSchema.parse(multiPoint)).toEqual(multiPoint);
+        });
+    });
 });
 
 /**
@@ -182,7 +203,7 @@ export const invalidGeoJsonMultiPoint: GeoJSONMultiPoint = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[1.0]],
+    coordinates: ["[1.0]"],
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -195,8 +216,6 @@ export const invalidGeoJsonMultiPoint: GeoJSONMultiPoint = {
     geometry: {},
     otherKey: "allowed",
 };
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonMultiPointPositionsTooBig: GeoJSONMultiPoint = geoJsonMultiPoint4D;
 
 /**
  * Invalid 2D GeoJSON MultiPoint to test types
@@ -263,3 +282,20 @@ export const multiPoint1: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3D;
 export const multiPoint2: GeoJSONTypes.MultiPoint = geoJsonMultiPoint2D;
 export const multiPoint3: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBbox;
 export const multiPoint4: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBbox as GeoJSONMultiPoint;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const multiPoint5: GeoJSONMultiPoint = multiPoint1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const multiPoint6: GeoJSONMultiPoint = turfMultiPoint([
+    [0, 0],
+    [1, 1],
+]).geometry;
+export const multiPoint7: GeoJSONMultiPoint = turfMultiPoint([
+    [0, 0, 0],
+    [1, 1, 1],
+]).geometry;

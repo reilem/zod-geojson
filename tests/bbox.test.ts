@@ -1,4 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
+import { point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod/v4";
 import { bbox2D, bbox3D } from "../examples/bbox";
@@ -67,6 +68,13 @@ describe("GeoJSONBbox", () => {
             expect(() => GeoJSON3DBboxSchema.parse(bbox4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates bbox from turf.js", () => {
+            const bbox = turfPoint([0, 0, 0], {}, { bbox: [0, 0, 0, 1, 1, 1] }).bbox;
+            expect(GeoJSON3DBboxSchema.parse(bbox)).toEqual(bbox);
+        });
+    });
 });
 
 /**
@@ -100,6 +108,16 @@ export const invalidBbox3D7: GeoJSON3DBbox = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 /**
  * Test that types match with @types/geojson
  */
-export const bbox1: GeoJSONTypes.BBox = bbox2D as GeoJSONBbox;
-export const bbox2: GeoJSONTypes.BBox = bbox2D;
+export const bbox1: GeoJSONTypes.BBox = bbox2D;
+export const bbox2: GeoJSONTypes.BBox = bbox2D as GeoJSONBbox;
 export const bbox3: GeoJSONTypes.BBox = bbox3D;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const bbox4: GeoJSONBbox = bbox1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const bbox5: GeoJSONBbox | undefined = turfPoint([0, 0, 0], {}, { bbox: [0, 0, 0, 0, 0, 0] }).bbox;

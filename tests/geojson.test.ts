@@ -1,6 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import z, { ZodError } from "zod/v4";
+import { featureCollection as turfFeatureCollection, feature as turfFeature, point as turfPoint } from "@turf/helpers";
+
 import {
     geoJsonFeatureGeometryCollection3D,
     geoJsonFeatureLineString2D,
@@ -43,7 +45,6 @@ import {
 } from "../src";
 import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
 import { singleGeoJsonGeometryCollection4D } from "./geometry/geometry_collection.test";
-import { geoJsonPoint4D } from "./geometry/point.test";
 
 describe("GeoJSONSchema", () => {
     it("allows a basic geometry", () => {
@@ -233,6 +234,31 @@ describe("GeoJSONSchema", () => {
             );
         });
     });
+
+    describe("turf.js", () => {
+        it("validates feature from turf.js", () => {
+            const feature = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } });
+            expect(GeoJSONSchema.parse(feature)).toEqual(feature);
+        });
+
+        it("validates geometry from turf.js feature", () => {
+            const geometry = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } }).geometry;
+            expect(GeoJSONSchema.parse(geometry)).toEqual(geometry);
+        });
+
+        it("validates feature collection from turf.js", () => {
+            const featureCollection = turfFeatureCollection([
+                turfPoint([1, 1], { extra: "word" }),
+                turfPoint([1, 2], { extra: "hello" }),
+            ]);
+            expect(GeoJSONSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("validates point from turf.js", () => {
+            const point = turfPoint([1, 2], { extra: "word" });
+            expect(GeoJSONSchema.parse(point)).toEqual(point);
+        });
+    });
 });
 
 /**
@@ -242,7 +268,7 @@ const testGeometry: GeoJSONGeometry = { type: "Point", coordinates: [0.0, 0.0] }
 export const invalidGeoJsonPoint: GeoJSON = {
     type: "Point",
     // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [1.0],
+    coordinates: "[0.0]",
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 2.0],
 };
@@ -262,7 +288,7 @@ export const invalidGeoJsonGeometryCollection: GeoJSON = {
             // @ts-expect-error -- THIS SHOULD FAIL
             type: "Foo",
             // @ts-expect-error -- THIS SHOULD FAIL
-            coordinates: [1.0],
+            coordinates: "[1.0]",
         },
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -278,7 +304,7 @@ export const invalidGeoJsonFeature: GeoJSON = {
         // @ts-expect-error -- THIS SHOULD FAIL
         type: "Foo",
         // @ts-expect-error -- THIS SHOULD FAIL
-        coordinates: [1.0],
+        coordinates: "[1.0]",
         // @ts-expect-error -- THIS SHOULD FAIL
         bbox: [0.0],
         // @ts-expect-error -- THIS SHOULD FAIL
@@ -305,7 +331,7 @@ export const invalidGeoJsonFeatureCollection: GeoJSON = {
                 // @ts-expect-error -- THIS SHOULD FAIL
                 type: "Bar",
                 // @ts-expect-error -- THIS SHOULD FAIL
-                coordinates: [1.0],
+                coordinates: "[1.0]",
                 // @ts-expect-error -- THIS SHOULD FAIL
                 bbox: [0.0],
                 // @ts-expect-error -- THIS SHOULD FAIL
@@ -328,8 +354,6 @@ export const invalidGeoJsonFeatureCollection: GeoJSON = {
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0],
 };
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonPositionsTooBig: GeoJSON = geoJsonPoint4D;
 
 /**
  * Invalid 2D GeoJSON to test types
@@ -522,6 +546,31 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 };
 
 /**
+ * Test custom strict position typing
+ */
+const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);
+
+const GeoJSON2DStrictGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON2DStrictPositionSchema);
+
+const GeoJSON2DStrictSchema = GeoJSONGenericSchema(
+    GeoJSON2DStrictPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSON2DStrictGeometrySchema,
+);
+type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
+
+export const strict2DPositionGeoJsonPoint: GeoJSON2DStrict = {
+    type: "Point",
+    coordinates: [1.0, 2.0],
+};
+
+export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
+    type: "Point",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    coordinates: [1.0, 2.0, 3.0],
+};
+
+/**
  * Test that types match with @types/geojson
  */
 export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;
@@ -529,3 +578,24 @@ export const geoJson2: GeoJSONTypes.Point = geoJsonPoint3D;
 export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon2D;
 export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection | null> =
     geoJsonFeatureGeometryCollection3D;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const geoJson5: GeoJSON = geoJson1;
+export const geoJson6: GeoJSON = geoJson2;
+export const geoJson7: GeoJSON = geoJson3;
+export const geoJson8: GeoJSON = geoJson4;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const geojson9: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } });
+export const geojson10: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } }).geometry;
+export const geojson11: GeoJSON = turfFeatureCollection([
+    turfPoint([1, 1], { extra: "word" }),
+    turfPoint([1, 2], { extra: "hello" }),
+]);
+export const geojson12: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0];
+export const geojson13: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0].geometry;
+export const geojson14: GeoJSON = turfPoint([1, 2], { extra: "word" });

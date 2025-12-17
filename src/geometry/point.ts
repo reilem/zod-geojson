@@ -1,15 +1,24 @@
 import * as z from "zod/v4";
-import { GeoJSONGeometryBaseSchema } from "./helper/base";
+import { GeoJSONGeometryBaseSchema, GeoJSONGeometryBaseSchemaShape } from "./helper/base";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONAnyPosition,
     GeoJSONPositionSchema,
 } from "./position";
-import { GeoJSONGeometryTypeSchema } from "./type";
+import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBboxForPosition } from "./validation/bbox";
 
-export const GeoJSONPointGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
+export type GeoJSONPointGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
+    GeoJSONGeometryBaseSchemaShape<P> & {
+        type: z.ZodLiteral<typeof GeoJSONGeometryType.Point>;
+        coordinates: z.ZodType<P>;
+    }
+>;
+
+export const GeoJSONPointGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONPointGenericSchemaType<P> =>
     z
         .looseObject({
             ...GeoJSONGeometryBaseSchema(positionSchema).shape,

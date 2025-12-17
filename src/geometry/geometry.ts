@@ -1,7 +1,15 @@
 import * as z from "zod/v4";
 import { core as zCore } from "zod/v4";
-import { GeoJSONGeometryCollectionGenericSchema } from "./geometry_collection";
-import { GeoJSONSimpleGeometryGenericSchema } from "./helper/simple";
+import {
+    GeoJSONGeometryCollectionGenericSchema,
+    GeoJSONGeometryCollectionGenericSchemaType,
+} from "./geometry_collection";
+import { GeoJSONLineStringGenericSchema, GeoJSONLineStringGenericSchemaType } from "./line_string";
+import { GeoJSONMultiLineStringGenericSchema, GeoJSONMultiLineStringGenericSchemaType } from "./multi_line_string";
+import { GeoJSONMultiPointGenericSchema, GeoJSONMultiPointGenericSchemaType } from "./multi_point";
+import { GeoJSONMultiPolygonGenericSchema, GeoJSONMultiPolygonGenericSchemaType } from "./multi_polygon";
+import { GeoJSONPointGenericSchema, GeoJSONPointGenericSchemaType } from "./point";
+import { GeoJSONPolygonGenericSchema, GeoJSONPolygonGenericSchemaType } from "./polygon";
 import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
@@ -9,9 +17,27 @@ import {
     GeoJSONPositionSchema,
 } from "./position";
 
+export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodDiscriminatedUnion<
+    [
+        GeoJSONPointGenericSchemaType<P>,
+        GeoJSONLineStringGenericSchemaType<P>,
+        GeoJSONMultiPointGenericSchemaType<P>,
+        GeoJSONPolygonGenericSchemaType<P>,
+        GeoJSONMultiLineStringGenericSchemaType<P>,
+        GeoJSONMultiPolygonGenericSchemaType<P>,
+        GeoJSONGeometryCollectionGenericSchemaType<P>,
+    ],
+    "type"
+>;
+
 export const GeoJSONGeometryGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
     z.discriminatedUnion("type", [
-        GeoJSONSimpleGeometryGenericSchema(positionSchema),
+        GeoJSONPointGenericSchema(positionSchema),
+        GeoJSONLineStringGenericSchema(positionSchema),
+        GeoJSONMultiPointGenericSchema(positionSchema),
+        GeoJSONPolygonGenericSchema(positionSchema),
+        GeoJSONMultiLineStringGenericSchema(positionSchema),
+        GeoJSONMultiPolygonGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),
     ]);
 export type GeoJSONGeometryGeneric<P extends GeoJSONAnyPosition> = z.infer<

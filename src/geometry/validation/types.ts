@@ -1,4 +1,4 @@
-import { GeoJSONGeometryEnumType } from "../type";
+import { GeoJSONGeometryType } from "../type";
 
 /**
  * The bare essential types required to validate geometries
@@ -6,32 +6,35 @@ import { GeoJSONGeometryEnumType } from "../type";
  */
 
 export type ValidatableCoordinate = {
-    type: GeoJSONGeometryEnumType["Point"];
+    type: typeof GeoJSONGeometryType.Point;
     bbox?: number[] | null;
     coordinates?: number[] | null;
 };
 export type ValidatableList = {
-    type: GeoJSONGeometryEnumType["MultiPoint"] | GeoJSONGeometryEnumType["LineString"];
+    type: typeof GeoJSONGeometryType.MultiPoint | typeof GeoJSONGeometryType.LineString;
     bbox?: number[] | null;
     coordinates?: number[][] | null;
 };
 export type ValidatableGrid = {
-    type: GeoJSONGeometryEnumType["MultiLineString"] | GeoJSONGeometryEnumType["Polygon"];
+    type: typeof GeoJSONGeometryType.MultiLineString | typeof GeoJSONGeometryType.Polygon;
     bbox?: number[] | null;
     coordinates?: number[][][] | null;
 };
 export type ValidatableGridList = {
-    type: GeoJSONGeometryEnumType["MultiPolygon"];
+    type: typeof GeoJSONGeometryType.MultiPolygon;
     bbox?: number[] | null;
     coordinates?: number[][][][] | null;
 };
 
-export type ValidatableSimpleGeometry = ValidatableCoordinate | ValidatableList | ValidatableGrid | ValidatableGridList;
-
 export type ValidatableCollection = {
-    type: GeoJSONGeometryEnumType["GeometryCollection"];
-    geometries: ValidatableSimpleGeometry[];
+    type: typeof GeoJSONGeometryType.GeometryCollection;
+    geometries: ValidatableGeometry[];
     bbox?: number[] | null;
 };
 
-export type ValidatableGeometry = ValidatableSimpleGeometry | ValidatableCollection;
+export type ValidatableGeometry =
+    | ValidatableCoordinate
+    | ValidatableList
+    | ValidatableGrid
+    | ValidatableGridList
+    | ValidatableCollection;

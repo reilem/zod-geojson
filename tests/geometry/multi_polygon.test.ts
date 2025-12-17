@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
+import { multiPolygon as turfMultiPolygon } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     multiGeoJsonMultiPolygon2D,
@@ -22,7 +23,7 @@ import { failGeoJSONGeometrySchemaTest, passGeoJSONGeometrySchemaTest } from "./
 import { geoJsonPolygon4D } from "./polygon.test";
 
 export const singleGeoJsonMultiPolygon4D = {
-    type: "MultiPolygon",
+    type: "MultiPolygon" as const,
     coordinates: [geoJsonPolygon4D.coordinates],
 };
 
@@ -226,22 +227,74 @@ describe("GeoJSONMultiPolygon", () => {
             expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(ZodError);
         });
     });
+
+    describe("turf.js", () => {
+        it("validates 2D multi-polygon from turf.js", () => {
+            const multiPolygon = turfMultiPolygon([
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [0, 1],
+                        [0, 0],
+                    ],
+                ],
+            ]).geometry;
+            expect(GeoJSONMultiPolygonSchema.parse(multiPolygon)).toEqual(multiPolygon);
+        });
+
+        it("validates 3D multi-polygon from turf.js", () => {
+            const multiPolygon = turfMultiPolygon([
+                [
+                    [
+                        [0, 0, 0],
+                        [1, 0, 0],
+                        [1, 1, 1],
+                        [0, 1, 1],
+                        [0, 0, 0],
+                    ],
+                ],
+            ]).geometry;
+            expect(GeoJSONMultiPolygonSchema.parse(multiPolygon)).toEqual(multiPolygon);
+        });
+
+        it("validates multi-polygon with multiple polygons from turf.js", () => {
+            const multiPolygon = turfMultiPolygon([
+                [
+                    [
+                        [0, 0],
+                        [1, 0],
+                        [1, 1],
+                        [0, 1],
+                        [0, 0],
+                    ],
+                ],
+                [
+                    [
+                        [2, 2],
+                        [3, 2],
+                        [3, 3],
+                        [2, 3],
+                        [2, 2],
+                    ],
+                ],
+            ]).geometry;
+            expect(GeoJSONMultiPolygonSchema.parse(multiPolygon)).toEqual(multiPolygon);
+        });
+    });
 });
 
 /**
  * Invalid GeoJSON MultiPolygon to test types
  */
-export const invalidGeoJsonMultiPolygonRingTooSmall: GeoJSONMultiPolygon = {
+export const invalidGeoJsonMultiPolygon: GeoJSONMultiPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         [
             // @ts-expect-error -- THIS SHOULD FAIL
-            [
-                [0.0, 0.0],
-                [1.0, 0.0],
-                [0.0, 0.0],
-            ],
+            ["[0.0, 0.0],"[(1.0, 0.0)], [0.0, 0.0]],
         ],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -256,31 +309,17 @@ export const invalidGeoJsonMultiPolygonRingTooSmall: GeoJSONMultiPolygon = {
     geometry: {},
     otherKey: "allowed",
 };
-export const invalidGeoJsonMultiPolygonPositionsTooSmall: GeoJSONMultiPolygon = {
-    // @ts-expect-error -- THIS SHOULD FAIL
-    type: "Hello",
-    // @ts-expect-error -- THIS SHOULD FAIL
-    coordinates: [[[[0.0], [1.0], [0.0], [0.0]]]],
-    // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [0.0, 0.0],
-};
-// @ts-expect-error -- THIS SHOULD FAIL
-export const invalidGeoJsonMultiPolygonPositionsTooBig: GeoJSONMultiPolygon = singleGeoJsonMultiPolygon4D;
 
 /**
  * Invalid 2D GeoJSON MultiPolygon to test types
  */
-export const invalidGeoJsonMultiPolygon2DRingTooSmall: GeoJSON2DMultiPolygon = {
+export const invalidGeoJsonMultiPolygon2D: GeoJSON2DMultiPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         [
             // @ts-expect-error -- THIS SHOULD FAIL
-            [
-                [0.0, 0.0],
-                [1.0, 0.0],
-                [0.0, 0.0],
-            ],
+            ["[0.0, 0.0],"[(1.0, 0.0)], [0.0, 0.0]],
         ],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -325,17 +364,13 @@ export const invalidGeoJsonMultiPolygon2DPositionsTooBig: GeoJSON2DMultiPolygon 
 /**
  * Invalid 3D GeoJSON MultiPolygon to test types
  */
-export const invalidGeoJsonMultiPolygon3DRingTooSmall: GeoJSON3DMultiPolygon = {
+export const invalidGeoJsonMultiPolygon3D: GeoJSON3DMultiPolygon = {
     // @ts-expect-error -- THIS SHOULD FAIL
     type: "Hello",
     coordinates: [
         [
             // @ts-expect-error -- THIS SHOULD FAIL
-            [
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [0.0, 0.0, 0.0],
-            ],
+            ["[0.0, 0.0, 0.0]", [1.0, 0.0, 0.0], [0.0, 0.0, 0.0]],
         ],
     ],
     // @ts-expect-error -- THIS SHOULD FAIL
@@ -397,3 +432,34 @@ export const invalidGeoJsonMultiPolygon3DPositionsTooBig: GeoJSON3DMultiPolygon 
 export const multiPolygon1: GeoJSONTypes.MultiPolygon = multiGeoJsonMultiPolygon2D;
 export const multiPolygon2: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D;
 export const multiPolygon3: GeoJSONTypes.MultiPolygon = singleGeoJsonMultiPolygon3D as GeoJSONMultiPolygon;
+
+/**
+ * Test that @types/geojson matches our types
+ */
+export const multiPolygon4: GeoJSONMultiPolygon = multiPolygon1;
+
+/**
+ * Test that turf.js matches our types
+ */
+export const multiPolygon5: GeoJSONMultiPolygon = turfMultiPolygon([
+    [
+        [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+        ],
+    ],
+]).geometry;
+export const multiPolygon6: GeoJSONMultiPolygon = turfMultiPolygon([
+    [
+        [
+            [0, 0, 0],
+            [1, 0, 0],
+            [1, 1, 1],
+            [0, 1, 1],
+            [0, 0, 0],
+        ],
+    ],
+]).geometry;

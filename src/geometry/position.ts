@@ -17,9 +17,9 @@ export type GeoJSON3DPosition = z.infer<typeof GeoJSON3DPositionSchema>;
 // > Implementations SHOULD NOT extend positions beyond three elements
 //   because the semantics of extra elements are unspecified and
 //   ambiguous. (RFC 7946, Section 3.1.1)
-export const GeoJSONPositionSchema = z.union([GeoJSON2DPositionSchema, GeoJSON3DPositionSchema]);
+export const GeoJSONPositionSchema = z.number().array().min(2).max(3);
 export type GeoJSONPosition = z.infer<typeof GeoJSONPositionSchema>;
 
 // Any GeoJSON position (2D or 3D or more) used mainly for generic schemas
-export const GeoJSONAnyPositionSchema = z.tuple([z.number(), z.number()], z.number());
+export const GeoJSONAnyPositionSchema = z.number().array().min(2);
 export type GeoJSONAnyPosition = z.infer<typeof GeoJSONAnyPositionSchema>;
