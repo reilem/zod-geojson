@@ -16,7 +16,6 @@ import {
     validDimensionsForFeatureCollection,
 } from "./validation/dimension";
 import {
-    DiscriminableGeometrySchema,
     GeoJSON2DGeometrySchema,
     GeoJSON3DGeometrySchema,
     GeoJSONGeometryGeneric,
@@ -26,7 +25,7 @@ import {
 export type GeoJSONFeatureCollectionGenericSchemaType<
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
         type: z.ZodLiteral<typeof GeoJSONType.FeatureCollection>;
@@ -41,11 +40,11 @@ export type GeoJSONFeatureCollectionGenericSchemaType<
 export const GeoJSONFeatureCollectionGenericSchema = <
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 >(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
-    geometrySchema: DiscriminableGeometrySchema<P, G>,
+    geometrySchema: z.ZodType<G>,
 ): GeoJSONFeatureCollectionGenericSchemaType<P, R, G> =>
     z
         .looseObject({

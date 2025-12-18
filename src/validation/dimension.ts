@@ -11,6 +11,7 @@ export const getInvalidFeatureCollectionDimensionsIssue = (ctx: z.core.ParsePayl
 
 export function validDimensionsForFeatureCollection(collection: ValidatableFeatureCollection): boolean {
     const geometries = getGeometries(collection);
+    if (geometries.length === 0) return true;
     const dimension = getDimensionForGeometry(geometries[0]);
     return geometries.slice(1).every((geometry) => getDimensionForGeometry(geometry) === dimension);
 }

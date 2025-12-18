@@ -6,12 +6,14 @@ import { featureCollection as turfFeatureCollection, feature as turfFeature, poi
 import {
     geoJsonFeatureGeometryCollection3D,
     geoJsonFeatureLineString2D,
+    geoJsonFeatureNullGeometry,
     geoJsonFeaturePoint2D,
     geoJsonFeaturePoint3D,
     geoJsonFeaturePolygon2D,
     geoJsonFeaturePolygon3DWithBbox,
 } from "../examples/feature";
 import {
+    geoJsonFeatureCollectionNullGeometry,
     multiGeoJsonFeatureCollection2D,
     multiGeoJsonFeatureCollectionPolygon3D,
     singleGeoJsonFeatureCollection2D,
@@ -171,6 +173,18 @@ describe("GeoJSONSchema", () => {
             z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DPolygonSchema]),
         );
 
+        const GeoJSONNullableSchema = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONGeometrySchema.nullable(),
+        );
+
+        const GeoJSONNullablePointSchema = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONPointSchema.nullable(),
+        );
+
         it("allows any point containing geojson to be parsed by a point geojson schema", () => {
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
@@ -206,6 +220,30 @@ describe("GeoJSONSchema", () => {
             );
         });
 
+        it("allows valid geojson to be parsed by a geojson schema with nullable geometry", () => {
+            expect(GeoJSONNullableSchema.parse(geoJsonFeaturePolygon2D)).toEqual(geoJsonFeaturePolygon2D);
+            expect(GeoJSONNullableSchema.parse(multiGeoJsonFeatureCollection2D)).toEqual(
+                multiGeoJsonFeatureCollection2D,
+            );
+
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSONNullablePointSchema.parse(singleGeoJsonFeatureCollection3D)).toEqual(
+                singleGeoJsonFeatureCollection3D,
+            );
+        });
+
+        it("allows null geometry to be parsed by a geojson schema with nullable geometry", () => {
+            expect(GeoJSONNullableSchema.parse(geoJsonFeatureNullGeometry)).toEqual(geoJsonFeatureNullGeometry);
+            expect(GeoJSONNullableSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
+                geoJsonFeatureCollectionNullGeometry,
+            );
+
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeatureNullGeometry)).toEqual(geoJsonFeatureNullGeometry);
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
+                geoJsonFeatureCollectionNullGeometry,
+            );
+        });
+
         it("does not allow a polygon containing geojson to be parsed by a point geojson schema", () => {
             expect(() => GeoJSONPointGeoJSONSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
             expect(() => GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
@@ -231,6 +269,70 @@ describe("GeoJSONSchema", () => {
             expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
             expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(
                 ZodError,
+            );
+        });
+
+        it("throws error when trying to make a geojson schema with an invalid geometry schema", () => {
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.or(z.null()),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.or(z.null()).nullable(),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.nullable().or(z.null()),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    // @ts-expect-error -- THIS SHOULD FAIL
+                    GeoJSONGeometrySchema.optional(),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    // @ts-expect-error -- THIS SHOULD FAIL
+                    GeoJSONGeometrySchema.or(z.undefined()),
+                ),
+            ).toThrow(Error);
+
+            // These do not throw, but we need to make sure typescript forbids it
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.object({ something: "without a type field" }),
+            );
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.object({ type: "not a geometry" }),
+            );
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.discriminatedUnion("something", [z.object({ something: "without a type field" })]),
             );
         });
     });
@@ -562,22 +664,24 @@ type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
 export const strict2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     type: "Point",
     coordinates: [1.0, 2.0],
+    bbox: [0.0, 0.0, 3.0, 4.0],
 };
 
 export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     type: "Point",
     // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0, 2.0, 3.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0],
 };
 
 /**
  * Test that types match with @types/geojson
  */
-export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;
+export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
 export const geoJson2: GeoJSONTypes.Point = geoJsonPoint3D;
-export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon2D;
-export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection | null> =
-    geoJsonFeatureGeometryCollection3D;
+export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon2D;
+export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection> = geoJsonFeatureGeometryCollection3D;
 
 /**
  * Test that @types/geojson matches our types

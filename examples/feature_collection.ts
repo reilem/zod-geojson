@@ -1,5 +1,5 @@
 import { GeoJSON2DFeatureCollection, GeoJSON3DFeatureCollection, GeoJSONFeatureCollection } from "../src";
-import { geoJsonFeaturePolygon2D, geoJsonFeaturePolygon3DWithBbox } from "./feature";
+import { geoJsonFeatureNullGeometry, geoJsonFeaturePolygon2D, geoJsonFeaturePolygon3DWithBbox } from "./feature";
 
 export const singleGeoJsonFeatureCollection2D = {
     type: "FeatureCollection",
@@ -68,3 +68,8 @@ export const multiGeoJsonFeatureCollectionPolygon3D = {
     type: "FeatureCollection",
     features: [geoJsonFeaturePolygon3DWithBbox, geoJsonFeaturePolygon3DWithBbox],
 } satisfies GeoJSON3DFeatureCollection;
+
+export const geoJsonFeatureCollectionNullGeometry = {
+    type: "FeatureCollection",
+    features: [geoJsonFeatureNullGeometry],
+};

@@ -19,7 +19,7 @@ import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
 export type GeoJSONGenericSchemaType<
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodDiscriminatedUnion<
     [z.ZodType<G>, GeoJSONFeatureGenericSchemaType<P, R, G>, GeoJSONFeatureCollectionGenericSchemaType<P, R, G>],
     "type"
@@ -28,14 +28,14 @@ export type GeoJSONGenericSchemaType<
 export const GeoJSONGenericSchema = <
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 >(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
-    geometrySchema: DiscriminableGeometrySchema<P, G>,
+    geometrySchema: z.ZodType<G>,
 ): GeoJSONGenericSchemaType<P, R, G> =>
     z.discriminatedUnion("type", [
-        geometrySchema,
+        getDiscriminableGeometrySchema(geometrySchema),
         GeoJSONFeatureGenericSchema(positionSchema, propertiesSchema, geometrySchema),
         GeoJSONFeatureCollectionGenericSchema(positionSchema, propertiesSchema, geometrySchema),
     ]);
@@ -65,3 +65,21 @@ export const GeoJSON3DSchema = GeoJSONGenericSchema(
     GeoJSON3DGeometrySchema,
 );
 export type GeoJSON3D = z.infer<typeof GeoJSON3DSchema>;
+
+/**
+ * Ensure geometrySchema is discriminable. If it's nullable, unwrap it first.
+ * We know if the schema is a Zod object or discriminated union, it's discriminable because of the typing
+ * constraints on G. We forbid all other schemas for simplicity.
+ */
+function getDiscriminableGeometrySchema<P extends GeoJSONAnyPosition, G extends GeoJSONGeometryGeneric<P> | null>(
+    geometrySchema: z.ZodType<G>,
+): DiscriminableGeometrySchema<P, G> {
+    const schema = geometrySchema instanceof z.ZodNullable ? geometrySchema.unwrap() : geometrySchema;
+    if (schema instanceof z.ZodObject || schema instanceof z.ZodDiscriminatedUnion) {
+        return schema as DiscriminableGeometrySchema<P, G>;
+    }
+    throw new Error(
+        "GeoJSONGenericSchema received invalid geometry schema. Schema must be either a ZodObject or " +
+            `ZodDiscriminatedUnion, or a ZodNullable wrapping one of those. Received: ${schema._zod.def.type}.`,
+    );
+}

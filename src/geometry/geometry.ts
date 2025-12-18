@@ -44,11 +44,10 @@ export type GeoJSONGeometryGeneric<P extends GeoJSONAnyPosition> = z.infer<
     ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
 >;
 
-export type DiscriminableGeometrySchema<P extends GeoJSONAnyPosition, G extends GeoJSONGeometryGeneric<P>> = z.ZodType<
-    G,
-    unknown,
-    zCore.$ZodTypeInternals<G> & zCore.$ZodTypeDiscriminableInternals
->;
+export type DiscriminableGeometrySchema<
+    P extends GeoJSONAnyPosition,
+    G extends GeoJSONGeometryGeneric<P> | null,
+> = z.ZodType<G, unknown, zCore.$ZodTypeInternals<G> & zCore.$ZodTypeDiscriminableInternals>;
 
 export const GeoJSONGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSONPositionSchema);
 export type GeoJSONGeometry = z.infer<typeof GeoJSONGeometrySchema>;

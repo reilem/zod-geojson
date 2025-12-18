@@ -170,7 +170,7 @@ If you wish to use a different dimension (e.g. 4D geometries), you can pass a cu
 as the first parameter to the generic schema functions.
 
 As discussed above, if you only wish to customize the `position` field, you will still need to pass valid schemas for
-the `properties` and `geometries` fields. You can use the default `GeoJSONPropertiesSchema` properties schema and you will need to 
+the `properties` and `geometries` fields. You can use the default `GeoJSONPropertiesSchema` properties schema and you will need to
 create & pass a custom geometry schema that uses your custom position schema.
 
 ```typescript
@@ -250,6 +250,31 @@ const PointOrPolygonGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
 );
 ```
 
+### Nullable Geometries
+
+By default, the `geometry` field of a GeoJSON Feature is defined as a non-nullable GeoJSON geometry object. This
+decision was made to improve interoperability with [@types/geojson](https://www.npmjs.com/package/@types/geojson) which
+defines the `geometry` field as non-nullable in the main `GeoJSON` type.
+
+If you want to allow `null` values in feature `geometry` fields you can create a custom nullable geometry schema and
+pass this schema as the third parameter to the `GeoJSONFeatureGenericSchema`, `GeoJSONFeatureCollectionGenericSchema`
+or `GeoJSONGenericSchema` functions.
+
+```typescript
+import {
+    GeoJSONFeatureGenericSchema,
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSONGeometrySchema,
+} from "zod-geojson";
+
+const GeoJSONFeatureWithNullableGeometrySchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSONGeometrySchema.nullable(),
+);
+```
+
 ### Strict Position Typing
 
 The default 2D and 3D position schemas exported by this library used to enforce this dimensionality at type-level. For example:
@@ -281,6 +306,16 @@ export const GeoJSON2DStrictSchema = GeoJSONGenericSchema(
     GeoJSON2DStrictGeometrySchema,
 );
 type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
+```
+
+Using strict position typing will also restrict the bbox field to match the position dimension. For example:
+
+```typescript
+export const invalid: GeoJSON2DStrict = {
+    type: "Point",
+    coordinates: [1.0, 2.0],
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This will fail. bbox has 6 values instead of 4
+};
 ```
 
 ## Error Cases
