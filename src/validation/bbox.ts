@@ -2,7 +2,7 @@ import { bboxEquals, getBboxForGeometries, getBboxForGeometry } from "../geometr
 import { getGeometries, ValidatableFeature, ValidatableFeatureCollection } from "./types";
 
 export function validBboxForFeature({ bbox, geometry }: ValidatableFeature): boolean {
-    if (!bbox || !geometry) {
+    if (bbox == null || geometry == null) {
         return true;
     }
     const expectedBbox = getBboxForGeometry(geometry);
