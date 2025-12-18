@@ -284,6 +284,12 @@ describe("GeoJSONFeatureCollection", () => {
             );
         });
 
+        it("allows a feature collection to be parsed by a nullable geometry feature schema", () => {
+            expect(GeoJSONNullableGeometryFeatureCollectionSchema.parse(multiGeoJsonFeatureCollection2D)).toEqual(
+                multiGeoJsonFeatureCollection2D,
+            );
+        });
+
         it("allows a feature collection with nullable geometries to be parsed by a nullable geometry feature collection schema", () => {
             expect(GeoJSONNullableGeometryFeatureCollectionSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
                 geoJsonFeatureCollectionNullGeometry,

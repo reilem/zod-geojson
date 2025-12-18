@@ -346,6 +346,10 @@ describe("GeoJSONFeature", () => {
             );
         });
 
+        it("allows a feature to be parsed by a nullable geometry feature schema", () => {
+            expect(GeoJSONNullableGeometryFeatureSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+        });
+
         it("allows a feature with nullable geometry to be parsed by a nullable geometry feature schema", () => {
             const nullGeometryFeature = {
                 ...geoJsonFeaturePoint2D,
