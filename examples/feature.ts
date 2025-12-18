@@ -47,3 +47,9 @@ export const geoJsonFeatureGeometryCollection3D = {
     properties: geoJsonPropertiesComplex,
     geometry: multiGeoJsonGeometryCollection3D,
 } satisfies GeoJSONFeature;
+
+export const geoJsonFeatureNullGeometry = {
+    type: "Feature",
+    properties: geoJsonPropertiesEmpty,
+    geometry: null,
+};

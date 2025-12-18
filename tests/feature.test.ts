@@ -46,10 +46,6 @@ export const geoJsonFeaturePoint4D = {
     geometry: geoJsonPoint4D,
 };
 
-function passGeoJSONFeatureSchemaTest(object: unknown) {
-    passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema, GeoJSON3DFeatureSchema], object);
-}
-
 function passGeoJSON2DFeatureSchemaTest(object: unknown) {
     passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema], object);
 }
@@ -105,12 +101,6 @@ describe("GeoJSONFeature", () => {
             color: "#FF00FF",
         });
     });
-    it("allows a feature with null geometry", () => {
-        passGeoJSONFeatureSchemaTest({
-            ...geoJsonFeaturePoint2D,
-            geometry: null,
-        });
-    });
     it("allows a feature with null properties", () => {
         passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
@@ -118,6 +108,12 @@ describe("GeoJSONFeature", () => {
         });
     });
 
+    it("does not allow a feature with null geometry", () => {
+        failGeoJSONFeatureSchemaTest({
+            ...geoJsonFeaturePoint2D,
+            geometry: null,
+        });
+    });
     it("does not allow a feature with a 1D geometry", () => {
         failGeoJSONFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
@@ -326,6 +322,12 @@ describe("GeoJSONFeature", () => {
             z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DPolygonSchema]),
         );
 
+        const GeoJSONNullableGeometryFeatureSchema = GeoJSONFeatureGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONGeometrySchema.nullable(),
+        );
+
         it("allows any point feature to be parsed by a point feature schema", () => {
             expect(GeoJSONPointFeatureSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
             expect(GeoJSONPointFeatureSchema.parse(geoJsonFeaturePoint3D)).toEqual(geoJsonFeaturePoint3D);
@@ -342,6 +344,15 @@ describe("GeoJSONFeature", () => {
             expect(GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePolygon2D)).toEqual(
                 geoJsonFeaturePolygon2D,
             );
+        });
+
+        it("allows a feature with nullable geometry to be parsed by a nullable geometry feature schema", () => {
+            const nullGeometryFeature = {
+                ...geoJsonFeaturePoint2D,
+                geometry: null,
+            };
+            expect(GeoJSONNullableGeometryFeatureSchema.parse(nullGeometryFeature)).toEqual(nullGeometryFeature);
+            expect(GeoJSONNullableGeometryFeatureSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
         });
 
         it("does not allow a polygon feature to be parsed by a point feature schema", () => {
@@ -558,19 +569,18 @@ export const testGeometryDoesNotEqual2: Equals<
 /**
  * Test that types match with @types/geojson
  */
-export const feature1: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> = geoJsonFeaturePoint2D;
-export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D;
-export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon3DWithBbox;
+export const feature1: GeoJSONTypes.Feature = geoJsonFeaturePoint2D;
+export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D;
+export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon3DWithBbox;
 
-export const feature4: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D;
-export const feature5: GeoJSONTypes.Feature<GeoJSONTypes.Point | null> = geoJsonFeaturePoint2D as GeoJSONFeatureGeneric<
+export const feature4: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D;
+export const feature5: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D as GeoJSONFeatureGeneric<
     GeoJSONPosition,
     GeoJSONProperties,
     GeoJSONPoint
 >;
 
-export const feature6: GeoJSONTypes.Feature<GeoJSONTypes.Geometry | null> =
-    geoJsonFeatureLineString2D as GeoJSONFeature;
+export const feature6: GeoJSONTypes.Feature = geoJsonFeatureLineString2D as GeoJSONFeature;
 
 /**
  * Test that @types/geojson matches our types

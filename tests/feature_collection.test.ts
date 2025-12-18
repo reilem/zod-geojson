@@ -5,6 +5,7 @@ import { featureCollection as turfFeatureCollection, point as turfPoint } from "
 
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
+    geoJsonFeatureCollectionNullGeometry,
     multiGeoJsonFeatureCollection2D,
     multiGeoJsonFeatureCollectionPolygon3D,
     multiGeoJsonFeatureCollectionWithBbox2D,
@@ -256,6 +257,12 @@ describe("GeoJSONFeatureCollection", () => {
             z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DLineStringSchema]),
         );
 
+        const GeoJSONNullableGeometryFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONGeometrySchema.nullable(),
+        );
+
         it("allows a point feature collection to be parsed by a point feature collection schema", () => {
             expect(GeoJSONPointFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection2D)).toEqual(
                 singleGeoJsonFeatureCollection2D,
@@ -274,6 +281,12 @@ describe("GeoJSONFeatureCollection", () => {
         it("allows a mixed 2D point and line strings feature collection to be parsed by a 2D point or line string feature collection schema", () => {
             expect(GeoJSON2DPointOrLineStringFeatureCollectionSchema.parse(multiGeoJsonFeatureCollection2D)).toEqual(
                 multiGeoJsonFeatureCollection2D,
+            );
+        });
+
+        it("allows a feature collection with nullable geometries to be parsed by a nullable geometry feature collection schema", () => {
+            expect(GeoJSONNullableGeometryFeatureCollectionSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
+                geoJsonFeatureCollectionNullGeometry,
             );
         });
 
@@ -497,11 +510,9 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
 /**
  * Test that types match with @types/geojson
  */
-export const featureCollection1: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
-    singleGeoJsonFeatureCollection3D;
-export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Point | null> =
-    singleGeoJsonFeatureCollection3D;
-export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry | null> =
+export const featureCollection1: GeoJSONTypes.FeatureCollection = singleGeoJsonFeatureCollection3D;
+export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Point> = singleGeoJsonFeatureCollection3D;
+export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry> =
     multiGeoJsonFeatureCollectionWithBbox2D as GeoJSONFeatureCollection;
 
 /**

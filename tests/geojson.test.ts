@@ -6,12 +6,14 @@ import { featureCollection as turfFeatureCollection, feature as turfFeature, poi
 import {
     geoJsonFeatureGeometryCollection3D,
     geoJsonFeatureLineString2D,
+    geoJsonFeatureNullGeometry,
     geoJsonFeaturePoint2D,
     geoJsonFeaturePoint3D,
     geoJsonFeaturePolygon2D,
     geoJsonFeaturePolygon3DWithBbox,
 } from "../examples/feature";
 import {
+    geoJsonFeatureCollectionNullGeometry,
     multiGeoJsonFeatureCollection2D,
     multiGeoJsonFeatureCollectionPolygon3D,
     singleGeoJsonFeatureCollection2D,
@@ -171,6 +173,12 @@ describe("GeoJSONSchema", () => {
             z.discriminatedUnion("type", [GeoJSON2DPointSchema, GeoJSON2DPolygonSchema]),
         );
 
+        const GeoJSONNullableSchema = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONGeometrySchema.nullable(),
+        );
+
         it("allows any point containing geojson to be parsed by a point geojson schema", () => {
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
@@ -203,6 +211,13 @@ describe("GeoJSONSchema", () => {
             );
             expect(GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollectionPolygon2D)).toEqual(
                 singleGeoJsonFeatureCollectionPolygon2D,
+            );
+        });
+
+        it("allows null geometry to be parsed by a geojson schema with nullable geometry", () => {
+            expect(GeoJSONNullableSchema.parse(geoJsonFeatureNullGeometry)).toEqual(geoJsonFeatureNullGeometry);
+            expect(GeoJSONNullableSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
+                geoJsonFeatureCollectionNullGeometry,
             );
         });
 
@@ -573,11 +588,10 @@ export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
 /**
  * Test that types match with @types/geojson
  */
-export const geoJson1: GeoJSONTypes.GeoJSON<GeoJSONTypes.Geometry | null> = geoJsonPoint3D as GeoJSON;
+export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
 export const geoJson2: GeoJSONTypes.Point = geoJsonPoint3D;
-export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon | null> = geoJsonFeaturePolygon2D;
-export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection | null> =
-    geoJsonFeatureGeometryCollection3D;
+export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon2D;
+export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection> = geoJsonFeatureGeometryCollection3D;
 
 /**
  * Test that @types/geojson matches our types

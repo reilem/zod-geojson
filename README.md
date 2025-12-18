@@ -170,7 +170,7 @@ If you wish to use a different dimension (e.g. 4D geometries), you can pass a cu
 as the first parameter to the generic schema functions.
 
 As discussed above, if you only wish to customize the `position` field, you will still need to pass valid schemas for
-the `properties` and `geometries` fields. You can use the default `GeoJSONPropertiesSchema` properties schema and you will need to 
+the `properties` and `geometries` fields. You can use the default `GeoJSONPropertiesSchema` properties schema and you will need to
 create & pass a custom geometry schema that uses your custom position schema.
 
 ```typescript
