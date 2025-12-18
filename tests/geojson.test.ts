@@ -561,6 +561,31 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 };
 
 /**
+ * Test invalid usage of GeoJSONGenericSchema
+ */
+
+export const InvalidGeoJSONSchema1 = GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    GeoJSONGeometrySchema.optional(),
+);
+
+export const InvalidGeoJSONSchema2 = GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    z.object({ something: "without a type field" }),
+);
+
+export const InvalidGeoJSONSchema3 = GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    z.object({ type: "not a geometry" }),
+);
+
+/**
  * Test custom strict position typing
  */
 const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);

@@ -1,7 +1,6 @@
 import * as z from "zod/v4";
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaShape } from "./base";
 import {
-    DiscriminableGeometrySchema,
     GeoJSON2DGeometrySchema,
     GeoJSON3DGeometrySchema,
     GeoJSONGeometryGeneric,
@@ -21,11 +20,11 @@ import { validBboxForFeature } from "./validation/bbox";
 export type GeoJSONFeatureGenericSchemaType<
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
         type: z.ZodLiteral<typeof GeoJSONType.Feature>;
-        geometry: z.ZodNullable<z.ZodType<G>>;
+        geometry: z.ZodType<G>;
         properties: z.ZodNullable<z.ZodType<R>>;
         coordinates: z.ZodOptional<z.ZodNever>;
         features: z.ZodOptional<z.ZodNever>;
@@ -36,18 +35,18 @@ export type GeoJSONFeatureGenericSchemaType<
 export const GeoJSONFeatureGenericSchema = <
     P extends GeoJSONAnyPosition,
     R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    G extends GeoJSONGeometryGeneric<P> | null,
 >(
     positionSchema: z.ZodType<P>,
     propertiesSchema: z.ZodType<R>,
-    geometrySchema: DiscriminableGeometrySchema<P, G>,
+    geometrySchema: z.ZodType<G>,
 ): GeoJSONFeatureGenericSchemaType<P, R, G> =>
     z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,
             id: z.string().or(z.number()).optional(),
             type: z.literal(GeoJSONTypeSchema.enum.Feature),
-            geometry: geometrySchema.nullable(),
+            geometry: geometrySchema,
             properties: propertiesSchema.nullable(),
             coordinates: z.never({ error: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
             features: z.never({ error: "GeoJSON Feature cannot have a 'features' key" }).optional(),
