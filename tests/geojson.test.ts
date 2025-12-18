@@ -179,6 +179,12 @@ describe("GeoJSONSchema", () => {
             GeoJSONGeometrySchema.nullable(),
         );
 
+        const GeoJSONNullablePointSchema = GeoJSONGenericSchema(
+            GeoJSONPositionSchema,
+            GeoJSONPropertiesSchema,
+            GeoJSONPointSchema.nullable(),
+        );
+
         it("allows any point containing geojson to be parsed by a point geojson schema", () => {
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
             expect(GeoJSONPointGeoJSONSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
@@ -214,9 +220,26 @@ describe("GeoJSONSchema", () => {
             );
         });
 
+        it("allows valid geojson to be parsed by a geojson schema with nullable geometry", () => {
+            expect(GeoJSONNullableSchema.parse(geoJsonFeaturePolygon2D)).toEqual(geoJsonFeaturePolygon2D);
+            expect(GeoJSONNullableSchema.parse(multiGeoJsonFeatureCollection2D)).toEqual(
+                multiGeoJsonFeatureCollection2D,
+            );
+
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeaturePoint2D)).toEqual(geoJsonFeaturePoint2D);
+            expect(GeoJSONNullablePointSchema.parse(singleGeoJsonFeatureCollection3D)).toEqual(
+                singleGeoJsonFeatureCollection3D,
+            );
+        });
+
         it("allows null geometry to be parsed by a geojson schema with nullable geometry", () => {
             expect(GeoJSONNullableSchema.parse(geoJsonFeatureNullGeometry)).toEqual(geoJsonFeatureNullGeometry);
             expect(GeoJSONNullableSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
+                geoJsonFeatureCollectionNullGeometry,
+            );
+
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeatureNullGeometry)).toEqual(geoJsonFeatureNullGeometry);
+            expect(GeoJSONNullablePointSchema.parse(geoJsonFeatureCollectionNullGeometry)).toEqual(
                 geoJsonFeatureCollectionNullGeometry,
             );
         });
@@ -246,6 +269,70 @@ describe("GeoJSONSchema", () => {
             expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
             expect(() => GeoJSON2DPointOrPolygonGeoJSONSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(
                 ZodError,
+            );
+        });
+
+        it("throws error when trying to make a geojson schema with an invalid geometry schema", () => {
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.or(z.null()),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.or(z.null()).nullable(),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    GeoJSONGeometrySchema.nullable().or(z.null()),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    // @ts-expect-error -- THIS SHOULD FAIL
+                    GeoJSONGeometrySchema.optional(),
+                ),
+            ).toThrow(Error);
+
+            expect(() =>
+                GeoJSONGenericSchema(
+                    GeoJSONPositionSchema,
+                    GeoJSONPropertiesSchema,
+                    // @ts-expect-error -- THIS SHOULD FAIL
+                    GeoJSONGeometrySchema.or(z.undefined()),
+                ),
+            ).toThrow(Error);
+
+            // These do not throw, but we need to make sure typescript forbids it
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.object({ something: "without a type field" }),
+            );
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.object({ type: "not a geometry" }),
+            );
+            GeoJSONGenericSchema(
+                GeoJSONPositionSchema,
+                GeoJSONPropertiesSchema,
+                // @ts-expect-error -- THIS SHOULD FAIL
+                z.discriminatedUnion("something", [z.object({ something: "without a type field" })]),
             );
         });
     });
@@ -561,31 +648,6 @@ export const invalidGeoJson3DFeatureCollection: GeoJSON3D = {
 };
 
 /**
- * Test invalid usage of GeoJSONGenericSchema
- */
-
-export const InvalidGeoJSONSchema1 = GeoJSONGenericSchema(
-    GeoJSONPositionSchema,
-    GeoJSONPropertiesSchema,
-    // @ts-expect-error -- THIS SHOULD FAIL
-    GeoJSONGeometrySchema.optional(),
-);
-
-export const InvalidGeoJSONSchema2 = GeoJSONGenericSchema(
-    GeoJSONPositionSchema,
-    GeoJSONPropertiesSchema,
-    // @ts-expect-error -- THIS SHOULD FAIL
-    z.object({ something: "without a type field" }),
-);
-
-export const InvalidGeoJSONSchema3 = GeoJSONGenericSchema(
-    GeoJSONPositionSchema,
-    GeoJSONPropertiesSchema,
-    // @ts-expect-error -- THIS SHOULD FAIL
-    z.object({ type: "not a geometry" }),
-);
-
-/**
  * Test custom strict position typing
  */
 const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);
@@ -602,12 +664,15 @@ type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
 export const strict2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     type: "Point",
     coordinates: [1.0, 2.0],
+    bbox: [0.0, 0.0, 3.0, 4.0],
 };
 
 export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     type: "Point",
     // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0, 2.0, 3.0],
+    // @ts-expect-error -- THIS SHOULD FAIL
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0],
 };
 
 /**
