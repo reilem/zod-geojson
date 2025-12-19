@@ -10,7 +10,7 @@ import {
     geoJsonFeaturePoint2D,
     geoJsonFeaturePoint3D,
     geoJsonFeaturePolygon2D,
-    geoJsonFeaturePolygon3DWithBbox,
+    geoJsonFeaturePolygon3DWithBBox,
 } from "../examples/feature";
 import { geoJsonLineString2D } from "../examples/geometry/line_string";
 import { geoJsonPoint3D } from "../examples/geometry/point";
@@ -69,7 +69,7 @@ describe("GeoJSONFeature", () => {
         passGeoJSON2DFeatureSchemaTest(geoJsonFeaturePolygon2D);
     });
     it("allows a feature with a 3D polygon geometry and valid bbox", () => {
-        passGeoJSON3DFeatureSchemaTest(geoJsonFeaturePolygon3DWithBbox);
+        passGeoJSON3DFeatureSchemaTest(geoJsonFeaturePolygon3DWithBBox);
     });
     it("allows a feature with a 2D geometry collection", () => {
         passGeoJSON2DFeatureSchemaTest(geoJsonFeatureGeometryCollection2D);
@@ -334,8 +334,8 @@ describe("GeoJSONFeature", () => {
         });
 
         it("allows a 3D polygon feature to be parsed by a 3D polygon feature schema ", () => {
-            expect(GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon3DWithBbox)).toEqual(
-                geoJsonFeaturePolygon3DWithBbox,
+            expect(GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon3DWithBBox)).toEqual(
+                geoJsonFeaturePolygon3DWithBBox,
             );
         });
 
@@ -575,7 +575,7 @@ export const testGeometryDoesNotEqual2: Equals<
  */
 export const feature1: GeoJSONTypes.Feature = geoJsonFeaturePoint2D;
 export const feature2: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D;
-export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon3DWithBbox;
+export const feature3: GeoJSONTypes.Feature<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon3DWithBBox;
 
 export const feature4: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D;
 export const feature5: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeaturePoint2D as GeoJSONFeatureGeneric<

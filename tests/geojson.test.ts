@@ -10,7 +10,7 @@ import {
     geoJsonFeaturePoint2D,
     geoJsonFeaturePoint3D,
     geoJsonFeaturePolygon2D,
-    geoJsonFeaturePolygon3DWithBbox,
+    geoJsonFeaturePolygon3DWithBBox,
 } from "../examples/feature";
 import {
     geoJsonFeatureCollectionNullGeometry,
@@ -195,8 +195,8 @@ describe("GeoJSONSchema", () => {
 
         it("allows any 3D polygon containing geojson to be parsed by a 3D polygon geojson schema", () => {
             expect(GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonPolygon3D)).toEqual(geoJsonPolygon3D);
-            expect(GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonFeaturePolygon3DWithBbox)).toEqual(
-                geoJsonFeaturePolygon3DWithBbox,
+            expect(GeoJSON3DPolygonGeoJSONSchema.parse(geoJsonFeaturePolygon3DWithBBox)).toEqual(
+                geoJsonFeaturePolygon3DWithBBox,
             );
             expect(GeoJSON3DPolygonGeoJSONSchema.parse(multiGeoJsonFeatureCollectionPolygon3D)).toEqual(
                 multiGeoJsonFeatureCollectionPolygon3D,

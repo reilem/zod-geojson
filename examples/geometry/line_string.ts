@@ -17,12 +17,12 @@ export const geoJsonLineString3D = {
     ],
 } satisfies GeoJSON3DLineString;
 
-export const geoJsonLineString2DWithBbox = {
+export const geoJsonLineString2DWithBBox = {
     ...geoJsonLineString2D,
     bbox: [1.0, 2.0, 3.0, 4.0],
 } satisfies GeoJSON2DLineString;
 
-export const geoJsonLineString3DWithBbox = {
+export const geoJsonLineString3DWithBBox = {
     ...geoJsonLineString3D,
     bbox: [0.0, 0.0, 0.0, 20.0, 10.0, 2.0],
 } satisfies GeoJSON3DLineString;

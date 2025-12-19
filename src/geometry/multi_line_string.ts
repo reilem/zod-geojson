@@ -8,7 +8,7 @@ import {
     GeoJSONPositionSchema,
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
-import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
+import { getInvalidBBoxIssue, validBBoxForPositionGrid } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 
 export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
@@ -40,7 +40,7 @@ export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONAnyPosition
                 ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
-            if (!validBboxForPositionGrid(ctx.value)) {
+            if (!validBBoxForPositionGrid(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }

@@ -4,9 +4,9 @@ import { point as turfPoint } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonPoint2D,
-    geoJsonPoint2DWithBbox,
+    geoJsonPoint2DWithBBox,
     geoJsonPoint3D,
-    geoJsonPoint3DWithBbox,
+    geoJsonPoint3DWithBBox,
 } from "../../examples/geometry/point";
 import {
     GeoJSON2DPoint,
@@ -43,10 +43,10 @@ describe("GeoJSONPoint", () => {
         passGeoJSON3DPointTest(geoJsonPoint3D);
     });
     it("allows a 2D point with valid bbox", () => {
-        passGeoJSON2DPointTest(geoJsonPoint2DWithBbox);
+        passGeoJSON2DPointTest(geoJsonPoint2DWithBBox);
     });
     it("allows a 3D point with valid bbox", () => {
-        passGeoJSON3DPointTest(geoJsonPoint3DWithBbox);
+        passGeoJSON3DPointTest(geoJsonPoint3DWithBBox);
     });
     it("allows a point and preserves extra keys", () => {
         const geoJsonPointWithExtraKeys = {
@@ -247,8 +247,8 @@ export const invalidGeoJsonPoint3DPositionTooBig: GeoJSON3DPoint = {
 /**
  * Test that types match with @types/geojson
  */
-export const point1: GeoJSONTypes.Point = geoJsonPoint2DWithBbox;
-export const point2: GeoJSONTypes.Point = geoJsonPoint3DWithBbox;
+export const point1: GeoJSONTypes.Point = geoJsonPoint2DWithBBox;
+export const point2: GeoJSONTypes.Point = geoJsonPoint3DWithBBox;
 export const point3: GeoJSONTypes.Point = geoJsonPoint2D;
 export const point4: GeoJSONTypes.Point = geoJsonPoint3D;
 export const point5: GeoJSONTypes.Point = geoJsonPoint3D as GeoJSONPoint;

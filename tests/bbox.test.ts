@@ -3,76 +3,76 @@ import { point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
 import { ZodError } from "zod/v4";
 import { bbox2D, bbox3D } from "../examples/bbox";
-import { GeoJSONBbox, GeoJSONBboxSchema } from "../src";
-import { GeoJSON2DBbox, GeoJSON2DBboxSchema, GeoJSON3DBbox, GeoJSON3DBboxSchema } from "../src/bbox";
+import { GeoJSONBBox, GeoJSONBBoxSchema } from "../src";
+import { GeoJSON2DBBox, GeoJSON2DBBoxSchema, GeoJSON3DBBox, GeoJSON3DBBoxSchema } from "../src/bbox";
 
 const bbox4D = [0, 0, 0, 0, 0, 0, 0, 0];
 
-describe("GeoJSONBbox", () => {
+describe("GeoJSONBBox", () => {
     it("allows 2D bbox", () => {
-        expect(GeoJSONBboxSchema.parse(bbox2D)).toEqual(bbox2D);
+        expect(GeoJSONBBoxSchema.parse(bbox2D)).toEqual(bbox2D);
     });
 
     it("allows 3D bbox", () => {
-        expect(GeoJSONBboxSchema.parse(bbox3D)).toEqual(bbox3D);
+        expect(GeoJSONBBoxSchema.parse(bbox3D)).toEqual(bbox3D);
     });
 
     it("does not allow an empty bbox", () => {
-        expect(() => GeoJSONBboxSchema.parse([])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([])).toThrow(ZodError);
     });
 
     it("does not allow a 4D bbox", () => {
-        expect(() => GeoJSONBboxSchema.parse(bbox4D)).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse(bbox4D)).toThrow(ZodError);
     });
 
     it("does not allow a bbox with 1 position", () => {
-        expect(() => GeoJSONBboxSchema.parse([0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(ZodError);
     });
 
     it("does not allow a bbox with 2 positions", () => {
-        expect(() => GeoJSONBboxSchema.parse([0, 0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0, 0])).toThrow(ZodError);
     });
 
     it("does not allow a bbox with 3 positions", () => {
-        expect(() => GeoJSONBboxSchema.parse([0, 0, 0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0, 0, 0])).toThrow(ZodError);
     });
 
     it("does not allow an uneven bbox", () => {
-        expect(() => GeoJSONBboxSchema.parse([0.0, 3.0, -1.0, 2.0, 5.0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0.0, 3.0, -1.0, 2.0, 5.0])).toThrow(ZodError);
     });
 
     it("does not allow a badly formatted bbox", () => {
-        expect(() => GeoJSONBboxSchema.parse("bbox cannot be a string")).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse("bbox cannot be a string")).toThrow(ZodError);
     });
 
     describe("2D", () => {
         it("allows a 2D bbox", () => {
-            expect(GeoJSON2DBboxSchema.parse(bbox2D)).toEqual(bbox2D);
+            expect(GeoJSON2DBBoxSchema.parse(bbox2D)).toEqual(bbox2D);
         });
         it("does not allow a 3D bbox", () => {
-            expect(() => GeoJSON2DBboxSchema.parse(bbox3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DBBoxSchema.parse(bbox3D)).toThrow(ZodError);
         });
         it("does not allow a 4D bbox", () => {
-            expect(() => GeoJSON2DBboxSchema.parse(bbox4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DBBoxSchema.parse(bbox4D)).toThrow(ZodError);
         });
     });
 
     describe("3D", () => {
         it("allows a 3D bbox", () => {
-            expect(GeoJSON3DBboxSchema.parse(bbox3D)).toEqual(bbox3D);
+            expect(GeoJSON3DBBoxSchema.parse(bbox3D)).toEqual(bbox3D);
         });
         it("does not allow a 2D bbox", () => {
-            expect(() => GeoJSON3DBboxSchema.parse(bbox2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DBBoxSchema.parse(bbox2D)).toThrow(ZodError);
         });
         it("does not allow a 4D bbox", () => {
-            expect(() => GeoJSON3DBboxSchema.parse(bbox4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DBBoxSchema.parse(bbox4D)).toThrow(ZodError);
         });
     });
 
     describe("turf.js", () => {
         it("validates bbox from turf.js", () => {
             const bbox = turfPoint([0, 0, 0], {}, { bbox: [0, 0, 0, 1, 1, 1] }).bbox;
-            expect(GeoJSON3DBboxSchema.parse(bbox)).toEqual(bbox);
+            expect(GeoJSON3DBBoxSchema.parse(bbox)).toEqual(bbox);
         });
     });
 });
@@ -81,43 +81,43 @@ describe("GeoJSONBbox", () => {
  * Invalid bbox's to test types
  */
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBboxEmpty: GeoJSONBbox = [];
+export const invalidBBoxEmpty: GeoJSONBBox = [];
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox1: GeoJSONBbox = [0.0];
+export const invalidBBox1: GeoJSONBBox = [0.0];
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox2: GeoJSONBbox = [0.0, 0.0];
+export const invalidBBox2: GeoJSONBBox = [0.0, 0.0];
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox3: GeoJSONBbox = [0.0, 0.0, 0.0];
+export const invalidBBox3: GeoJSONBBox = [0.0, 0.0, 0.0];
 
 /**
  * Invalid 2D bbox's to test types
  */
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox2D3: GeoJSON2DBbox = [0.0, 0.0, 0.0];
+export const invalidBBox2D3: GeoJSON2DBBox = [0.0, 0.0, 0.0];
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox2D5: GeoJSON2DBbox = [0.0, 0.0, 0.0, 0.0, 0.0];
+export const invalidBBox2D5: GeoJSON2DBBox = [0.0, 0.0, 0.0, 0.0, 0.0];
 
 /**
  * Invalid 3D bbox's to test types
  */
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox3D5: GeoJSON3DBbox = [0.0, 0.0, 0.0, 0.0, 0.0];
+export const invalidBBox3D5: GeoJSON3DBBox = [0.0, 0.0, 0.0, 0.0, 0.0];
 // @ts-expect-error -- THIS SHOULD FAIL
-export const invalidBbox3D7: GeoJSON3DBbox = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+export const invalidBBox3D7: GeoJSON3DBBox = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
 /**
  * Test that types match with @types/geojson
  */
 export const bbox1: GeoJSONTypes.BBox = bbox2D;
-export const bbox2: GeoJSONTypes.BBox = bbox2D as GeoJSONBbox;
+export const bbox2: GeoJSONTypes.BBox = bbox2D as GeoJSONBBox;
 export const bbox3: GeoJSONTypes.BBox = bbox3D;
 
 /**
  * Test that @types/geojson matches our types
  */
-export const bbox4: GeoJSONBbox = bbox1;
+export const bbox4: GeoJSONBBox = bbox1;
 
 /**
  * Test that turf.js matches our types
  */
-export const bbox5: GeoJSONBbox | undefined = turfPoint([0, 0, 0], {}, { bbox: [0, 0, 0, 0, 0, 0] }).bbox;
+export const bbox5: GeoJSONBBox | undefined = turfPoint([0, 0, 0], {}, { bbox: [0, 0, 0, 0, 0, 0] }).bbox;

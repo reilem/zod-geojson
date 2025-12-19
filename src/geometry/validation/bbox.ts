@@ -11,7 +11,7 @@ import {
 export const getInvalidBBoxIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIssue => ({
     code: "custom" as const,
     message:
-        "Invalid bbox. Bbox length must be 2 * n, where n is the dimension of the geometry. Bbox must be a valid extent for the geometry.",
+        "Invalid bbox. BBox length must be 2 * n, where n is the dimension of the geometry. BBox must be a valid extent for the geometry.",
     input: ctx.value,
     continue: true,
 });
@@ -21,7 +21,7 @@ export const getInvalidBBoxIssue = (ctx: z.core.ParsePayload): z.core.$ZodRawIss
  * @param bbox The bbox to validate
  * @param coordinates Contains the position
  */
-export function validBboxForPosition({ bbox, coordinates }: ValidatableCoordinate): boolean {
+export function validBBoxForPosition({ bbox, coordinates }: ValidatableCoordinate): boolean {
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
@@ -37,7 +37,7 @@ export function validBboxForPosition({ bbox, coordinates }: ValidatableCoordinat
  * @param bbox The bbox to validate
  * @param coordinates Contains the list of positions
  */
-export function validBboxForPositionList({ bbox, coordinates }: ValidatableList): boolean {
+export function validBBoxForPositionList({ bbox, coordinates }: ValidatableList): boolean {
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
@@ -46,7 +46,7 @@ export function validBboxForPositionList({ bbox, coordinates }: ValidatableList)
         return false;
     }
 
-    return bboxEquals(bbox, updateBboxForPositionList([], coordinates));
+    return bboxEquals(bbox, updateBBoxForPositionList([], coordinates));
 }
 
 /**
@@ -54,7 +54,7 @@ export function validBboxForPositionList({ bbox, coordinates }: ValidatableList)
  * @param bbox The bbox to validate
  * @param coordinates Contains the grid of positions
  */
-export function validBboxForPositionGrid({ bbox, coordinates }: ValidatableGrid): boolean {
+export function validBBoxForPositionGrid({ bbox, coordinates }: ValidatableGrid): boolean {
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
@@ -62,7 +62,7 @@ export function validBboxForPositionGrid({ bbox, coordinates }: ValidatableGrid)
     if (bbox.length !== 2 * dimension) {
         return false;
     }
-    return bboxEquals(bbox, updateBboxForPositionGrid([], coordinates));
+    return bboxEquals(bbox, updateBBoxForPositionGrid([], coordinates));
 }
 
 /**
@@ -70,7 +70,7 @@ export function validBboxForPositionGrid({ bbox, coordinates }: ValidatableGrid)
  * @param bbox The bbox to validate
  * @param coordinates Contains the grid of positions
  */
-export function validBboxForPositionGridList({ bbox, coordinates }: ValidatableGridList): boolean {
+export function validBBoxForPositionGridList({ bbox, coordinates }: ValidatableGridList): boolean {
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
@@ -79,36 +79,36 @@ export function validBboxForPositionGridList({ bbox, coordinates }: ValidatableG
         return false;
     }
 
-    return bboxEquals(bbox, updateBboxForPositionGridList([], coordinates));
+    return bboxEquals(bbox, updateBBoxForPositionGridList([], coordinates));
 }
 
-export function validBboxForCollection({ bbox, geometries }: ValidatableCollection): boolean {
+export function validBBoxForCollection({ bbox, geometries }: ValidatableCollection): boolean {
     if (!bbox) {
         return true;
     }
-    const expectedBbox = getBboxForGeometries(geometries);
-    return bboxEquals(bbox, expectedBbox);
+    const expectedBBox = getBBoxForGeometries(geometries);
+    return bboxEquals(bbox, expectedBBox);
 }
 
-export function getBboxForGeometry(geometry: ValidatableGeometry): number[] {
+export function getBBoxForGeometry(geometry: ValidatableGeometry): number[] {
     switch (geometry.type) {
         case "Point":
-            return updateBboxForPosition([], geometry.coordinates);
+            return updateBBoxForPosition([], geometry.coordinates);
         case "MultiPoint":
         case "LineString":
-            return updateBboxForPositionList([], geometry.coordinates);
+            return updateBBoxForPositionList([], geometry.coordinates);
         case "MultiLineString":
         case "Polygon":
-            return updateBboxForPositionGrid([], geometry.coordinates);
+            return updateBBoxForPositionGrid([], geometry.coordinates);
         case "MultiPolygon":
-            return updateBboxForPositionGridList([], geometry.coordinates);
+            return updateBBoxForPositionGridList([], geometry.coordinates);
         case "GeometryCollection":
-            return getBboxForGeometries(geometry.geometries);
+            return getBBoxForGeometries(geometry.geometries);
     }
 }
 
-export function getBboxForGeometries(geometries: ValidatableGeometry[]): number[] {
-    return mergeBboxs(geometries.map(getBboxForGeometry));
+export function getBBoxForGeometries(geometries: ValidatableGeometry[]): number[] {
+    return mergeBBoxs(geometries.map(getBBoxForGeometry));
 }
 
 export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
@@ -121,51 +121,51 @@ export function bboxEquals(bbox1: number[], bbox2: number[]): boolean {
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGridList(currentBbox: number[], positions?: number[][][][] | null): number[] {
-    positions?.forEach((positionGrid) => updateBboxForPositionGrid(currentBbox, positionGrid));
-    return currentBbox;
+function updateBBoxForPositionGridList(currentBBox: number[], positions?: number[][][][] | null): number[] {
+    positions?.forEach((positionGrid) => updateBBoxForPositionGrid(currentBBox, positionGrid));
+    return currentBBox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionGrid(currentBbox: number[], positions?: number[][][] | null): number[] {
-    positions?.forEach((positionList) => updateBboxForPositionList(currentBbox, positionList));
-    return currentBbox;
+function updateBBoxForPositionGrid(currentBBox: number[], positions?: number[][][] | null): number[] {
+    positions?.forEach((positionList) => updateBBoxForPositionList(currentBBox, positionList));
+    return currentBBox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPositionList(currentBbox: number[], positions?: number[][] | null): number[] {
-    positions?.forEach((position) => updateBboxForPosition(currentBbox, position));
-    return currentBbox;
+function updateBBoxForPositionList(currentBBox: number[], positions?: number[][] | null): number[] {
+    positions?.forEach((position) => updateBBoxForPosition(currentBBox, position));
+    return currentBBox;
 }
 
 /**
  * NOTE: Mutates the given bbox. Performance optimisation to avoid unnecessary copies.
  */
-function updateBboxForPosition(currentBbox: number[], position?: number[] | null): number[] {
+function updateBBoxForPosition(currentBBox: number[], position?: number[] | null): number[] {
     const dimension = position?.length ?? 0;
     position?.forEach((value, index) => {
-        const iMin = currentBbox[index];
-        const iMax = currentBbox[index + dimension];
+        const iMin = currentBBox[index];
+        const iMax = currentBBox[index + dimension];
         if (iMin === undefined || value < iMin) {
-            currentBbox[index] = value;
+            currentBBox[index] = value;
         }
         if (iMax === undefined || value > iMax) {
-            currentBbox[index + dimension] = value;
+            currentBBox[index + dimension] = value;
         }
     });
-    return currentBbox;
+    return currentBBox;
 }
 
-function mergeBboxs(bboxs: number[][]): number[] {
+function mergeBBoxs(bboxs: number[][]): number[] {
     const dimension = bboxs[0].length / 2;
-    const mergedBbox = [];
+    const mergedBBox = [];
     for (let i = 0; i < dimension; i++) {
-        mergedBbox[i] = Math.min(...bboxs.map((bbox) => bbox[i]));
-        mergedBbox[i + dimension] = Math.max(...bboxs.map((bbox) => bbox[i + dimension]));
+        mergedBBox[i] = Math.min(...bboxs.map((bbox) => bbox[i]));
+        mergedBBox[i + dimension] = Math.max(...bboxs.map((bbox) => bbox[i + dimension]));
     }
-    return mergedBbox;
+    return mergedBBox;
 }

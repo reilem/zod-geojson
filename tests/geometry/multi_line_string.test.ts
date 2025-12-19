@@ -5,11 +5,11 @@ import { ZodError } from "zod/v4";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
     multiGeoJsonMultiLineString2D,
-    multiGeoJsonMultiLineString2DWithBbox,
+    multiGeoJsonMultiLineString2DWithBBox,
     singleGeoJsonMultiLineString2D,
-    singleGeoJsonMultiLineString2DWithBbox,
+    singleGeoJsonMultiLineString2DWithBBox,
     singleGeoJsonMultiLineString3D,
-    singleGeoJsonMultiLineString3DWithBbox,
+    singleGeoJsonMultiLineString3DWithBBox,
 } from "../../examples/geometry/multi_line_string";
 import {
     GeoJSON2DMultiLineString,
@@ -60,13 +60,13 @@ describe("GeoJSONMultiLineString", () => {
         passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3D);
     });
     it("allows a 2D multi-line string with one line and bbox", () => {
-        passGeoJSON2DMultiLineStringTest(singleGeoJsonMultiLineString2DWithBbox);
+        passGeoJSON2DMultiLineStringTest(singleGeoJsonMultiLineString2DWithBBox);
     });
     it("allows a 2D multi-line string with multiples and with bbox", () => {
-        passGeoJSON2DMultiLineStringTest(multiGeoJsonMultiLineString2DWithBbox);
+        passGeoJSON2DMultiLineStringTest(multiGeoJsonMultiLineString2DWithBBox);
     });
     it("allows a 3D multi-line string with bbox", () => {
-        passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3DWithBbox);
+        passGeoJSON3DMultiLineStringTest(singleGeoJsonMultiLineString3DWithBBox);
     });
     it("allows a multi-line string and preserves extra keys", () => {
         passGeoJSON2DMultiLineStringTest({
@@ -347,9 +347,9 @@ export const invalidGeoJsonMultiLineString3DPositionTooBig: GeoJSON3DMultiLineSt
  */
 export const multiLineString1: GeoJSONTypes.MultiLineString = multiGeoJsonMultiLineString2D;
 export const multiLineString2: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString3D;
-export const multiLineString3: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString2DWithBbox;
+export const multiLineString3: GeoJSONTypes.MultiLineString = singleGeoJsonMultiLineString2DWithBBox;
 export const multiLineString4: GeoJSONTypes.MultiLineString =
-    singleGeoJsonMultiLineString2DWithBbox as GeoJSONMultiLineString;
+    singleGeoJsonMultiLineString2DWithBBox as GeoJSONMultiLineString;
 
 /**
  * Test that @types/geojson matches our types

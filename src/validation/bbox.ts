@@ -1,18 +1,18 @@
-import { bboxEquals, getBboxForGeometries, getBboxForGeometry } from "../geometry/validation/bbox";
+import { bboxEquals, getBBoxForGeometries, getBBoxForGeometry } from "../geometry/validation/bbox";
 import { getGeometries, ValidatableFeature, ValidatableFeatureCollection } from "./types";
 
-export function validBboxForFeature({ bbox, geometry }: ValidatableFeature): boolean {
+export function validBBoxForFeature({ bbox, geometry }: ValidatableFeature): boolean {
     if (bbox == null || geometry == null) {
         return true;
     }
-    const expectedBbox = getBboxForGeometry(geometry);
-    return bboxEquals(expectedBbox, bbox);
+    const expectedBBox = getBBoxForGeometry(geometry);
+    return bboxEquals(expectedBBox, bbox);
 }
 
-export function validBboxForFeatureCollection({ features, bbox }: ValidatableFeatureCollection) {
+export function validBBoxForFeatureCollection({ features, bbox }: ValidatableFeatureCollection) {
     if (!bbox) {
         return true;
     }
-    const expectedBbox = getBboxForGeometries(getGeometries({ features }));
-    return bboxEquals(expectedBbox, bbox);
+    const expectedBBox = getBBoxForGeometries(getGeometries({ features }));
+    return bboxEquals(expectedBBox, bbox);
 }

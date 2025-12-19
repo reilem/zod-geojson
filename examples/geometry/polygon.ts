@@ -46,17 +46,17 @@ export const geoJsonPolygon2DWithHole = {
     ],
 } satisfies GeoJSON2DPolygon;
 
-export const geoJsonPolygon2DWithBbox = {
+export const geoJsonPolygon2DWithBBox = {
     ...geoJsonPolygon2D,
     bbox: [0.0, 0.0, 1.0, 1.0],
 } satisfies GeoJSON2DPolygon;
 
-export const geoJsonPolygon3DWithBbox = {
+export const geoJsonPolygon3DWithBBox = {
     ...geoJsonPolygon3D,
     bbox: [0.0, 0.0, 0.0, 1.0, 2.0, 2.0],
 } satisfies GeoJSON3DPolygon;
 
-export const geoJsonPolygon2DWithHoleAndBbox = {
+export const geoJsonPolygon2DWithHoleAndBBox = {
     ...geoJsonPolygon2DWithHole,
     bbox: [0.0, 0.0, 10.0, 10.0],
 } satisfies GeoJSON2DPolygon;

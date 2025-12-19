@@ -4,11 +4,11 @@ import { multiPolygon as turfMultiPolygon } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     multiGeoJsonMultiPolygon2D,
-    multiGeoJsonMultiPolygon2DWithBbox,
+    multiGeoJsonMultiPolygon2DWithBBox,
     singleGeoJsonMultiPolygon2D,
-    singleGeoJsonMultiPolygon2DWithBbox,
+    singleGeoJsonMultiPolygon2DWithBBox,
     singleGeoJsonMultiPolygon3D,
-    singleGeoJsonMultiPolygon3DWithBbox,
+    singleGeoJsonMultiPolygon3DWithBBox,
 } from "../../examples/geometry/multi_polygon";
 import { geoJsonPolygon2D, geoJsonPolygon3D } from "../../examples/geometry/polygon";
 import {
@@ -60,13 +60,13 @@ describe("GeoJSONMultiPolygon", () => {
         passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3D);
     });
     it("allows a 2D multi-polygon with one polygon and bbox", () => {
-        passGeoJSON2DMultiPolygonTest(singleGeoJsonMultiPolygon2DWithBbox);
+        passGeoJSON2DMultiPolygonTest(singleGeoJsonMultiPolygon2DWithBBox);
     });
     it("allows a 2D multi-polygon with multiple polygons and bbox", () => {
-        passGeoJSON2DMultiPolygonTest(multiGeoJsonMultiPolygon2DWithBbox);
+        passGeoJSON2DMultiPolygonTest(multiGeoJsonMultiPolygon2DWithBBox);
     });
     it("allows a 3D multi-polygon with one polygon and bbox", () => {
-        passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBbox);
+        passGeoJSON3DMultiPolygonTest(singleGeoJsonMultiPolygon3DWithBBox);
     });
     it("allows a multi-polygon and preserves extra keys", () => {
         passGeoJSON2DMultiPolygonTest({

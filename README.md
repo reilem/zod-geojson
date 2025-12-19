@@ -113,6 +113,40 @@ import type {
 } from "zod-geojson";
 ```
 
+### Strict Position Typing
+
+To maintain "out of box" compatibility with the `@types/geojson` types the general schemas allow any position
+dimensionality.
+
+```typescript
+import { GeoJSONPoint } from "zod-geojson";
+
+// These are all valid
+const point3D: GeoJSONPoint = { type: "Point", coordinates: [0, 0, 0] };
+const point1D: GeoJSONPoint = { type: "Point", coordinates: [0] };
+const point0D: GeoJSONPoint = { type: "Point", coordinates: [] };
+const point4D: GeoJSONPoint = { type: "Point", coordinates: [0, 0, 0, 0] };
+```
+
+If you wish to have strict position typing, you can use the provided 2D and 3D schemas/types. These use strict position
+typing and will also restrict the bbox field to match the position dimension. For example:
+
+```typescript
+import { GeoJSON2DPoint } from "zod-geojson";
+
+const point3D: GeoJSON2DPoint = {
+    type: "Point",
+    // This is a 3D position, and so errors during compilation!
+    coordinates: [0, 0, 0],
+};
+
+const point2DWith3DBBox: GeoJSON2DPoint = {
+    type: "Point",
+    coordinates: [1.0, 2.0],
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This will fail. BBox has 6 values instead of 4
+};
+```
+
 ## Customizing Schemas
 
 Each GeoJSON schema in this library has a generic version that allows you to customize certain aspects
@@ -273,49 +307,6 @@ const GeoJSONFeatureWithNullableGeometrySchema = GeoJSONFeatureGenericSchema(
     GeoJSONPropertiesSchema,
     GeoJSONGeometrySchema.nullable(),
 );
-```
-
-### Strict Position Typing
-
-The default 2D and 3D position schemas exported by this library used to enforce this dimensionality at type-level. For example:
-
-```typescript
-import { GeoJSON2DPoint } from "zod-geojson";
-
-const point2D: GeoJSON2DPoint = {
-    type: "Point",
-    // This is a 3D position, and so would error during compilation!
-    coordinates: [0, 0, 0],
-};
-```
-
-However, to maintain "out of box" compatibility with the `@types/geojson` types, this feature has been removed. If
-you wish to have strict position typing, you can use the generic schemas to create your own custom schemas and types
-that enforce the desired position dimension.
-
-```typescript
-const GeoJSON2DStrictPositionSchema = z.tuple([z.number(), z.number()]);
-type GeoJSON2DStrictPosition = z.infer<typeof GeoJSON2DStrictPositionSchema>;
-
-const GeoJSON2DStrictGeometrySchema = GeoJSONGeometryGenericSchema(GeoJSON2DStrictPositionSchema);
-type GeoJSON2DStrictGeometry = z.infer<typeof GeoJSON2DStrictGeometrySchema>;
-
-export const GeoJSON2DStrictSchema = GeoJSONGenericSchema(
-    GeoJSON2DStrictPositionSchema,
-    GeoJSONPropertiesSchema,
-    GeoJSON2DStrictGeometrySchema,
-);
-type GeoJSON2DStrict = z.infer<typeof GeoJSON2DStrictSchema>;
-```
-
-Using strict position typing will also restrict the bbox field to match the position dimension. For example:
-
-```typescript
-export const invalid: GeoJSON2DStrict = {
-    type: "Point",
-    coordinates: [1.0, 2.0],
-    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This will fail. bbox has 6 values instead of 4
-};
 ```
 
 ## Error Cases

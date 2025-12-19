@@ -15,7 +15,7 @@ import {
 import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
 import { GeoJSONType, GeoJSONTypeSchema } from "./type";
-import { validBboxForFeature } from "./validation/bbox";
+import { validBBoxForFeature } from "./validation/bbox";
 
 export type GeoJSONFeatureGenericSchemaType<
     P extends GeoJSONAnyPosition,
@@ -53,7 +53,7 @@ export const GeoJSONFeatureGenericSchema = <
             geometries: z.never({ error: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
         })
         .check((ctx) => {
-            if (!validBboxForFeature(ctx.value)) {
+            if (!validBBoxForFeature(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
             }
         });

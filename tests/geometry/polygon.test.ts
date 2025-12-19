@@ -6,7 +6,7 @@ import * as z from "zod/v4";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithHole,
-    geoJsonPolygon2DWithHoleAndBbox,
+    geoJsonPolygon2DWithHoleAndBBox,
     geoJsonPolygon3D,
 } from "../../examples/geometry/polygon";
 import {
@@ -72,7 +72,7 @@ describe("GeoJSONPolygon", () => {
         });
     });
     it("allows a 2D polygon with a hole and bbox", () => {
-        passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHoleAndBbox);
+        passGeoJSON2DPolygonTest(geoJsonPolygon2DWithHoleAndBBox);
     });
     it("allows a polygon and preserves extra keys", () => {
         passGeoJSON2DPolygonTest({
@@ -454,8 +454,8 @@ export const invalidGeoJsonPolygon3DPositionsTooBig: GeoJSON3DPolygon = {
 export const polygon1: GeoJSONTypes.Polygon = geoJsonPolygon2D;
 export const polygon2: GeoJSONTypes.Polygon = geoJsonPolygon3D;
 export const polygon3: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHole;
-export const polygon4: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox;
-export const polygon5: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBbox as GeoJSONPolygon;
+export const polygon4: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBBox;
+export const polygon5: GeoJSONTypes.Polygon = geoJsonPolygon2DWithHoleAndBBox as GeoJSONPolygon;
 
 /**
  * Test that @types/geojson matches our types

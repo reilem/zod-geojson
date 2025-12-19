@@ -10,7 +10,7 @@ import {
 import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
 import { GeoJSONType, GeoJSONTypeSchema } from "./type";
-import { validBboxForFeatureCollection } from "./validation/bbox";
+import { validBBoxForFeatureCollection } from "./validation/bbox";
 import {
     getInvalidFeatureCollectionDimensionsIssue,
     validDimensionsForFeatureCollection,
@@ -64,7 +64,7 @@ export const GeoJSONFeatureCollectionGenericSchema = <
                 ctx.issues.push(getInvalidFeatureCollectionDimensionsIssue(ctx));
                 return;
             }
-            if (!validBboxForFeatureCollection(ctx.value)) {
+            if (!validBBoxForFeatureCollection(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }

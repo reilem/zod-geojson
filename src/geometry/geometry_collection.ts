@@ -8,7 +8,7 @@ import {
     GeoJSONPositionSchema,
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
-import { getInvalidBBoxIssue, validBboxForCollection } from "./validation/bbox";
+import { getInvalidBBoxIssue, validBBoxForCollection } from "./validation/bbox";
 import { getInvalidGeometryCollectionDimensionIssue, validDimensionsForCollection } from "./validation/dimension";
 
 export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
@@ -49,7 +49,7 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosit
             if (!validDimensionsForCollection(ctx.value)) {
                 ctx.issues.push(getInvalidGeometryCollectionDimensionIssue(ctx));
             }
-            if (!validBboxForCollection(ctx.value)) {
+            if (!validBBoxForCollection(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
             }
         });

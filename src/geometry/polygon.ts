@@ -7,7 +7,7 @@ import {
     GeoJSONPositionSchema,
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
-import { getInvalidBBoxIssue, validBboxForPositionGrid } from "./validation/bbox";
+import { getInvalidBBoxIssue, validBBoxForPositionGrid } from "./validation/bbox";
 import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 import { getInvalidPolygonLinearRingIssue, validPolygonRings } from "./validation/linear_ring";
 
@@ -45,7 +45,7 @@ export const GeoJSONPolygonGenericSchema = <P extends GeoJSONAnyPosition>(
                 ctx.issues.push(getInvalidPolygonLinearRingIssue(ctx));
                 return;
             }
-            if (!validBboxForPositionGrid(ctx.value)) {
+            if (!validBBoxForPositionGrid(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
                 return;
             }
