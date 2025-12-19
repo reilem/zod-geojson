@@ -7,8 +7,7 @@
 
 This repository contains GeoJSON schemas for the [Zod](https://github.com/colinhacks/zod) validation library by [@colinhacks](https://x.com/colinhacks).
 
-The schemas are based on the GeoJSON specification [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946). They validate the structure of the GeoJSON objects, types, and the validity of the dimensions, geometries and
-bounding boxes.
+The schemas are based on the GeoJSON specification RFC 7946. They validate the structure of the GeoJSON objects and types, as well as the validity of the dimensions, geometries, and bounding boxes.
 
 The schemas and inferred types are designed to be fully compatible with the
 [@types/geojson](https://www.npmjs.com/package/@types/geojson) TypeScript types.
@@ -89,34 +88,10 @@ import type {
 } from "zod-geojson";
 ```
 
-### Dimensionality
-
-This library exports specific schemas for 2D and 3D GeoJSONs, and their accompanying types:
-
-```typescript
-import type {
-    // 2D GeoJSON Schemas
-    GeoJSON2DFeatureSchema,
-    GeoJSON2DFeature,
-    // ...
-    // 2D GeoJSON Types
-    GeoJSON2DPointSchema,
-    GeoJSON2DPoint,
-    // ...
-    // 3D GeoJSON Schemas
-    GeoJSON3DFeatureSchema,
-    GeoJSON3DFeature,
-    // ...
-    // 3D GeoJSON Types
-    GeoJSON3DPointSchema,
-    GeoJSON3DPoint,
-} from "zod-geojson";
-```
-
 ### Strict Position Typing
 
-To maintain "out of box" compatibility with the `@types/geojson` types the general schemas allow any position
-dimensionality.
+To maintain "out of the box" compatibility with [@types/geojson](https://www.npmjs.com/package/@types/geojson) the
+general schemas allow any position dimensionality.
 
 ```typescript
 import { GeoJSONPoint } from "zod-geojson";
@@ -128,8 +103,31 @@ const point0D: GeoJSONPoint = { type: "Point", coordinates: [] };
 const point4D: GeoJSONPoint = { type: "Point", coordinates: [0, 0, 0, 0] };
 ```
 
-If you wish to have strict position typing, you can use the provided 2D and 3D schemas/types. These use strict position
-typing and will also restrict the bbox field to match the position dimension. For example:
+If you want strict position checking at compile time then you can use the provided 2D and 3D schemas/types.
+
+```typescript
+import type {
+    // 2D GeoJSON
+    GeoJSON2DFeatureSchema,
+    GeoJSON2DFeature,
+    // ...
+    // 2D GeoJSON Geometries
+    GeoJSON2DPointSchema,
+    GeoJSON2DPoint,
+    // ...
+    // 3D GeoJSON
+    GeoJSON3DFeatureSchema,
+    GeoJSON3DFeature,
+    // ...
+    // 3D GeoJSON Geometries
+    GeoJSON3DPointSchema,
+    GeoJSON3DPoint,
+    // ...
+} from "zod-geojson";
+```
+
+These use zod tuples to ensure positions are checked at compile time. However, to maintain interoperability
+with `@types/geojson`, bounding box dimensionality is not enforced at the type level, only during runtime validation.
 
 ```typescript
 import { GeoJSON2DPoint } from "zod-geojson";
@@ -143,7 +141,7 @@ const point3D: GeoJSON2DPoint = {
 const point2DWith3DBBox: GeoJSON2DPoint = {
     type: "Point",
     coordinates: [1.0, 2.0],
-    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This will fail. BBox has 6 values instead of 4
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This is allowed at type level, but will error during validation!
 };
 ```
 
@@ -191,7 +189,7 @@ This function takes three parameters:
 
 Even if you wish to only customize one of these aspects, you will still need to pass all three parameters to the
 schema function. For convenience, this library exposes the default schemas which you can use as a base for your
-custom schemas. There are the following "default" main schemas that you can use if you do not wish to customize
+custom schemas. These are the following "default" main schemas that you can use if you do not wish to customize
 a certain aspect of the schema:
 
 - `GeoJSONPositionSchema` - The main GeoJSON position schema which allows both 2D and 3D positions
@@ -231,7 +229,19 @@ As discussed above, if you only wish to customize the `properties` field, you wi
 by this library for this purpose.
 
 ```typescript
-import { GeoJSONFeatureGenericSchema, GeoJSONPositionSchema, GeoJSONGeometrySchema } from "zod-geojson";
+import {
+    GeoJSONFeatureGenericSchema,
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    GeoJSONGeometrySchema,
+} from "zod-geojson";
+
+const NonNullPropertiesGeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema.unwrap(),
+    GeoJSONGeometrySchema,
+);
+type NonNullPropertiesGeoJSONFeature = z.infer<typeof NonNullPropertiesGeoJSONFeatureSchema>;
 
 const CustomPropertiesSchema = z.object({
     name: z.string(),

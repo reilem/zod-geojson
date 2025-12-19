@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
+import { feature as turfFeature, point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
 import z, { ZodError } from "zod/v4";
-import { feature as turfFeature, point as turfPoint } from "@turf/helpers";
 
 import {
     geoJsonFeatureGeometryCollection2D,
@@ -17,11 +17,13 @@ import { geoJsonPoint3D } from "../examples/geometry/point";
 import {
     GeoJSON2DFeature,
     GeoJSON2DFeatureSchema,
+    GeoJSON2DGeometry,
     GeoJSON2DPointSchema,
     GeoJSON2DPolygonSchema,
     GeoJSON2DPositionSchema,
     GeoJSON3DFeature,
     GeoJSON3DFeatureSchema,
+    GeoJSON3DGeometry,
     GeoJSON3DPointSchema,
     GeoJSON3DPolygonSchema,
     GeoJSON3DPositionSchema,
@@ -243,15 +245,24 @@ describe("GeoJSONFeature", () => {
             GeoJSON4DGeometrySchema,
         );
 
+        const feature = {
+            ...geoJsonFeaturePoint2D,
+            geometry: {
+                type: "Point",
+                coordinates: [1.0, 2.0, 3.0, 4.0],
+            },
+        };
+
         it("allows feature with 4D positions", () => {
-            const feature = {
-                ...geoJsonFeaturePoint2D,
-                geometry: {
-                    type: "Point",
-                    coordinates: [1.0, 2.0, 3.0, 4.0],
-                },
-            };
             expect(GeoJSON4DFeatureSchema.parse(feature)).toEqual(feature);
+        });
+
+        it("allows a feature with 4D position and valid bbox", () => {
+            const featureWithBBox = {
+                ...feature,
+                bbox: [1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0],
+            };
+            expect(GeoJSON4DFeatureSchema.parse(featureWithBBox)).toEqual(featureWithBBox);
         });
 
         it("does not allow feature with 3D positions", () => {
@@ -267,6 +278,14 @@ describe("GeoJSONFeature", () => {
                 },
             };
             expect(() => GeoJSON4DFeatureSchema.parse(feature)).toThrow(ZodError);
+        });
+
+        it("does not allow a feature with 4D positions and invalid bbox", () => {
+            const featureWithInvalidBBox = {
+                ...feature,
+                bbox: [1.0, 2.0, 3.0, 4.0], // Invalid bbox for 4D position
+            };
+            expect(() => GeoJSON4DFeatureSchema.parse(featureWithInvalidBBox)).toThrow(ZodError);
         });
     });
 
@@ -586,15 +605,26 @@ export const feature5: GeoJSONTypes.Feature<GeoJSONTypes.Point> = geoJsonFeature
 
 export const feature6: GeoJSONTypes.Feature = geoJsonFeatureLineString2D as GeoJSONFeature;
 
+export const feature7: GeoJSONTypes.Feature<GeoJSON3DGeometry> = geoJsonFeaturePoint3D;
+export const feature8: GeoJSONTypes.Feature<GeoJSON2DGeometry> = geoJsonFeaturePolygon2D;
+
 /**
  * Test that @types/geojson matches our types
  */
-export const feature7: GeoJSONFeature = feature1;
+export const feature11: GeoJSONFeature = feature1;
+export const feature12: GeoJSONFeature = feature2;
+export const feature13: GeoJSONFeature = feature3;
+export const feature14: GeoJSONFeature = feature4;
+export const feature15: GeoJSONFeature = feature5;
+export const feature16: GeoJSONFeature = feature6;
+
+export const feature17: GeoJSON3DFeature = feature7;
+export const feature18: GeoJSON2DFeature = feature8;
 
 /**
  * Test that turf.js matches our types
  */
-export const feature8: GeoJSONFeature = turfFeature(geoJsonPoint3D);
-export const feature9: GeoJSONFeature = turfFeature(geoJsonPoint3D, { name: "hello" });
-export const feature10: GeoJSONFeature = turfPoint([0, 0, 0]);
-export const feature11: GeoJSONFeature = turfPoint([0, 0, 0], { extra: "field" });
+export const feature21: GeoJSONFeature = turfFeature(geoJsonPoint3D);
+export const feature22: GeoJSONFeature = turfFeature(geoJsonPoint3D, { name: "hello" });
+export const feature23: GeoJSONFeature = turfPoint([0, 0, 0]);
+export const feature24: GeoJSONFeature = turfPoint([0, 0, 0], { extra: "field" });

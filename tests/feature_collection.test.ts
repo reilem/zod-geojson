@@ -16,11 +16,13 @@ import {
 import {
     GeoJSON2DFeatureCollection,
     GeoJSON2DFeatureCollectionSchema,
+    GeoJSON2DGeometry,
     GeoJSON2DLineStringSchema,
     GeoJSON2DPointSchema,
     GeoJSON2DPositionSchema,
     GeoJSON3DFeatureCollection,
     GeoJSON3DFeatureCollectionSchema,
+    GeoJSON3DGeometry,
     GeoJSON3DPolygonSchema,
     GeoJSON3DPositionSchema,
     GeoJSONFeatureCollection,
@@ -167,20 +169,31 @@ describe("GeoJSONFeatureCollection", () => {
             GeoJSON4DGeometrySchema,
         );
 
-        it("allows feature collection with 4D positions", () => {
-            const featureCollection = {
-                ...singleGeoJsonFeatureCollection3D,
-                features: [
-                    {
-                        ...geoJsonFeaturePoint2D,
-                        geometry: {
-                            type: "Point",
-                            coordinates: [1.0, 2.0, 3.0, 4.0],
-                        },
+        const featureCollection = {
+            ...singleGeoJsonFeatureCollection3D,
+            features: [
+                {
+                    ...geoJsonFeaturePoint2D,
+                    geometry: {
+                        type: "Point",
+                        coordinates: [1.0, 2.0, 3.0, 4.0],
                     },
-                ],
-            };
+                },
+            ],
+        };
+
+        it("allows feature collection with 4D positions", () => {
             expect(GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toEqual(featureCollection);
+        });
+
+        it("allows a feature collection with 4D positions and valid bbox", () => {
+            const featureCollectionWithBBox = {
+                ...featureCollection,
+                bbox: [1.0, 2.0, 3.0, 4.0, 1.0, 2.0, 3.0, 4.0],
+            };
+            expect(GeoJSON4DFeatureCollectionSchema.parse(featureCollectionWithBBox)).toEqual(
+                featureCollectionWithBBox,
+            );
         });
 
         it("does not allow feature collection with 3D positions", () => {
@@ -201,6 +214,14 @@ describe("GeoJSONFeatureCollection", () => {
                 ],
             };
             expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toThrow(ZodError);
+        });
+
+        it("does not allow a feature collection with 4D positions and invalid bbox", () => {
+            const featureCollectionWithBBox = {
+                ...featureCollection,
+                bbox: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            };
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollectionWithBBox)).toThrow(ZodError);
         });
     });
 
@@ -521,19 +542,27 @@ export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Poi
 export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry> =
     multiGeoJsonFeatureCollectionWithBBox2D as GeoJSONFeatureCollection;
 
+export const featureCollection4: GeoJSONTypes.FeatureCollection<GeoJSON3DGeometry> = singleGeoJsonFeatureCollection3D;
+export const featureCollection5: GeoJSONTypes.FeatureCollection<GeoJSON2DGeometry> = singleGeoJsonFeatureCollection2D;
+
 /**
  * Test that @types/geojson matches our types
  */
-export const featureCollection4: GeoJSONFeatureCollection = featureCollection1;
+export const featureCollection11: GeoJSONFeatureCollection = featureCollection1;
+export const featureCollection12: GeoJSONFeatureCollection = featureCollection2;
+export const featureCollection13: GeoJSONFeatureCollection = featureCollection3;
+
+export const featureCollection14: GeoJSON3DFeatureCollection = featureCollection4;
+export const featureCollection15: GeoJSON2DFeatureCollection = featureCollection5;
 
 /**
  * Test that turf.js matches our types
  */
-export const featureCollection5: GeoJSONFeatureCollection = turfFeatureCollection([
+export const featureCollection21: GeoJSONFeatureCollection = turfFeatureCollection([
     turfPoint([1, 1]),
     turfPoint([2, 2]),
 ]);
-export const featureCollection6: GeoJSONFeatureCollection = turfFeatureCollection([
+export const featureCollection22: GeoJSONFeatureCollection = turfFeatureCollection([
     turfPoint([1, 1], { extra: "word" }),
     turfPoint([1, 2], { extra: "hello" }),
 ]);
