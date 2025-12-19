@@ -128,8 +128,9 @@ const point0D: GeoJSONPoint = { type: "Point", coordinates: [] };
 const point4D: GeoJSONPoint = { type: "Point", coordinates: [0, 0, 0, 0] };
 ```
 
-If you wish to have strict position typing, you can use the provided 2D and 3D schemas/types. These use strict position
-typing and will also restrict the bbox field to match the position dimension. For example:
+If you wish to have strict position typing, you can use the provided 2D and 3D schemas/types which use strict position
+typing. To maintain interoperability with `@types/geojson`, the 2D and 3D schemas/types will not specifically enforce
+the bounding box dimensionality at type level, but will check it during validation.
 
 ```typescript
 import { GeoJSON2DPoint } from "zod-geojson";
@@ -143,7 +144,7 @@ const point3D: GeoJSON2DPoint = {
 const point2DWith3DBBox: GeoJSON2DPoint = {
     type: "Point",
     coordinates: [1.0, 2.0],
-    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This will fail. BBox has 6 values instead of 4
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0], // This is allowed at type level, but will error during validation!
 };
 ```
 
