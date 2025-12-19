@@ -98,20 +98,29 @@ describe("GeoJSONSchema", () => {
             GeoJSON4DGeometrySchema,
         );
 
-        it("allows geojson with 4D positions", () => {
-            const geoJsonPolygon4D = {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        [0.0, 0.0, 0.0, 0.0],
-                        [1.0, 0.0, 0.0, 0.0],
-                        [1.0, 1.0, 2.0, 0.0],
-                        [0.0, 2.0, 2.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.0],
-                    ],
+        const geoJsonPolygon4D = {
+            type: "Polygon",
+            coordinates: [
+                [
+                    [0.0, 0.0, 0.0, 0.0],
+                    [1.0, 0.0, 0.0, 0.0],
+                    [1.0, 1.0, 2.0, 0.0],
+                    [0.0, 2.0, 2.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
                 ],
-            };
+            ],
+        };
+
+        it("allows geojson with 4D positions", () => {
             expect(GeoJSON4DSchema.parse(geoJsonPolygon4D)).toEqual(geoJsonPolygon4D);
+        });
+
+        it("allows a geojson with 4D positions and valid bbox", () => {
+            const polygonWithBBox = {
+                ...geoJsonPolygon4D,
+                bbox: [0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 2.0, 0.0],
+            };
+            expect(GeoJSON4DSchema.parse(polygonWithBBox)).toEqual(polygonWithBBox);
         });
 
         it("does not allow geojson with 3D positions", () => {
@@ -127,6 +136,14 @@ describe("GeoJSONSchema", () => {
                 },
             };
             expect(() => GeoJSON4DSchema.parse(feature)).toThrow(ZodError);
+        });
+
+        it("does not allow a geojson with 4D positions and invalid bbox", () => {
+            const polygonWithInvalidBBox = {
+                ...geoJsonPolygon4D,
+                bbox: [0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 2.0], // Invalid bbox length
+            };
+            expect(() => GeoJSON4DSchema.parse(polygonWithInvalidBBox)).toThrow(ZodError);
         });
     });
 
@@ -672,7 +689,7 @@ export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     // @ts-expect-error -- THIS SHOULD FAIL
     coordinates: [1.0, 2.0, 3.0],
     // @ts-expect-error -- THIS SHOULD FAIL
-    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0],
+    bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0],
 };
 
 /**
@@ -682,24 +699,29 @@ export const geoJson1: GeoJSONTypes.GeoJSON = geoJsonPoint3D as GeoJSON;
 export const geoJson2: GeoJSONTypes.Point = geoJsonPoint3D;
 export const geoJson3: GeoJSONTypes.GeoJSON<GeoJSONTypes.Polygon> = geoJsonFeaturePolygon2D;
 export const geoJson4: GeoJSONTypes.GeoJSON<GeoJSONTypes.GeometryCollection> = geoJsonFeatureGeometryCollection3D;
+export const geoJson5: GeoJSONTypes.GeoJSON<GeoJSON3DGeometry> = geoJsonFeatureGeometryCollection3D;
+export const geoJson6: GeoJSONTypes.GeoJSON<GeoJSON2DGeometry> = geoJsonFeaturePolygon2D;
 
 /**
  * Test that @types/geojson matches our types
  */
-export const geoJson5: GeoJSON = geoJson1;
-export const geoJson6: GeoJSON = geoJson2;
-export const geoJson7: GeoJSON = geoJson3;
-export const geoJson8: GeoJSON = geoJson4;
+export const geoJson11: GeoJSON = geoJson1;
+export const geoJson12: GeoJSON = geoJson2;
+export const geoJson13: GeoJSON = geoJson3;
+export const geoJson14: GeoJSON = geoJson4;
+
+export const geoJson15: GeoJSON3D = geoJson5;
+export const geoJson16: GeoJSON2D = geoJson6;
 
 /**
  * Test that turf.js matches our types
  */
-export const geojson9: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } });
-export const geojson10: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } }).geometry;
-export const geojson11: GeoJSON = turfFeatureCollection([
+export const geojson21: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } });
+export const geojson22: GeoJSON = turfFeature(geoJsonPolygon3D, { more: { data: 1123 } }).geometry;
+export const geojson23: GeoJSON = turfFeatureCollection([
     turfPoint([1, 1], { extra: "word" }),
     turfPoint([1, 2], { extra: "hello" }),
 ]);
-export const geojson12: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0];
-export const geojson13: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0].geometry;
-export const geojson14: GeoJSON = turfPoint([1, 2], { extra: "word" });
+export const geojson24: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0];
+export const geojson25: GeoJSON = turfFeatureCollection([turfPoint([1, 1], { extra: "word" })]).features[0].geometry;
+export const geojson26: GeoJSON = turfPoint([1, 2], { extra: "word" });

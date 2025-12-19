@@ -21,7 +21,11 @@ export type GeoJSONGenericSchemaType<
     R extends GeoJSONProperties,
     G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodDiscriminatedUnion<
-    [z.ZodType<G>, GeoJSONFeatureGenericSchemaType<P, R, G>, GeoJSONFeatureCollectionGenericSchemaType<P, R, G>],
+    [
+        DiscriminableGeometrySchema<P, G>,
+        GeoJSONFeatureGenericSchemaType<P, R, G>,
+        GeoJSONFeatureCollectionGenericSchemaType<P, R, G>,
+    ],
     "type"
 >;
 

@@ -1,10 +1,16 @@
 import { describe, expect, it } from "@jest/globals";
 import { point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod/v4";
+import z, { ZodError } from "zod";
 import { bbox2D, bbox3D } from "../examples/bbox";
 import { GeoJSONBBox, GeoJSONBBoxSchema } from "../src";
-import { GeoJSON2DBBox, GeoJSON2DBBoxSchema, GeoJSON3DBBox, GeoJSON3DBBoxSchema } from "../src/bbox";
+import {
+    GeoJSON2DBBox,
+    GeoJSON2DBBoxSchema,
+    GeoJSON3DBBox,
+    GeoJSON3DBBoxSchema,
+    GeoJSONBBoxGenericSchema,
+} from "../src/bbox";
 
 const bbox4D = [0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -66,6 +72,20 @@ describe("GeoJSONBBox", () => {
         });
         it("does not allow a 4D bbox", () => {
             expect(() => GeoJSON3DBBoxSchema.parse(bbox4D)).toThrow(ZodError);
+        });
+    });
+
+    describe("4D", () => {
+        const GeoJSON4DBBoxSchema = GeoJSONBBoxGenericSchema(z.tuple([z.number(), z.number(), z.number(), z.number()]));
+
+        it("allows a 4D bbox", () => {
+            expect(GeoJSON4DBBoxSchema.parse(bbox4D)).toEqual(bbox4D);
+        });
+        it("does not allow a 2D bbox", () => {
+            expect(() => GeoJSON4DBBoxSchema.parse(bbox2D)).toThrow(ZodError);
+        });
+        it("does not allow a 3D bbox", () => {
+            expect(() => GeoJSON4DBBoxSchema.parse(bbox3D)).toThrow(ZodError);
         });
     });
 
