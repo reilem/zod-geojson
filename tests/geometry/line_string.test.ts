@@ -4,9 +4,9 @@ import { lineString as turfLineString } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonLineString2D,
-    geoJsonLineString2DWithBbox,
+    geoJsonLineString2DWithBBox,
     geoJsonLineString3D,
-    geoJsonLineString3DWithBbox,
+    geoJsonLineString3DWithBBox,
 } from "../../examples/geometry/line_string";
 import {
     GeoJSON2DLineString,
@@ -49,10 +49,10 @@ describe("GeoJSONLineString", () => {
         passGeoJSON3DLineStringTest(geoJsonLineString3D);
     });
     it("allows 2D line string with valid bbox", () => {
-        passGeoJSON2DLineStringTest(geoJsonLineString2DWithBbox);
+        passGeoJSON2DLineStringTest(geoJsonLineString2DWithBBox);
     });
     it("allows 3D line string with valid bbox", () => {
-        passGeoJSON3DLineStringTest(geoJsonLineString3DWithBbox);
+        passGeoJSON3DLineStringTest(geoJsonLineString3DWithBBox);
     });
     it("allows a line string and preserves extra keys", () => {
         const geoJsonLineStringWithExtraKeys = {
@@ -302,8 +302,8 @@ export const invalidGeoJsonLineString3DPositionTooBig: GeoJSON3DLineString = {
  */
 export const lineString1: GeoJSONTypes.LineString = geoJsonLineString2D;
 export const lineString2: GeoJSONTypes.LineString = geoJsonLineString3D;
-export const lineString3: GeoJSONTypes.LineString = geoJsonLineString2DWithBbox;
-export const lineString4: GeoJSONTypes.LineString = geoJsonLineString2DWithBbox as GeoJSONLineString;
+export const lineString3: GeoJSONTypes.LineString = geoJsonLineString2DWithBBox;
+export const lineString4: GeoJSONTypes.LineString = geoJsonLineString2DWithBBox as GeoJSONLineString;
 
 /**
  * Test that @types/geojson matches our types

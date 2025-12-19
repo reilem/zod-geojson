@@ -8,11 +8,11 @@ import {
 import { ZodError } from "zod/v4";
 import {
     multiGeoJsonGeometryCollection2D,
-    multiGeoJsonGeometryCollection2DWithBbox,
+    multiGeoJsonGeometryCollection2DWithBBox,
     multiGeoJsonGeometryCollection3D,
-    multiGeoJsonGeometryCollection3DWithBbox,
+    multiGeoJsonGeometryCollection3DWithBBox,
     singleGeoJsonGeometryCollection2D,
-    singleGeoJsonGeometryCollection2DWithBbox,
+    singleGeoJsonGeometryCollection2DWithBBox,
 } from "../../examples/geometry/geometry_collection";
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { geoJsonMultiPoint2D } from "../../examples/geometry/multi_point";
@@ -67,13 +67,13 @@ describe("GeoJSONGeometryCollection", () => {
     });
 
     it("allows a geometry collection with one 2D geometry and valid bbox", () => {
-        passGeoJSON2DGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBbox);
+        passGeoJSON2DGeometryCollectionTest(singleGeoJsonGeometryCollection2DWithBBox);
     });
     it("allows a geometry collection with multiple 2D geometries and valid bbox", () => {
-        passGeoJSON2DGeometryCollectionTest(multiGeoJsonGeometryCollection2DWithBbox);
+        passGeoJSON2DGeometryCollectionTest(multiGeoJsonGeometryCollection2DWithBBox);
     });
     it("allows a geometry collection with multiple 3D geometries and valid bbox", () => {
-        passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBbox);
+        passGeoJSON3DGeometryCollectionTest(multiGeoJsonGeometryCollection3DWithBBox);
     });
     it("allows a geometry collection and preserves extra keys", () => {
         passGeoJSON2DGeometryCollectionTest({
@@ -359,9 +359,9 @@ export const invalidGeoJsonGeometryCollection3DPositionTooBig: GeoJSON3DGeometry
  */
 export const geometryCollection1: GeoJSONTypes.GeometryCollection = multiGeoJsonGeometryCollection2D;
 export const geometryCollection2: GeoJSONTypes.GeometryCollection = multiGeoJsonGeometryCollection3D;
-export const geometryCollection3: GeoJSONTypes.GeometryCollection = singleGeoJsonGeometryCollection2DWithBbox;
+export const geometryCollection3: GeoJSONTypes.GeometryCollection = singleGeoJsonGeometryCollection2DWithBBox;
 export const geometryCollection4: GeoJSONTypes.GeometryCollection =
-    singleGeoJsonGeometryCollection2DWithBbox as GeoJSONGeometryCollection;
+    singleGeoJsonGeometryCollection2DWithBBox as GeoJSONGeometryCollection;
 
 /**
  * Test that @types/geojson matches our types

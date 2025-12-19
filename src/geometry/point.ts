@@ -7,7 +7,7 @@ import {
     GeoJSONPositionSchema,
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
-import { getInvalidBBoxIssue, validBboxForPosition } from "./validation/bbox";
+import { getInvalidBBoxIssue, validBBoxForPosition } from "./validation/bbox";
 
 export type GeoJSONPointGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
@@ -26,7 +26,7 @@ export const GeoJSONPointGenericSchema = <P extends GeoJSONAnyPosition>(
             coordinates: positionSchema,
         })
         .check((ctx) => {
-            if (!validBboxForPosition(ctx.value)) {
+            if (!validBBoxForPosition(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
             }
         });

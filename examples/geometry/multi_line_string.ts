@@ -1,9 +1,9 @@
 import { GeoJSON2DMultiLineString, GeoJSON3DMultiLineString } from "../../src";
 import {
     geoJsonLineString2D,
-    geoJsonLineString2DWithBbox,
+    geoJsonLineString2DWithBBox,
     geoJsonLineString3D,
-    geoJsonLineString3DWithBbox,
+    geoJsonLineString3DWithBBox,
 } from "./line_string";
 
 export const singleGeoJsonMultiLineString2D = {
@@ -27,17 +27,17 @@ export const singleGeoJsonMultiLineString3D = {
     coordinates: [geoJsonLineString3D.coordinates],
 } satisfies GeoJSON3DMultiLineString;
 
-export const singleGeoJsonMultiLineString2DWithBbox = {
+export const singleGeoJsonMultiLineString2DWithBBox = {
     ...singleGeoJsonMultiLineString2D,
-    bbox: geoJsonLineString2DWithBbox.bbox,
+    bbox: geoJsonLineString2DWithBBox.bbox,
 } satisfies GeoJSON2DMultiLineString;
 
-export const multiGeoJsonMultiLineString2DWithBbox = {
+export const multiGeoJsonMultiLineString2DWithBBox = {
     ...multiGeoJsonMultiLineString2D,
     bbox: [1.0, 2.0, 30.0, 30.0],
 } satisfies GeoJSON2DMultiLineString;
 
-export const singleGeoJsonMultiLineString3DWithBbox = {
+export const singleGeoJsonMultiLineString3DWithBBox = {
     ...singleGeoJsonMultiLineString3D,
-    bbox: geoJsonLineString3DWithBbox.bbox,
+    bbox: geoJsonLineString3DWithBBox.bbox,
 } satisfies GeoJSON3DMultiLineString;

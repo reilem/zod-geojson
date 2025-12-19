@@ -8,7 +8,7 @@ import {
     geoJsonFeatureCollectionNullGeometry,
     multiGeoJsonFeatureCollection2D,
     multiGeoJsonFeatureCollectionPolygon3D,
-    multiGeoJsonFeatureCollectionWithBbox2D,
+    multiGeoJsonFeatureCollectionWithBBox2D,
     singleGeoJsonFeatureCollection2D,
     singleGeoJsonFeatureCollection3D,
     singleGeoJsonFeatureCollectionPolygon2D,
@@ -76,7 +76,7 @@ describe("GeoJSONFeatureCollection", () => {
         });
     });
     it("allows a feature collection with multiple features and bbox", () => {
-        passGeoJSON2DFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBbox2D);
+        passGeoJSON2DFeatureCollectionSchemaTest(multiGeoJsonFeatureCollectionWithBBox2D);
     });
     it("allows a feature collection with empty features array", () => {
         passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection2D, features: [] });
@@ -519,7 +519,7 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
 export const featureCollection1: GeoJSONTypes.FeatureCollection = singleGeoJsonFeatureCollection3D;
 export const featureCollection2: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Point> = singleGeoJsonFeatureCollection3D;
 export const featureCollection3: GeoJSONTypes.FeatureCollection<GeoJSONTypes.Geometry> =
-    multiGeoJsonFeatureCollectionWithBbox2D as GeoJSONFeatureCollection;
+    multiGeoJsonFeatureCollectionWithBBox2D as GeoJSONFeatureCollection;
 
 /**
  * Test that @types/geojson matches our types

@@ -18,12 +18,12 @@ export const geoJsonMultiPoint3D = {
     ],
 } satisfies GeoJSON3DMultiPoint;
 
-export const geoJsonMultiPoint2DWithBbox = {
+export const geoJsonMultiPoint2DWithBBox = {
     ...geoJsonMultiPoint2D,
     bbox: [-3.0, -2.0, 8.0, 4.0],
 } satisfies GeoJSON2DMultiPoint;
 
-export const geoJsonMultiPoint3DWithBbox = {
+export const geoJsonMultiPoint3DWithBBox = {
     ...geoJsonMultiPoint3D,
     bbox: [-3.0, -2.0, 0.0, 8.0, 4.0, 5.0],
 } satisfies GeoJSON3DMultiPoint;

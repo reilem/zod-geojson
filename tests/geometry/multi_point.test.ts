@@ -4,9 +4,9 @@ import { multiPoint as turfMultiPoint } from "@turf/helpers";
 import { ZodError } from "zod/v4";
 import {
     geoJsonMultiPoint2D,
-    geoJsonMultiPoint2DWithBbox,
+    geoJsonMultiPoint2DWithBBox,
     geoJsonMultiPoint3D,
-    geoJsonMultiPoint3DWithBbox,
+    geoJsonMultiPoint3DWithBBox,
 } from "../../examples/geometry/multi_point";
 import { geoJsonPoint2D, geoJsonPoint3D } from "../../examples/geometry/point";
 import {
@@ -55,10 +55,10 @@ describe("GeoJSONMultiPoint", () => {
         passGeoJSON3DMultiPointTest(geoJsonMultiPoint3D);
     });
     it("allows a 2D multi-point with a valid bbox", () => {
-        passGeoJSON2DMultiPointTest(geoJsonMultiPoint2DWithBbox);
+        passGeoJSON2DMultiPointTest(geoJsonMultiPoint2DWithBBox);
     });
     it("allows a 3D multi-point with valid bbox", () => {
-        passGeoJSON3DMultiPointTest(geoJsonMultiPoint3DWithBbox);
+        passGeoJSON3DMultiPointTest(geoJsonMultiPoint3DWithBBox);
     });
     it("allows a multi point and preserves extra keys", () => {
         passGeoJSON2DMultiPointTest({
@@ -280,8 +280,8 @@ export const invalidGeoJsonMultiPoint3DPositionTooBig: GeoJSON3DMultiPoint = {
  */
 export const multiPoint1: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3D;
 export const multiPoint2: GeoJSONTypes.MultiPoint = geoJsonMultiPoint2D;
-export const multiPoint3: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBbox;
-export const multiPoint4: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBbox as GeoJSONMultiPoint;
+export const multiPoint3: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBBox;
+export const multiPoint4: GeoJSONTypes.MultiPoint = geoJsonMultiPoint3DWithBBox as GeoJSONMultiPoint;
 
 /**
  * Test that @types/geojson matches our types

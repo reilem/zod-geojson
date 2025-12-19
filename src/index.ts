@@ -93,12 +93,12 @@ export {
 export { GeoJSONGeometryTypeSchema, GeoJSONGeometryType } from "./geometry/type";
 
 export {
-    GeoJSON2DBboxSchema,
-    GeoJSON3DBboxSchema,
-    GeoJSONBboxSchema,
-    type GeoJSON2DBbox,
-    type GeoJSON3DBbox,
-    type GeoJSONBbox,
+    GeoJSON2DBBoxSchema,
+    GeoJSON3DBBoxSchema,
+    GeoJSONBBoxSchema,
+    type GeoJSON2DBBox,
+    type GeoJSON3DBBox,
+    type GeoJSONBBox,
 } from "./bbox";
 
 export {

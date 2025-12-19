@@ -10,12 +10,12 @@ export const geoJsonPoint3D = {
     coordinates: [1.0, 2.0, 10.0],
 } satisfies GeoJSON3DPoint;
 
-export const geoJsonPoint2DWithBbox = {
+export const geoJsonPoint2DWithBBox = {
     ...geoJsonPoint2D,
     bbox: [1.0, 2.0, 1.0, 2.0],
 } satisfies GeoJSON2DPoint;
 
-export const geoJsonPoint3DWithBbox = {
+export const geoJsonPoint3DWithBBox = {
     ...geoJsonPoint3D,
     bbox: [1.0, 2.0, 10.0, 1.0, 2.0, 10.0],
 } satisfies GeoJSON3DPoint;
