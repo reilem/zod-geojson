@@ -17,8 +17,8 @@ describe("GeoJSONProperties", () => {
         expect(GeoJSONPropertiesSchema.parse(properties)).toEqual(properties);
     });
 
-    it("allows null properties", () => {
-        expect(GeoJSONPropertiesSchema.parse(null)).toBeNull();
+    it("rejects null properties", () => {
+        expect(() => GeoJSONPropertiesSchema.parse(null)).toThrow();
     });
 
     it("rejects undefined & objects with undefined", () => {

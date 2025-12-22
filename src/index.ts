@@ -9,6 +9,7 @@ export {
     type GeoJSON2DGeometry,
     type GeoJSON3DGeometry,
     type GeoJSONGeometry,
+    type DiscriminableGeometrySchema,
 } from "./geometry/geometry";
 
 export {

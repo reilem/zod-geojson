@@ -30,6 +30,7 @@ import {
     GeoJSONFeature,
     GeoJSONFeatureGenericSchema,
     GeoJSONFeatureSchema,
+    GeoJSONGeometry,
     GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     GeoJSONPoint,
@@ -536,6 +537,43 @@ export const invalidGeoJsonFeature3DPositionTooBig: GeoJSON3DFeature = {
     },
     // @ts-expect-error -- THIS SHOULD FAIL
     bbox: [1.0, 0.0, 0.0],
+};
+
+/**
+ * Test the ability to make properties non-nullable
+ */
+export type FeatureWithNonNullableProperties = GeoJSONFeatureGeneric<
+    GeoJSONPosition,
+    GeoJSONProperties,
+    GeoJSONGeometry
+>;
+
+export const validFeatureWithNonNullableProperties: FeatureWithNonNullableProperties = {
+    ...geoJsonFeaturePoint2D,
+    properties: {
+        key: "value",
+    },
+};
+
+export const invalidFeatureWithNonNullableProperties: FeatureWithNonNullableProperties = {
+    type: "Feature",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: null,
+};
+
+/**
+ * Test the ability to make geometry nullable
+ */
+export type FeatureWithNullableGeometry = GeoJSONFeatureGeneric<
+    GeoJSONPosition,
+    GeoJSONProperties,
+    GeoJSONGeometry | null
+>;
+
+export const validFeatureWithNullableGeometry2: FeatureWithNullableGeometry = {
+    type: "Feature",
+    properties: {},
+    geometry: null,
 };
 
 /**

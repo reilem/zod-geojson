@@ -36,15 +36,19 @@ import {
     GeoJSON3DPolygonSchema,
     GeoJSON3DPositionSchema,
     GeoJSON3DSchema,
+    GeoJSONGeneric,
     GeoJSONGenericSchema,
     GeoJSONGeometry,
     GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     GeoJSONPointSchema,
+    GeoJSONPosition,
     GeoJSONPositionSchema,
+    GeoJSONProperties,
     GeoJSONPropertiesSchema,
     GeoJSONSchema,
 } from "../src";
+import { FeatureWithNonNullableProperties } from "./feature.test";
 import { singleGeoJsonFeatureCollection4D } from "./feature_collection.test";
 import { singleGeoJsonGeometryCollection4D } from "./geometry/geometry_collection.test";
 
@@ -692,6 +696,33 @@ export const invalid2DPositionGeoJsonPoint: GeoJSON2DStrict = {
     bbox: [0.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0],
 };
 
+/**
+ * Test the ability to make properties non-nullable
+ */
+export type GeoJSONWithNonNullableProperties = GeoJSONGeneric<GeoJSONPosition, GeoJSONProperties, GeoJSONGeometry>;
+
+export const validFeatureWithNonNullableProperties: FeatureWithNonNullableProperties = {
+    ...geoJsonFeaturePoint2D,
+    properties: {
+        key: "value",
+    },
+};
+
+export const invalidFeatureWithNonNullableProperties: FeatureWithNonNullableProperties = {
+    type: "Feature",
+    // @ts-expect-error -- THIS SHOULD FAIL
+    properties: null,
+};
+
+/**
+ * Test the ability to make geometry nullable
+ */
+export type GeoJSONWithNullableGeometry = GeoJSONGeneric<GeoJSONPosition, GeoJSONProperties, GeoJSONGeometry | null>;
+
+export const validFeatureWithNullableGeometry2: GeoJSONWithNullableGeometry = {
+    ...multiGeoJsonFeatureCollection2D,
+    features: [{ ...geoJsonFeaturePoint2D, geometry: null }],
+};
 /**
  * Test that types match with @types/geojson
  */

@@ -19,13 +19,13 @@ import { validBBoxForFeature } from "./validation/bbox";
 
 export type GeoJSONFeatureGenericSchemaType<
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
+    R extends GeoJSONProperties | null,
     G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
         type: z.ZodLiteral<typeof GeoJSONType.Feature>;
         geometry: z.ZodType<G>;
-        properties: z.ZodNullable<z.ZodType<R>>;
+        properties: z.ZodType<R>;
         coordinates: z.ZodOptional<z.ZodNever>;
         features: z.ZodOptional<z.ZodNever>;
         geometries: z.ZodOptional<z.ZodNever>;
@@ -34,7 +34,7 @@ export type GeoJSONFeatureGenericSchemaType<
 
 export const GeoJSONFeatureGenericSchema = <
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
+    R extends GeoJSONProperties | null,
     G extends GeoJSONGeometryGeneric<P> | null,
 >(
     positionSchema: z.ZodType<P>,
@@ -47,7 +47,7 @@ export const GeoJSONFeatureGenericSchema = <
             id: z.string().or(z.number()).optional(),
             type: z.literal(GeoJSONTypeSchema.enum.Feature),
             geometry: geometrySchema,
-            properties: propertiesSchema.nullable(),
+            properties: propertiesSchema,
             coordinates: z.never({ error: "GeoJSON Feature cannot have a 'coordinates' key" }).optional(),
             features: z.never({ error: "GeoJSON Feature cannot have a 'features' key" }).optional(),
             geometries: z.never({ error: "GeoJSON Feature cannot have a 'geometries' key" }).optional(),
@@ -59,27 +59,27 @@ export const GeoJSONFeatureGenericSchema = <
         });
 export type GeoJSONFeatureGeneric<
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    R extends GeoJSONProperties | null,
+    G extends GeoJSONGeometryGeneric<P> | null,
 > = z.infer<ReturnType<typeof GeoJSONFeatureGenericSchema<P, R, G>>>;
 
 export const GeoJSONFeatureSchema = GeoJSONFeatureGenericSchema(
     GeoJSONPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSONGeometrySchema,
 );
 export type GeoJSONFeature = z.infer<typeof GeoJSONFeatureSchema>;
 
 export const GeoJSON2DFeatureSchema = GeoJSONFeatureGenericSchema(
     GeoJSON2DPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSON2DGeometrySchema,
 );
 export type GeoJSON2DFeature = z.infer<typeof GeoJSON2DFeatureSchema>;
 
 export const GeoJSON3DFeatureSchema = GeoJSONFeatureGenericSchema(
     GeoJSON3DPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSON3DGeometrySchema,
 );
 export type GeoJSON3DFeature = z.infer<typeof GeoJSON3DFeatureSchema>;
