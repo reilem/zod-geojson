@@ -1,4 +1,4 @@
-import * as z from "zod/v4";
+import * as z from "zod";
 import { GeoJSONFeatureGenericSchema, GeoJSONFeatureGenericSchemaType } from "./feature";
 import { GeoJSONFeatureCollectionGenericSchema, GeoJSONFeatureCollectionGenericSchemaType } from "./feature_collection";
 import {

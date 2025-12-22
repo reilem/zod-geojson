@@ -1,4 +1,4 @@
-import z from "zod";
+import * as z from "zod";
 
 export const GeoJSONPropertiesSchema = z.record(z.string(), z.json());
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { multiPolygon as turfMultiPolygon } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     multiGeoJsonMultiPolygon2D,
     multiGeoJsonMultiPolygon2DWithBBox,
@@ -209,10 +209,10 @@ describe("GeoJSONMultiPolygon", () => {
             expect(GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toEqual(singleGeoJsonMultiPolygon2D);
         });
         it("does not allow a 3D multi-polygon", () => {
-            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-polygon", () => {
-            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(z.ZodError);
         });
     });
 
@@ -221,10 +221,10 @@ describe("GeoJSONMultiPolygon", () => {
             expect(GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon3D)).toEqual(singleGeoJsonMultiPolygon3D);
         });
         it("does not allow a 2D multi-polygon", () => {
-            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-polygon", () => {
-            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiPolygonSchema.parse(singleGeoJsonMultiPolygon4D)).toThrow(z.ZodError);
         });
     });
 

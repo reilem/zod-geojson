@@ -1,4 +1,4 @@
-import * as z from "zod/v4";
+import * as z from "zod";
 import { GeoJSONBBoxGenericSchema, GeoJSONBBoxGenericSchemaType } from "./bbox";
 import { GeoJSONAnyPosition } from "./geometry/position";
 

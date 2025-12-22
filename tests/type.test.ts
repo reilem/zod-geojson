@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import { GeoJSONType, GeoJSONTypeSchema } from "../src";
 import { point as turfPoint } from "@turf/helpers";
 
@@ -11,7 +11,7 @@ describe("GeoJSONType", () => {
     );
 
     it("does not allow an invalid geojson type", () => {
-        expect(() => GeoJSONTypeSchema.parse("InvalidType")).toThrow(ZodError);
+        expect(() => GeoJSONTypeSchema.parse("InvalidType")).toThrow(z.ZodError);
     });
 
     describe("turf.js", () => {
