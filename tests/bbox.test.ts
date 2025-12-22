@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
-import z, { ZodError } from "zod";
+import * as z from "zod";
 import { bbox2D, bbox3D } from "../examples/bbox";
 import { GeoJSONBBox, GeoJSONBBoxSchema } from "../src";
 import {
@@ -24,31 +24,31 @@ describe("GeoJSONBBox", () => {
     });
 
     it("does not allow an empty bbox", () => {
-        expect(() => GeoJSONBBoxSchema.parse([])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([])).toThrow(z.ZodError);
     });
 
     it("does not allow a 4D bbox", () => {
-        expect(() => GeoJSONBBoxSchema.parse(bbox4D)).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse(bbox4D)).toThrow(z.ZodError);
     });
 
     it("does not allow a bbox with 1 position", () => {
-        expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0])).toThrow(z.ZodError);
     });
 
     it("does not allow a bbox with 2 positions", () => {
-        expect(() => GeoJSONBBoxSchema.parse([0, 0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0, 0])).toThrow(z.ZodError);
     });
 
     it("does not allow a bbox with 3 positions", () => {
-        expect(() => GeoJSONBBoxSchema.parse([0, 0, 0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0, 0, 0])).toThrow(z.ZodError);
     });
 
     it("does not allow an uneven bbox", () => {
-        expect(() => GeoJSONBBoxSchema.parse([0.0, 3.0, -1.0, 2.0, 5.0])).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse([0.0, 3.0, -1.0, 2.0, 5.0])).toThrow(z.ZodError);
     });
 
     it("does not allow a badly formatted bbox", () => {
-        expect(() => GeoJSONBBoxSchema.parse("bbox cannot be a string")).toThrow(ZodError);
+        expect(() => GeoJSONBBoxSchema.parse("bbox cannot be a string")).toThrow(z.ZodError);
     });
 
     describe("2D", () => {
@@ -56,10 +56,10 @@ describe("GeoJSONBBox", () => {
             expect(GeoJSON2DBBoxSchema.parse(bbox2D)).toEqual(bbox2D);
         });
         it("does not allow a 3D bbox", () => {
-            expect(() => GeoJSON2DBBoxSchema.parse(bbox3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DBBoxSchema.parse(bbox3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D bbox", () => {
-            expect(() => GeoJSON2DBBoxSchema.parse(bbox4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DBBoxSchema.parse(bbox4D)).toThrow(z.ZodError);
         });
     });
 
@@ -68,10 +68,10 @@ describe("GeoJSONBBox", () => {
             expect(GeoJSON3DBBoxSchema.parse(bbox3D)).toEqual(bbox3D);
         });
         it("does not allow a 2D bbox", () => {
-            expect(() => GeoJSON3DBBoxSchema.parse(bbox2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DBBoxSchema.parse(bbox2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D bbox", () => {
-            expect(() => GeoJSON3DBBoxSchema.parse(bbox4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DBBoxSchema.parse(bbox4D)).toThrow(z.ZodError);
         });
     });
 
@@ -82,10 +82,10 @@ describe("GeoJSONBBox", () => {
             expect(GeoJSON4DBBoxSchema.parse(bbox4D)).toEqual(bbox4D);
         });
         it("does not allow a 2D bbox", () => {
-            expect(() => GeoJSON4DBBoxSchema.parse(bbox2D)).toThrow(ZodError);
+            expect(() => GeoJSON4DBBoxSchema.parse(bbox2D)).toThrow(z.ZodError);
         });
         it("does not allow a 3D bbox", () => {
-            expect(() => GeoJSON4DBBoxSchema.parse(bbox3D)).toThrow(ZodError);
+            expect(() => GeoJSON4DBBoxSchema.parse(bbox3D)).toThrow(z.ZodError);
         });
     });
 

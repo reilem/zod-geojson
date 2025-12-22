@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { point as turfPoint, lineString as turfLineString, polygon as turfPolygon } from "@turf/helpers";
-import z from "zod/v4";
+import * as z from "zod";
 import { singleGeoJsonGeometryCollection2D } from "../../examples/geometry/geometry_collection";
 import { geoJsonLineString3D } from "../../examples/geometry/line_string";
 import { multiGeoJsonMultiLineString2D } from "../../examples/geometry/multi_line_string";

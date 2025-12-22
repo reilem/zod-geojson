@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { point as turfPoint } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     geoJsonPoint2D,
     geoJsonPoint2DWithBBox,
@@ -131,10 +131,10 @@ describe("GeoJSONPoint", () => {
             expect(GeoJSON2DPointSchema.parse(geoJsonPoint2D)).toEqual(geoJsonPoint2D);
         });
         it("does not allow a 3D point", () => {
-            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D point", () => {
-            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointSchema.parse(geoJsonPoint4D)).toThrow(z.ZodError);
         });
     });
 
@@ -143,10 +143,10 @@ describe("GeoJSONPoint", () => {
             expect(GeoJSON3DPointSchema.parse(geoJsonPoint3D)).toEqual(geoJsonPoint3D);
         });
         it("does not allow a 2D point", () => {
-            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D point", () => {
-            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPointSchema.parse(geoJsonPoint4D)).toThrow(z.ZodError);
         });
     });
 

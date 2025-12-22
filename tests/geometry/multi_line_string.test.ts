@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { multiLineString as turfMultiLineString } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
     multiGeoJsonMultiLineString2D,
@@ -174,10 +174,10 @@ describe("GeoJSONMultiLineString", () => {
             );
         });
         it("does not allow a 3D multi-line string", () => {
-            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-line string", () => {
-            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(z.ZodError);
         });
     });
 
@@ -188,10 +188,10 @@ describe("GeoJSONMultiLineString", () => {
             );
         });
         it("does not allow a 2D multi-line string", () => {
-            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-line string", () => {
-            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiLineStringSchema.parse(singleGeoJsonMultiLineString4D)).toThrow(z.ZodError);
         });
     });
 

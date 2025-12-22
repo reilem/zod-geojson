@@ -1,8 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { polygon as turfPolygon } from "@turf/helpers";
-import { ZodError } from "zod/v4";
-import * as z from "zod/v4";
+import * as z from "zod";
 import {
     geoJsonPolygon2D,
     geoJsonPolygon2DWithHole,
@@ -208,10 +207,10 @@ describe("GeoJSONPolygon", () => {
             expect(GeoJSON2DPolygonSchema.parse(geoJsonPolygon2D)).toEqual(geoJsonPolygon2D);
         });
         it("does not allow a 3D polygon", () => {
-            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D polygon", () => {
-            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(z.ZodError);
         });
     });
 
@@ -220,10 +219,10 @@ describe("GeoJSONPolygon", () => {
             expect(GeoJSON3DPolygonSchema.parse(geoJsonPolygon3D)).toEqual(geoJsonPolygon3D);
         });
         it("does not allow a 2D polygon", () => {
-            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D polygon", () => {
-            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPolygonSchema.parse(geoJsonPolygon4D)).toThrow(z.ZodError);
         });
     });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { feature as turfFeature, point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
-import z, { ZodError } from "zod/v4";
+import * as z from "zod";
 
 import {
     geoJsonFeatureGeometryCollection2D,
@@ -216,10 +216,10 @@ describe("GeoJSONFeature", () => {
             expect(GeoJSON2DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toEqual(geoJsonFeaturePolygon2D);
         });
         it("does not allow a 3D feature", () => {
-            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D feature", () => {
-            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(z.ZodError);
         });
     });
 
@@ -228,10 +228,10 @@ describe("GeoJSONFeature", () => {
             expect(GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint3D)).toEqual(geoJsonFeaturePoint3D);
         });
         it("does not allow a 2D feature", () => {
-            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D feature", () => {
-            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DFeatureSchema.parse(geoJsonFeaturePoint4D)).toThrow(z.ZodError);
         });
     });
 
@@ -267,7 +267,7 @@ describe("GeoJSONFeature", () => {
         });
 
         it("does not allow feature with 3D positions", () => {
-            expect(() => GeoJSON4DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(z.ZodError);
         });
 
         it("does not allow feature with 5D positions", () => {
@@ -278,7 +278,7 @@ describe("GeoJSONFeature", () => {
                     coordinates: [1.0, 2.0, 3.0, 4.0, 5.0],
                 },
             };
-            expect(() => GeoJSON4DFeatureSchema.parse(feature)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureSchema.parse(feature)).toThrow(z.ZodError);
         });
 
         it("does not allow a feature with 4D positions and invalid bbox", () => {
@@ -286,7 +286,7 @@ describe("GeoJSONFeature", () => {
                 ...feature,
                 bbox: [1.0, 2.0, 3.0, 4.0], // Invalid bbox for 4D position
             };
-            expect(() => GeoJSON4DFeatureSchema.parse(featureWithInvalidBBox)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureSchema.parse(featureWithInvalidBBox)).toThrow(z.ZodError);
         });
     });
 
@@ -319,7 +319,7 @@ describe("GeoJSONFeature", () => {
                     age: 30,
                 },
             };
-            expect(() => GeoJSONFeatureWithCustomProperties.parse(feature)).toThrow(ZodError);
+            expect(() => GeoJSONFeatureWithCustomProperties.parse(feature)).toThrow(z.ZodError);
         });
     });
 
@@ -380,11 +380,11 @@ describe("GeoJSONFeature", () => {
         });
 
         it("does not allow a polygon feature to be parsed by a point feature schema", () => {
-            expect(() => GeoJSONPointFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSONPointFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(z.ZodError);
         });
 
         it("does not allow a 2D polygon feature to be parsed by a 3D polygon feature schema", () => {
-            expect(() => GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPolygonFeatureSchema.parse(geoJsonFeaturePolygon2D)).toThrow(z.ZodError);
         });
 
         it("does not allow a 2D line string feature to be parsed by a 2D point or polygon feature schema", () => {
@@ -394,11 +394,11 @@ describe("GeoJSONFeature", () => {
                     properties: {},
                     geometry: geoJsonLineString2D,
                 }),
-            ).toThrow(ZodError);
+            ).toThrow(z.ZodError);
         });
 
         it("does not allow a 3D point feature to be parsed by a 2D point or polygon feature schema", () => {
-            expect(() => GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPointOrPolygonFeatureSchema.parse(geoJsonFeaturePoint3D)).toThrow(z.ZodError);
         });
     });
 

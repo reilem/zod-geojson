@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
-import z, { ZodError } from "zod/v4";
+import * as z from "zod";
 import { featureCollection as turfFeatureCollection, point as turfPoint } from "@turf/helpers";
 
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
@@ -141,10 +141,10 @@ describe("GeoJSONFeatureCollection", () => {
             );
         });
         it("does not allow a 3D feature collection", () => {
-            expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D feature collection", () => {
-            expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(z.ZodError);
         });
     });
 
@@ -155,10 +155,10 @@ describe("GeoJSONFeatureCollection", () => {
             );
         });
         it("does not allow a 2D feature collection", () => {
-            expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D feature collection", () => {
-            expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection4D)).toThrow(z.ZodError);
         });
     });
 
@@ -201,7 +201,7 @@ describe("GeoJSONFeatureCollection", () => {
         });
 
         it("does not allow feature collection with 3D positions", () => {
-            expect(() => GeoJSON4DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D)).toThrow(z.ZodError);
         });
 
         it("does not allow feature collection with 5D positions", () => {
@@ -217,7 +217,7 @@ describe("GeoJSONFeatureCollection", () => {
                     },
                 ],
             };
-            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollection)).toThrow(z.ZodError);
         });
 
         it("does not allow a feature collection with 4D positions and invalid bbox", () => {
@@ -225,7 +225,7 @@ describe("GeoJSONFeatureCollection", () => {
                 ...featureCollection,
                 bbox: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
             };
-            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollectionWithBBox)).toThrow(ZodError);
+            expect(() => GeoJSON4DFeatureCollectionSchema.parse(featureCollectionWithBBox)).toThrow(z.ZodError);
         });
     });
 
@@ -259,7 +259,7 @@ describe("GeoJSONFeatureCollection", () => {
                     },
                 ],
             };
-            expect(() => GeoJSONFeatureCollectionWithCustomProperties.parse(featureCollection)).toThrow(ZodError);
+            expect(() => GeoJSONFeatureCollectionWithCustomProperties.parse(featureCollection)).toThrow(z.ZodError);
         });
     });
 
@@ -323,26 +323,26 @@ describe("GeoJSONFeatureCollection", () => {
 
         it("does not allow a polygon feature collection to be parsed by a point feature collection schema", () => {
             expect(() => GeoJSONPointFeatureCollectionSchema.parse(singleGeoJsonFeatureCollectionPolygon2D)).toThrow(
-                ZodError,
+                z.ZodError,
             );
         });
 
         it("does not allow a 2D polygon feature collection to be parsed by a 3D polygon feature collection schema", () => {
             expect(() =>
                 GeoJSON3DPolygonFeatureCollectionSchema.parse(singleGeoJsonFeatureCollectionPolygon2D),
-            ).toThrow(ZodError);
+            ).toThrow(z.ZodError);
         });
 
         it("does not allow a 2D polygon feature collection to be parsed by a 2D point or line string feature collection schema", () => {
             expect(() =>
                 GeoJSON2DPointOrLineStringFeatureCollectionSchema.parse(singleGeoJsonFeatureCollectionPolygon2D),
-            ).toThrow(ZodError);
+            ).toThrow(z.ZodError);
         });
 
         it("does not allow a 3D point feature collection to be parsed by a 2D point or line string feature collection schema", () => {
             expect(() =>
                 GeoJSON2DPointOrLineStringFeatureCollectionSchema.parse(singleGeoJsonFeatureCollection3D),
-            ).toThrow(ZodError);
+            ).toThrow(z.ZodError);
         });
     });
 

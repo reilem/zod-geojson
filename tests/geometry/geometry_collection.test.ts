@@ -5,7 +5,7 @@ import {
     lineString as turfLineString,
     geometryCollection as turfGeometryCollection,
 } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     multiGeoJsonGeometryCollection2D,
     multiGeoJsonGeometryCollection2DWithBBox,
@@ -196,10 +196,12 @@ describe("GeoJSONGeometryCollection", () => {
             );
         });
         it("does not allow a 3D geometry collection", () => {
-            expect(() => GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection3D)).toThrow(z.ZodError);
         });
         it("does not allow a 6D geometry collection", () => {
-            expect(() => GeoJSON2DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(
+                z.ZodError,
+            );
         });
     });
 
@@ -210,10 +212,12 @@ describe("GeoJSONGeometryCollection", () => {
             );
         });
         it("does not allow a 2D geometry collection", () => {
-            expect(() => GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DGeometryCollectionSchema.parse(multiGeoJsonGeometryCollection2D)).toThrow(z.ZodError);
         });
         it("does not allow a 6D geometry collection", () => {
-            expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DGeometryCollectionSchema.parse(singleGeoJsonGeometryCollection4D)).toThrow(
+                z.ZodError,
+            );
         });
     });
 

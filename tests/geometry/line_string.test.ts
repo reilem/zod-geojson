@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { lineString as turfLineString } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     geoJsonLineString2D,
     geoJsonLineString2DWithBBox,
@@ -154,10 +154,10 @@ describe("GeoJSONLineString", () => {
             expect(GeoJSON2DLineStringSchema.parse(geoJsonLineString2D)).toEqual(geoJsonLineString2D);
         });
         it("does not allow a 3D line string", () => {
-            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString3D)).toThrow(z.ZodError);
         });
         it("does not allow a 5D line string", () => {
-            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DLineStringSchema.parse(geoJsonLineString4D)).toThrow(z.ZodError);
         });
     });
 
@@ -166,10 +166,10 @@ describe("GeoJSONLineString", () => {
             expect(GeoJSON3DLineStringSchema.parse(geoJsonLineString3D)).toEqual(geoJsonLineString3D);
         });
         it("does not allow a 2D line string", () => {
-            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString2D)).toThrow(z.ZodError);
         });
         it("does not allow a 5D line string", () => {
-            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DLineStringSchema.parse(geoJsonLineString4D)).toThrow(z.ZodError);
         });
     });
 

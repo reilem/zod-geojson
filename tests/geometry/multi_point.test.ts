@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { multiPoint as turfMultiPoint } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     geoJsonMultiPoint2D,
     geoJsonMultiPoint2DWithBBox,
@@ -156,10 +156,10 @@ describe("GeoJSONMultiPoint", () => {
             expect(GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint2D)).toEqual(geoJsonMultiPoint2D);
         });
         it("does not allow a 3D multi-point", () => {
-            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-point", () => {
-            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(z.ZodError);
         });
     });
 
@@ -168,10 +168,10 @@ describe("GeoJSONMultiPoint", () => {
             expect(GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint3D)).toEqual(geoJsonMultiPoint3D);
         });
         it("does not allow a 2D multi-point", () => {
-            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D multi-point", () => {
-            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DMultiPointSchema.parse(geoJsonMultiPoint4D)).toThrow(z.ZodError);
         });
     });
 

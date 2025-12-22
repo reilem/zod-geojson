@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import * as z from "zod";
 import { getDimensionForGeometry } from "../geometry/validation/dimension";
 import { getGeometries, ValidatableFeatureCollection } from "./types";
 

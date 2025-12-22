@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import type GeoJSONTypes from "geojson";
 import { point as turfPoint } from "@turf/helpers";
-import { ZodError } from "zod/v4";
+import * as z from "zod";
 import {
     GeoJSON2DPosition,
     GeoJSON2DPositionSchema,
@@ -26,14 +26,14 @@ describe("GeoJSONPosition", () => {
     });
 
     it("does not allow 1D positions", () => {
-        expect(() => GeoJSONPositionSchema.parse([1])).toThrow(ZodError);
+        expect(() => GeoJSONPositionSchema.parse([1])).toThrow(z.ZodError);
     });
     it("does not allow 4D positions", () => {
-        expect(() => GeoJSONPositionSchema.parse(position4D)).toThrow(ZodError);
+        expect(() => GeoJSONPositionSchema.parse(position4D)).toThrow(z.ZodError);
     });
 
     it("does not allow empty positions", () => {
-        expect(() => GeoJSONPositionSchema.parse([])).toThrow(ZodError);
+        expect(() => GeoJSONPositionSchema.parse([])).toThrow(z.ZodError);
     });
 
     describe("2D", () => {
@@ -41,10 +41,10 @@ describe("GeoJSONPosition", () => {
             expect(GeoJSON2DPositionSchema.parse(position2D)).toEqual(position2D);
         });
         it("does not allow a 3D position", () => {
-            expect(() => GeoJSON2DPositionSchema.parse(position3D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPositionSchema.parse(position3D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D position", () => {
-            expect(() => GeoJSON2DPositionSchema.parse(position4D)).toThrow(ZodError);
+            expect(() => GeoJSON2DPositionSchema.parse(position4D)).toThrow(z.ZodError);
         });
     });
 
@@ -53,10 +53,10 @@ describe("GeoJSONPosition", () => {
             expect(GeoJSON3DPositionSchema.parse(position3D)).toEqual(position3D);
         });
         it("does not allow a 2D position", () => {
-            expect(() => GeoJSON3DPositionSchema.parse(position2D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPositionSchema.parse(position2D)).toThrow(z.ZodError);
         });
         it("does not allow a 4D position", () => {
-            expect(() => GeoJSON3DPositionSchema.parse(position4D)).toThrow(ZodError);
+            expect(() => GeoJSON3DPositionSchema.parse(position4D)).toThrow(z.ZodError);
         });
     });
 
