@@ -24,7 +24,7 @@ import {
 
 export type GeoJSONFeatureCollectionGenericSchemaType<
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
+    R extends GeoJSONProperties | null,
     G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
@@ -39,7 +39,7 @@ export type GeoJSONFeatureCollectionGenericSchemaType<
 
 export const GeoJSONFeatureCollectionGenericSchema = <
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
+    R extends GeoJSONProperties | null,
     G extends GeoJSONGeometryGeneric<P> | null,
 >(
     positionSchema: z.ZodType<P>,
@@ -71,27 +71,27 @@ export const GeoJSONFeatureCollectionGenericSchema = <
         });
 export type GeoJSONFeatureCollectionGeneric<
     P extends GeoJSONAnyPosition,
-    R extends GeoJSONProperties,
-    G extends GeoJSONGeometryGeneric<P>,
+    R extends GeoJSONProperties | null,
+    G extends GeoJSONGeometryGeneric<P> | null,
 > = z.infer<ReturnType<typeof GeoJSONFeatureCollectionGenericSchema<P, R, G>>>;
 
 export const GeoJSONFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSONPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSONGeometrySchema,
 );
 export type GeoJSONFeatureCollection = z.infer<typeof GeoJSONFeatureCollectionSchema>;
 
 export const GeoJSON2DFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSON2DPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSON2DGeometrySchema,
 );
 export type GeoJSON2DFeatureCollection = z.infer<typeof GeoJSON2DFeatureCollectionSchema>;
 
 export const GeoJSON3DFeatureCollectionSchema = GeoJSONFeatureCollectionGenericSchema(
     GeoJSON3DPositionSchema,
-    GeoJSONPropertiesSchema,
+    GeoJSONPropertiesSchema.nullable(),
     GeoJSON3DGeometrySchema,
 );
 export type GeoJSON3DFeatureCollection = z.infer<typeof GeoJSON3DFeatureCollectionSchema>;

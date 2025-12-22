@@ -26,12 +26,16 @@ import {
     GeoJSON3DPolygonSchema,
     GeoJSON3DPositionSchema,
     GeoJSONFeatureCollection,
+    GeoJSONFeatureCollectionGeneric,
     GeoJSONFeatureCollectionGenericSchema,
     GeoJSONFeatureCollectionSchema,
+    GeoJSONGeometry,
     GeoJSONGeometryGenericSchema,
     GeoJSONGeometrySchema,
     GeoJSONPointSchema,
+    GeoJSONPosition,
     GeoJSONPositionSchema,
+    GeoJSONProperties,
     GeoJSONPropertiesSchema,
 } from "../src";
 import { failGeoJSONSchemaTest, passGeoJSONSchemaTest } from "./_helpers";
@@ -532,6 +536,39 @@ export const invalidGeoJsonFeatureCollection3DPositionTooBig: GeoJSON3DFeatureCo
             },
         },
     ],
+};
+
+/**
+ * Test the ability to make properties non-nullable
+ */
+export type FeatureCollectionWithNonNullableProperties = GeoJSONFeatureCollectionGeneric<
+    GeoJSONPosition,
+    GeoJSONProperties,
+    GeoJSONGeometry
+>;
+
+export const validFeatureCollectionWithNonNullableProperties: FeatureCollectionWithNonNullableProperties = {
+    ...multiGeoJsonFeatureCollection2D,
+    features: [{ ...geoJsonFeaturePoint2D, properties: {} }],
+};
+
+export const invalidFeatureCollectionWithNonNullableProperties: FeatureCollectionWithNonNullableProperties = {
+    ...multiGeoJsonFeatureCollection2D,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    features: [{ ...geoJsonFeaturePoint2D, properties: null }],
+};
+/**
+ * Test the ability to make geometry nullable
+ */
+export type FeatureCollectionWithNullableGeometry = GeoJSONFeatureCollectionGeneric<
+    GeoJSONPosition,
+    GeoJSONProperties,
+    GeoJSONGeometry | null
+>;
+
+export const validFeatureWithNullableGeometry2: FeatureCollectionWithNullableGeometry = {
+    ...multiGeoJsonFeatureCollection2D,
+    features: [{ ...geoJsonFeaturePoint2D, geometry: null }],
 };
 
 /**
