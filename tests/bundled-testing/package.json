@@ -1,5 +1,5 @@
 {
-    "name": "zod-geojson-esm-testing",
+    "name": "zod-geojson-bundled-testing",
     "type": "module",
     "scripts": {
         "start": "pnpm tsc && node lib/index.js"
