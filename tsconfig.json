@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
         "target": "es2019",
-        "moduleResolution": "node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "outDir": "lib",
         "noEmit": true,
         "esModuleInterop": true,
