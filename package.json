@@ -36,6 +36,7 @@
         "test": "jest && pnpm test:esm && pnpm test:cjs",
         "test:esm": "pnpm -C tests/esm-testing i --frozen-lockfile && pnpm -C tests/esm-testing start",
         "test:cjs": "pnpm -C tests/cjs-testing i --frozen-lockfile && pnpm -C tests/cjs-testing start",
+        "test:bundled": "pnpm -C tests/bundled-testing i --frozen-lockfile && pnpm -C tests/bundled-testing start",
         "clean": "rimraf lib",
         "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
