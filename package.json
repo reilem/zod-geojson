@@ -1,6 +1,6 @@
 {
     "name": "zod-geojson",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "description": "Zod schemas for GeoJSON",
     "repository": {
         "type": "git",
