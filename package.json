@@ -41,7 +41,7 @@
         "build": "pnpm clean && pnpm zshy",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
-        "circularcheck": "madge --circular --exclude 'geometry_collection.ts' --extensions ts ./src",
+        "circularcheck": "madge --circular --extensions ts ./src",
         "checks": "pnpm typecheck && pnpm build && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
