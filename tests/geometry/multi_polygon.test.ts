@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
 import { multiPolygon as turfMultiPolygon } from "@turf/helpers";
+import type GeoJSONTypes from "geojson";
 import * as z from "zod";
 import {
     multiGeoJsonMultiPolygon2D,
@@ -42,6 +42,10 @@ function passGeoJSON3DMultiPolygonTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema, GeoJSON3DMultiPolygonSchema], value);
 }
 
+function passGeoJSONAnyMultiPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPolygonSchema], value);
+}
+
 function failGeoJSONMultiPolygonTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest(
         [GeoJSONMultiPolygonSchema, GeoJSON2DMultiPolygonSchema, GeoJSON3DMultiPolygonSchema],
@@ -76,6 +80,27 @@ describe("GeoJSONMultiPolygon", () => {
     });
     it("allows a multi-polygon with empty coordinates", () => {
         passGeoJSONMultiPolygonTest({ type: "MultiPolygon", coordinates: [] });
+    });
+    it("allows a multi-polygon with inconsistent position dimensions", () => {
+        passGeoJSONAnyMultiPolygonTest({
+            ...singleGeoJsonMultiPolygon2D,
+            coordinates: [
+                [
+                    [
+                        [0.0, 1.0],
+                        [2.0, 2.0],
+                        [0.0, 2.0, 0.0],
+                        [0.0, 1.0],
+                    ],
+                ],
+            ],
+        });
+    });
+    it("allows a multi-polygon with inconsistent position dimensions across polygons", () => {
+        passGeoJSONAnyMultiPolygonTest({
+            ...singleGeoJsonMultiPolygon2D,
+            coordinates: [geoJsonPolygon2D.coordinates, geoJsonPolygon3D.coordinates],
+        });
     });
 
     it("does not allow a 1D multi-polygon", () => {
@@ -140,27 +165,6 @@ describe("GeoJSONMultiPolygon", () => {
                     [0.0, 1.0],
                 ],
             ],
-        });
-    });
-    it("does not allow a multi-polygon with inconsistent position dimensions", () => {
-        failGeoJSONMultiPolygonTest({
-            ...singleGeoJsonMultiPolygon2D,
-            coordinates: [
-                [
-                    [
-                        [0.0, 1.0],
-                        [2.0, 2.0],
-                        [0.0, 2.0, 0.0],
-                        [0.0, 1.0],
-                    ],
-                ],
-            ],
-        });
-    });
-    it("does not allow a multi-polygon with inconsistent position dimensions across polygons", () => {
-        failGeoJSONMultiPolygonTest({
-            ...singleGeoJsonMultiPolygon2D,
-            coordinates: [geoJsonPolygon2D, geoJsonPolygon3D],
         });
     });
     it("does not allow a 2D multi-polygon with a non-overlapping bbox", () => {

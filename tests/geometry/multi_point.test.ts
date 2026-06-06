@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
 import { multiPoint as turfMultiPoint } from "@turf/helpers";
+import type GeoJSONTypes from "geojson";
 import * as z from "zod";
 import {
     geoJsonMultiPoint2D,
@@ -40,6 +40,10 @@ function passGeoJSON3DMultiPointTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema, GeoJSON3DMultiPointSchema], value);
 }
 
+function passGeoJSONAnyMultiPointTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiPointSchema], value);
+}
+
 function failGeoJSONMultiPointTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest(
         [GeoJSONMultiPointSchema, GeoJSON2DMultiPointSchema, GeoJSON3DMultiPointSchema],
@@ -68,6 +72,12 @@ describe("GeoJSONMultiPoint", () => {
     });
     it("allows a multi-point with empty coordinates", () => {
         passGeoJSONMultiPointTest({ type: "MultiPoint", coordinates: [] });
+    });
+    it("allows multi-point with inconsistent position dimensions", () => {
+        passGeoJSONAnyMultiPointTest({
+            ...geoJsonMultiPoint2D,
+            coordinates: [geoJsonPoint2D.coordinates, geoJsonPoint3D.coordinates, [5.0, 6.0]],
+        });
     });
 
     it("does not allow a 1D multi-point", () => {
@@ -103,12 +113,6 @@ describe("GeoJSONMultiPoint", () => {
             ],
         };
         failGeoJSONMultiPointTest(geoJsonMultiPointWithInvalidCoordinates);
-    });
-    it("does not allow multi-point with inconsistent position dimensions", () => {
-        failGeoJSONMultiPointTest({
-            ...geoJsonMultiPoint2D,
-            coordinates: [geoJsonPoint2D, geoJsonPoint3D, [5.0, 6.0, 7.0, 8.0]],
-        });
     });
     it("does not allow a 2D multi point with a non-overlapping bbox", () => {
         // This bbox is completely outside and somewhere else from the expected bbox

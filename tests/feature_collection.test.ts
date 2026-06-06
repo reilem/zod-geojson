@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
+import { featureCollection as turfFeatureCollection, point as turfPoint } from "@turf/helpers";
 import type GeoJSONTypes from "geojson";
 import * as z from "zod";
-import { featureCollection as turfFeatureCollection, point as turfPoint } from "@turf/helpers";
 
 import { geoJsonFeaturePoint2D, geoJsonFeaturePoint3D } from "../examples/feature";
 import {
@@ -61,6 +61,10 @@ function passGeoJSON3DFeatureCollectionSchemaTest(object: unknown) {
     passGeoJSONSchemaTest([GeoJSONFeatureCollectionSchema, GeoJSON3DFeatureCollectionSchema], object);
 }
 
+function passGeoJSONAnyFeatureCollectionSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureCollectionSchema], object);
+}
+
 function failGeoJSONFeatureCollectionSchemaTest(object: unknown) {
     failGeoJSONSchemaTest(
         [GeoJSONFeatureCollectionSchema, GeoJSON2DFeatureCollectionSchema, GeoJSON3DFeatureCollectionSchema],
@@ -87,6 +91,12 @@ describe("GeoJSONFeatureCollection", () => {
     it("allows a feature collection with empty features array", () => {
         passGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection2D, features: [] });
     });
+    it("allows a feature collection with inconsistent position dimensions across features", () => {
+        passGeoJSONAnyFeatureCollectionSchemaTest({
+            ...multiGeoJsonFeatureCollection2D,
+            features: [geoJsonFeaturePoint2D, geoJsonFeaturePoint3D],
+        });
+    });
 
     it("does not allow a feature collection with a 1D feature", () => {
         failGeoJSONFeatureCollectionSchemaTest({});
@@ -108,12 +118,6 @@ describe("GeoJSONFeatureCollection", () => {
     });
     it("does not allow a feature collection with the geometries key", () => {
         failGeoJSONFeatureCollectionSchemaTest({ ...singleGeoJsonFeatureCollection2D, geometries: [] });
-    });
-    it("does not allow a feature collection with inconsistent position dimensions across features", () => {
-        failGeoJSONFeatureCollectionSchemaTest({
-            ...multiGeoJsonFeatureCollection2D,
-            features: [geoJsonFeaturePoint2D, geoJsonFeaturePoint3D],
-        });
     });
     it("does not allow a feature with a geometry with incorrect bbox", () => {
         failGeoJSONFeatureCollectionSchemaTest({

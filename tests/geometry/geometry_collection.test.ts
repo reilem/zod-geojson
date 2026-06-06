@@ -1,10 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
-import GeoJSONTypes from "geojson";
 import {
-    point as turfPoint,
-    lineString as turfLineString,
     geometryCollection as turfGeometryCollection,
+    lineString as turfLineString,
+    point as turfPoint,
 } from "@turf/helpers";
+import GeoJSONTypes from "geojson";
 import * as z from "zod";
 import {
     multiGeoJsonGeometryCollection2D,
@@ -48,6 +48,10 @@ function passGeoJSON3DGeometryCollectionTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema], value);
 }
 
+function passGeoJSONAnyGeometryCollectionTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONGeometryCollectionSchema], value);
+}
+
 function failGeoJSONGeometryCollectionTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest(
         [GeoJSONGeometryCollectionSchema, GeoJSON2DGeometryCollectionSchema, GeoJSON3DGeometryCollectionSchema],
@@ -83,6 +87,32 @@ describe("GeoJSONGeometryCollection", () => {
     });
     it("allows a geometry collection with empty geometries", () => {
         passGeoJSONGeometryCollectionTest({ type: "GeometryCollection", geometries: [] });
+    });
+    it("allows a geometry collection with geometries with inconsistent position dimensions", () => {
+        passGeoJSONAnyGeometryCollectionTest({
+            ...singleGeoJsonGeometryCollection2D,
+            geometries: [
+                {
+                    type: "MultiPoint",
+                    coordinates: [
+                        [0.0, 5.0],
+                        [2.0, -2.0, 0.0],
+                    ],
+                },
+            ],
+        });
+    });
+    it("allows a geometry collection with geometries with inconsistent position dimensions across geometries", () => {
+        passGeoJSONAnyGeometryCollectionTest({
+            ...singleGeoJsonGeometryCollection2D,
+            geometries: [geoJsonMultiPoint2D, geoJsonLineString3D],
+        });
+    });
+    it("allows a geometry collection with geometries with inconsistent position dimensions across geometry collections", () => {
+        passGeoJSONAnyGeometryCollectionTest({
+            ...singleGeoJsonGeometryCollection2D,
+            geometries: [singleGeoJsonGeometryCollection2D, multiGeoJsonGeometryCollection3D],
+        });
     });
 
     it("does not allow a geometry collection with a 1D geometry", () => {
@@ -131,32 +161,6 @@ describe("GeoJSONGeometryCollection", () => {
                     coordinates: [0.0, 0.0],
                 },
             ],
-        });
-    });
-    it("does not allow a geometry collection with geometries with inconsistent position dimensions", () => {
-        failGeoJSONGeometryCollectionTest({
-            ...singleGeoJsonGeometryCollection2D,
-            geometries: [
-                {
-                    type: "MultiPoint",
-                    coordinates: [
-                        [0.0, 5.0],
-                        [2.0, -2.0, 0.0],
-                    ],
-                },
-            ],
-        });
-    });
-    it("does not allow a geometry collection with geometries with inconsistent position dimensions across geometries", () => {
-        failGeoJSONGeometryCollectionTest({
-            ...singleGeoJsonGeometryCollection2D,
-            geometries: [geoJsonMultiPoint2D, geoJsonLineString3D],
-        });
-    });
-    it("does not allow a geometry collection with geometries with inconsistent position dimensions across geometry collections", () => {
-        failGeoJSONGeometryCollectionTest({
-            ...singleGeoJsonGeometryCollection2D,
-            geometries: [singleGeoJsonGeometryCollection2D, multiGeoJsonGeometryCollection3D],
         });
     });
     it("does not allow a geometry collection with geometries with invalid coordinates", () => {

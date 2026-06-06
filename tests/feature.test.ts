@@ -57,6 +57,10 @@ function passGeoJSON3DFeatureSchemaTest(object: unknown) {
     passGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON3DFeatureSchema], object);
 }
 
+function passGeoJSONAnyFeatureSchemaTest(object: unknown) {
+    passGeoJSONSchemaTest([GeoJSONFeatureSchema], object);
+}
+
 function failGeoJSONFeatureSchemaTest(object: unknown) {
     failGeoJSONSchemaTest([GeoJSONFeatureSchema, GeoJSON2DFeatureSchema, GeoJSON3DFeatureSchema], object);
 }
@@ -108,6 +112,18 @@ describe("GeoJSONFeature", () => {
         passGeoJSON2DFeatureSchemaTest({
             ...geoJsonFeaturePoint2D,
             properties: null,
+        });
+    });
+    it("allows a feature with a geometry with inconsistent position dimensions", () => {
+        passGeoJSONAnyFeatureSchemaTest({
+            ...geoJsonFeaturePoint2D,
+            geometry: {
+                type: "MultiPoint",
+                coordinates: [
+                    [50.0, 10.0],
+                    [0.0, 2.0, 3.0],
+                ],
+            },
         });
     });
 
@@ -168,18 +184,6 @@ describe("GeoJSONFeature", () => {
             geometry: {
                 type: "BadType",
                 coordinates: [0.0, 2.0],
-            },
-        });
-    });
-    it("does not allow a feature with a geometry with inconsistent position dimensions", () => {
-        failGeoJSONFeatureSchemaTest({
-            ...geoJsonFeaturePoint2D,
-            geometry: {
-                type: "MultiPoint",
-                coordinates: [
-                    [50.0, 10.0],
-                    [0.0, 2.0, 3.0],
-                ],
             },
         });
     });

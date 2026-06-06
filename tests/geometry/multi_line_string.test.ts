@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
 import { multiLineString as turfMultiLineString } from "@turf/helpers";
+import type GeoJSONTypes from "geojson";
 import * as z from "zod";
 import { geoJsonLineString2D, geoJsonLineString3D } from "../../examples/geometry/line_string";
 import {
@@ -42,6 +42,10 @@ function passGeoJSON3DMultiLineStringTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema, GeoJSON3DMultiLineStringSchema], value);
 }
 
+function passGeoJSONAnyMultiLineStringTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONMultiLineStringSchema], value);
+}
+
 function failGeoJSONMultiLineStringTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest(
         [GeoJSONMultiLineStringSchema, GeoJSON2DMultiLineStringSchema, GeoJSON3DMultiLineStringSchema],
@@ -77,6 +81,23 @@ describe("GeoJSONMultiLineString", () => {
     it("allows a multi-line string with empty coordinates", () => {
         passGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [] });
     });
+    it("allows a multi-line string with inconsistent position dimensions", () => {
+        passGeoJSONAnyMultiLineStringTest({
+            ...singleGeoJsonMultiLineString2D,
+            coordinates: [
+                [
+                    [0.0, 0.0],
+                    [10.0, 10.0, 0.0],
+                ],
+            ],
+        });
+    });
+    it("allows a multi-line string with inconsistent position dimensions across lines", () => {
+        passGeoJSONAnyMultiLineStringTest({
+            ...singleGeoJsonMultiLineString2D,
+            coordinates: [geoJsonLineString2D.coordinates, geoJsonLineString3D.coordinates],
+        });
+    });
 
     it("does not allow a 1D multi-line string", () => {
         failGeoJSONMultiLineStringTest({ type: "MultiLineString", coordinates: [[[0.0], [1.0]]] });
@@ -107,23 +128,6 @@ describe("GeoJSONMultiLineString", () => {
                 [0.0, 0.0],
                 [10.0, 10.0],
             ],
-        });
-    });
-    it("does not allow a multi-line string with inconsistent position dimensions", () => {
-        failGeoJSONMultiLineStringTest({
-            ...singleGeoJsonMultiLineString2D,
-            coordinates: [
-                [
-                    [0.0, 0.0],
-                    [10.0, 10.0, 0.0],
-                ],
-            ],
-        });
-    });
-    it("does not allow a multi-line string with inconsistent position dimensions across lines", () => {
-        failGeoJSONMultiLineStringTest({
-            ...singleGeoJsonMultiLineString2D,
-            coordinates: [geoJsonLineString2D, geoJsonLineString3D],
         });
     });
     it("does not allow a 2D multi-line string with a non-overlapping bbox", () => {
