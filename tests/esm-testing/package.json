@@ -5,11 +5,11 @@
         "start": "pnpm tsc && node lib/index.js"
     },
     "devDependencies": {
-        "@types/node": "^24.3.1",
-        "typescript": "~5.9.2"
+        "@types/node": "catalog:",
+        "typescript": "catalog:"
     },
     "dependencies": {
-        "zod": "~4.1.8",
+        "zod": "catalog:",
         "zod-geojson": "link:../.."
     }
 }
