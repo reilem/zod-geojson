@@ -1,6 +1,6 @@
 {
     "name": "zod-geojson",
-    "version": "1.6.5",
+    "version": "1.7.0",
     "description": "Zod schemas for GeoJSON",
     "repository": {
         "type": "git",
@@ -14,7 +14,7 @@
         "schema",
         "validation"
     ],
-    "packageManager": "pnpm@10.26.0",
+    "packageManager": "pnpm@11.5.2",
     "zshy": "./src/index.ts",
     "main": "./lib/index.js",
     "module": "./lib/index.mjs",
@@ -45,18 +45,18 @@
         "checks": "pnpm typecheck && pnpm build && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
-        "@jest/globals": "^30.0.2",
-        "@turf/helpers": "~7.3.1",
+        "@jest/globals": "^30.4.1",
+        "@turf/helpers": "~7.3.5",
         "@types/geojson": "^7946.0.16",
-        "@types/node": "~24.6.2",
-        "jest": "^30.0.2",
+        "@types/node": "~25.9.2",
+        "jest": "^30.4.2",
         "madge": "^8.0.0",
-        "prettier": "^3.2.5",
-        "rimraf": "^6.0.1",
-        "ts-jest": "^29.1.2",
-        "typescript": "~5.9.2",
-        "zod": "~4.1.13",
-        "zshy": "^0.4.1"
+        "prettier": "^3.8.3",
+        "rimraf": "^6.1.3",
+        "ts-jest": "^29.4.11",
+        "typescript": "~6.0.3",
+        "zod": "~4.4.3",
+        "zshy": "~0.7.2"
     },
     "peerDependencies": {
         "zod": ">=4.0.0"
