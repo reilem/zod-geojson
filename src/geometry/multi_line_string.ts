@@ -9,7 +9,6 @@ import {
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBBoxForPositionGrid } from "./validation/bbox";
-import { getInvalidDimensionIssue, validDimensionsForPositionGrid } from "./validation/dimension";
 
 export type GeoJSONMultiLineStringGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
@@ -33,11 +32,6 @@ export const GeoJSONMultiLineStringGenericSchema = <P extends GeoJSONAnyPosition
         .check((ctx) => {
             // Skip remaining checks if coordinates array is empty
             if (!ctx.value.coordinates.length) {
-                return;
-            }
-
-            if (!validDimensionsForPositionGrid(ctx.value)) {
-                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
             if (!validBBoxForPositionGrid(ctx.value)) {

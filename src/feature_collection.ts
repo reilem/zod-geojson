@@ -2,6 +2,12 @@ import * as z from "zod";
 import { GeoJSONBaseSchema, GeoJSONBaseSchemaShape } from "./base";
 import { GeoJSONFeatureGenericSchema, GeoJSONFeatureGenericSchemaType } from "./feature";
 import {
+    GeoJSON2DGeometrySchema,
+    GeoJSON3DGeometrySchema,
+    GeoJSONGeometryGeneric,
+    GeoJSONGeometrySchema,
+} from "./geometry/geometry";
+import {
     GeoJSON2DPositionSchema,
     GeoJSON3DPositionSchema,
     GeoJSONAnyPosition,
@@ -11,16 +17,6 @@ import { getInvalidBBoxIssue } from "./geometry/validation/bbox";
 import { GeoJSONProperties, GeoJSONPropertiesSchema } from "./properties";
 import { GeoJSONType, GeoJSONTypeSchema } from "./type";
 import { validBBoxForFeatureCollection } from "./validation/bbox";
-import {
-    getInvalidFeatureCollectionDimensionsIssue,
-    validDimensionsForFeatureCollection,
-} from "./validation/dimension";
-import {
-    GeoJSON2DGeometrySchema,
-    GeoJSON3DGeometrySchema,
-    GeoJSONGeometryGeneric,
-    GeoJSONGeometrySchema,
-} from "./geometry/geometry";
 
 export type GeoJSONFeatureCollectionGenericSchemaType<
     P extends GeoJSONAnyPosition,
@@ -58,10 +54,6 @@ export const GeoJSONFeatureCollectionGenericSchema = <
         })
         .check((ctx) => {
             if (!ctx.value.features.length) {
-                return;
-            }
-            if (!validDimensionsForFeatureCollection(ctx.value)) {
-                ctx.issues.push(getInvalidFeatureCollectionDimensionsIssue(ctx));
                 return;
             }
             if (!validBBoxForFeatureCollection(ctx.value)) {

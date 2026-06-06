@@ -14,7 +14,6 @@ import {
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBBoxForCollection } from "./validation/bbox";
-import { getInvalidGeometryCollectionDimensionIssue, validDimensionsForCollection } from "./validation/dimension";
 
 export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
@@ -50,9 +49,6 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosit
             // Skip remaining checks if geometries array is empty
             if (!ctx.value.geometries.length) {
                 return;
-            }
-            if (!validDimensionsForCollection(ctx.value)) {
-                ctx.issues.push(getInvalidGeometryCollectionDimensionIssue(ctx));
             }
             if (!validBBoxForCollection(ctx.value)) {
                 ctx.issues.push(getInvalidBBoxIssue(ctx));
