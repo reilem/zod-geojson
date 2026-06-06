@@ -48,7 +48,7 @@
         "@jest/globals": "^30.4.1",
         "@turf/helpers": "~7.3.5",
         "@types/geojson": "^7946.0.16",
-        "@types/node": "~25.9.2",
+        "@types/node": "~25.9.1",
         "jest": "^30.4.2",
         "madge": "^8.0.0",
         "prettier": "^3.8.3",
