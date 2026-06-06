@@ -8,7 +8,6 @@ import {
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBBoxForPositionList } from "./validation/bbox";
-import { getInvalidDimensionIssue, validDimensionsForPositionList } from "./validation/dimension";
 
 export type GeoJSONMultiPointGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
     GeoJSONGeometryBaseSchemaShape<P> & {
@@ -32,10 +31,6 @@ export const GeoJSONMultiPointGenericSchema = <P extends GeoJSONAnyPosition>(
         .check((ctx) => {
             // Skip remaining checks if coordinates empty
             if (!ctx.value.coordinates.length) {
-                return;
-            }
-            if (!validDimensionsForPositionList(ctx.value)) {
-                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
             if (!validBBoxForPositionList(ctx.value)) {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
 import { polygon as turfPolygon } from "@turf/helpers";
+import type GeoJSONTypes from "geojson";
 import * as z from "zod";
 import {
     geoJsonPolygon2D,
@@ -44,6 +44,10 @@ function passGeoJSON3DPolygonTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
 
+function passGeoJSONAnyPolygonTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema], value);
+}
+
 function failGeoJSONPolygonTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest([GeoJSONPolygonSchema, GeoJSON2DPolygonSchema, GeoJSON3DPolygonSchema], value);
 }
@@ -83,6 +87,25 @@ describe("GeoJSONPolygon", () => {
         passGeoJSONPolygonTest({
             ...geoJsonPolygon2D,
             coordinates: [],
+        });
+    });
+    it("allows a polygon with inconsistent position dimensions", () => {
+        passGeoJSONAnyPolygonTest({
+            ...geoJsonPolygon2D,
+            coordinates: [
+                [
+                    [0.0, 0.0],
+                    [1.0, 0.0],
+                    [1.0, 1.0],
+                    [0.0, 0.0],
+                ],
+                [
+                    [0.0, 0.0, 0.0],
+                    [1.0, 0.0, 0.0],
+                    [1.0, 1.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                ],
+            ],
         });
     });
 
@@ -138,25 +161,6 @@ describe("GeoJSONPolygon", () => {
                     [0.0, 0.0],
                     [1.0, 0.0],
                     [0.0, 0.0],
-                ],
-            ],
-        });
-    });
-    it("does not allow a polygon with inconsistent position dimensions", () => {
-        failGeoJSONPolygonTest({
-            ...geoJsonPolygon2D,
-            coordinates: [
-                [
-                    [0.0, 0.0],
-                    [1.0, 0.0],
-                    [1.0, 1.0],
-                    [0.0, 0.0],
-                ],
-                [
-                    [0.0, 0.0, 0.0],
-                    [1.0, 0.0, 0.0],
-                    [1.0, 1.0, 0.0],
-                    [0.0, 0.0, 0.0],
                 ],
             ],
         });

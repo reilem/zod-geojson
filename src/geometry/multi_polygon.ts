@@ -9,7 +9,6 @@ import {
 } from "./position";
 import { GeoJSONGeometryType, GeoJSONGeometryTypeSchema } from "./type";
 import { getInvalidBBoxIssue, validBBoxForPositionGridList } from "./validation/bbox";
-import { getInvalidDimensionIssue, validDimensionsForPositionGridList } from "./validation/dimension";
 import { getInvalidMultiPolygonLinearRingIssue, validMultiPolygonLinearRings } from "./validation/linear_ring";
 
 export type GeoJSONMultiPolygonGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodObject<
@@ -34,11 +33,6 @@ export const GeoJSONMultiPolygonGenericSchema = <P extends GeoJSONAnyPosition>(
         .check((ctx) => {
             // Skip remaining checks if coordinates array is empty
             if (!ctx.value.coordinates.length) {
-                return;
-            }
-
-            if (!validDimensionsForPositionGridList(ctx.value)) {
-                ctx.issues.push(getInvalidDimensionIssue(ctx));
                 return;
             }
 

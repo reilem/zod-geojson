@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import type GeoJSONTypes from "geojson";
 import { lineString as turfLineString } from "@turf/helpers";
+import type GeoJSONTypes from "geojson";
 import * as z from "zod";
 import {
     geoJsonLineString2D,
@@ -34,6 +34,10 @@ function passGeoJSON3DLineStringTest(value: unknown): void {
     passGeoJSONGeometrySchemaTest([GeoJSONLineStringSchema, GeoJSON3DLineStringSchema], value);
 }
 
+function passGeoJSONAnyLineStringTest(value: unknown): void {
+    passGeoJSONGeometrySchemaTest([GeoJSONLineStringSchema], value);
+}
+
 function failGeoJSONLineStringTest(value: unknown): void {
     failGeoJSONGeometrySchemaTest(
         [GeoJSONLineStringSchema, GeoJSON2DLineStringSchema, GeoJSON3DLineStringSchema],
@@ -60,6 +64,16 @@ describe("GeoJSONLineString", () => {
             extraKey: "extra",
         };
         passGeoJSON2DLineStringTest(geoJsonLineStringWithExtraKeys);
+    });
+    it("allows line string with inconsistent position dimensions", () => {
+        passGeoJSONAnyLineStringTest({
+            ...geoJsonLineString2D,
+            coordinates: [
+                [0, 0],
+                [1, 2, 3],
+                [4, 5, 6],
+            ],
+        });
     });
 
     it("does not allow a 1D line string", () => {
@@ -96,16 +110,6 @@ describe("GeoJSONLineString", () => {
         failGeoJSONLineStringTest({
             ...geoJsonLineString2D,
             coordinates: [[1.0, 2.0, 3.0]],
-        });
-    });
-    it("does not allow line string with inconsistent position dimensions", () => {
-        failGeoJSONLineStringTest({
-            ...geoJsonLineString2D,
-            coordinates: [
-                [0, 0],
-                [1, 2, 3],
-                [4, 5, 6, 7],
-            ],
         });
     });
     it("does not allow a 2D line string with a non-overlapping bbox", () => {
