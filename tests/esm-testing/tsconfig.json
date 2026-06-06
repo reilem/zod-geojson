@@ -4,6 +4,8 @@
         "moduleResolution": "nodenext",
         "strict": true,
         "skipLibCheck": true,
+        "types": ["node"],
+        "rootDir": "src",
         "outDir": "lib"
     },
     "include": ["src"],

@@ -3,7 +3,9 @@
         "target": "es2019",
         "module": "nodenext",
         "moduleResolution": "nodenext",
-        "outDir": "lib",
+        "lib": ["esnext", "dom"],
+        "types": ["node"],
+        "rootDir": ".",
         "noEmit": true,
         "esModuleInterop": true,
         "strict": true,
@@ -11,7 +13,6 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noImplicitReturns": true,
-        "downlevelIteration": true,
         "isolatedModules": true,
         "noErrorTruncation": true
     },

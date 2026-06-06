@@ -33,29 +33,29 @@
         "LICENSE"
     ],
     "scripts": {
-        "test": "jest && pnpm test:esm && pnpm test:cjs",
+        "test": "jest && pnpm test:esm && pnpm test:cjs && pnpm test:bundled",
         "test:esm": "pnpm -C tests/esm-testing i --frozen-lockfile && pnpm -C tests/esm-testing start",
         "test:cjs": "pnpm -C tests/cjs-testing i --frozen-lockfile && pnpm -C tests/cjs-testing start",
         "test:bundled": "pnpm -C tests/bundled-testing i --frozen-lockfile && pnpm -C tests/bundled-testing start",
         "clean": "rimraf lib",
-        "build": "pnpm clean && pnpm zshy",
+        "build": "pnpm clean && pnpm zshy -p tsconfig.build.json",
         "typecheck": "tsc",
         "prettiercheck": "prettier -c .",
         "circularcheck": "madge --circular --extensions ts ./src",
-        "checks": "pnpm typecheck && pnpm build && pnpm prettiercheck && pnpm circularcheck && pnpm test"
+        "checks": "pnpm build && pnpm typecheck && pnpm prettiercheck && pnpm circularcheck && pnpm test"
     },
     "devDependencies": {
         "@jest/globals": "^30.4.1",
         "@turf/helpers": "~7.3.5",
         "@types/geojson": "^7946.0.16",
-        "@types/node": "~25.9.1",
+        "@types/node": "catalog:",
         "jest": "^30.4.2",
         "madge": "^8.0.0",
         "prettier": "^3.8.3",
         "rimraf": "^6.1.3",
         "ts-jest": "^29.4.11",
-        "typescript": "~6.0.3",
-        "zod": "~4.4.3",
+        "typescript": "catalog:",
+        "zod": "catalog:",
         "zshy": "~0.7.2"
     },
     "peerDependencies": {

@@ -1,11 +1,19 @@
-trustPolicy: 'no-downgrade'
+packages:
+    - "tests/**"
+
+trustPolicy: "no-downgrade"
 
 trustPolicyExclude:
-  - 'semver@6.3.1'
+    - "semver@6.3.1"
 
 minimumReleaseAge: 2880
 
 strictDepBuilds: true
 
 allowBuilds:
-  unrs-resolver: false
+    unrs-resolver: false
+
+catalog:
+    "@types/node": "~25.9.1"
+    typescript: "~6.0.3"
+    zod: "~4.4.3"
