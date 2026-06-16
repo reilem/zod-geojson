@@ -6,6 +6,10 @@
         "type": "git",
         "url": "https://github.com/reilem/zod-geojson"
     },
+    "homepage": "https://github.com/reilem/zod-geojson#readme",
+    "bugs": {
+        "url": "https://github.com/reilem/zod-geojson/issues"
+    },
     "author": "Reinert Lemmens",
     "license": "MIT",
     "keywords": [
