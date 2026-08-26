@@ -23,6 +23,7 @@ export type GeoJSONFeatureGenericSchemaType<
     G extends GeoJSONGeometryGeneric<P> | null,
 > = z.ZodObject<
     GeoJSONBaseSchemaShape<P> & {
+        id: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
         type: z.ZodLiteral<typeof GeoJSONType.Feature>;
         geometry: z.ZodType<G>;
         properties: z.ZodType<R>;
