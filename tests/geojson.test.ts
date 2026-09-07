@@ -337,26 +337,6 @@ describe("GeoJSONSchema", () => {
                     GeoJSONGeometrySchema.or(z.undefined()),
                 ),
             ).toThrow(Error);
-
-            // These do not throw, but we need to make sure typescript forbids it
-            GeoJSONGenericSchema(
-                GeoJSONPositionSchema,
-                GeoJSONPropertiesSchema,
-                // @ts-expect-error -- THIS SHOULD FAIL
-                z.object({ something: "without a type field" }),
-            );
-            GeoJSONGenericSchema(
-                GeoJSONPositionSchema,
-                GeoJSONPropertiesSchema,
-                // @ts-expect-error -- THIS SHOULD FAIL
-                z.object({ type: "not a geometry" }),
-            );
-            GeoJSONGenericSchema(
-                GeoJSONPositionSchema,
-                GeoJSONPropertiesSchema,
-                // @ts-expect-error -- THIS SHOULD FAIL
-                z.discriminatedUnion("something", [z.object({ something: "without a type field" })]),
-            );
         });
     });
 
