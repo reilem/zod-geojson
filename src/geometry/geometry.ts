@@ -26,10 +26,17 @@ export type GeoJSONGeometryCollectionGenericSchemaType<P extends GeoJSONAnyPosit
     }
 >;
 
+const geometryCollectionSchemaCache = new WeakMap<z.ZodType, z.ZodType>();
+
 export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosition>(
     positionSchema: z.ZodType<P>,
-): GeoJSONGeometryCollectionGenericSchemaType<P> =>
-    z
+): GeoJSONGeometryCollectionGenericSchemaType<P> => {
+    const cachedSchema = geometryCollectionSchemaCache.get(positionSchema);
+    if (cachedSchema !== undefined) {
+        return cachedSchema as GeoJSONGeometryCollectionGenericSchemaType<P>;
+    }
+
+    const schema = z
         .looseObject({
             ...GeoJSONBaseSchema(positionSchema).shape,
             type: z.literal(GeoJSONGeometryTypeSchema.enum.GeometryCollection),
@@ -55,6 +62,10 @@ export const GeoJSONGeometryCollectionGenericSchema = <P extends GeoJSONAnyPosit
             }
         });
 
+    geometryCollectionSchemaCache.set(positionSchema, schema);
+    return schema;
+};
+
 export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONAnyPosition> = z.ZodDiscriminatedUnion<
     [
         GeoJSONPointGenericSchemaType<P>,
@@ -68,8 +79,17 @@ export type GeoJSONGeometryGenericSchemaType<P extends GeoJSONAnyPosition> = z.Z
     "type"
 >;
 
-export const GeoJSONGeometryGenericSchema = <P extends GeoJSONAnyPosition>(positionSchema: z.ZodType<P>) =>
-    z.discriminatedUnion("type", [
+const geometrySchemaCache = new WeakMap<z.ZodType, z.ZodType>();
+
+export const GeoJSONGeometryGenericSchema = <P extends GeoJSONAnyPosition>(
+    positionSchema: z.ZodType<P>,
+): GeoJSONGeometryGenericSchemaType<P> => {
+    const cachedSchema = geometrySchemaCache.get(positionSchema);
+    if (cachedSchema !== undefined) {
+        return cachedSchema as GeoJSONGeometryGenericSchemaType<P>;
+    }
+
+    const schema = z.discriminatedUnion("type", [
         GeoJSONPointGenericSchema(positionSchema),
         GeoJSONLineStringGenericSchema(positionSchema),
         GeoJSONMultiPointGenericSchema(positionSchema),
@@ -78,6 +98,10 @@ export const GeoJSONGeometryGenericSchema = <P extends GeoJSONAnyPosition>(posit
         GeoJSONMultiPolygonGenericSchema(positionSchema),
         GeoJSONGeometryCollectionGenericSchema(positionSchema),
     ]);
+
+    geometrySchemaCache.set(positionSchema, schema);
+    return schema;
+};
 export type GeoJSONGeometryGeneric<P extends GeoJSONAnyPosition> = z.infer<
     ReturnType<typeof GeoJSONGeometryGenericSchema<P>>
 >;
