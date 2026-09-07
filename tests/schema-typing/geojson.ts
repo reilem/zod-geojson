@@ -3,7 +3,8 @@
  * parsing match the expected GeoJSON types.
  */
 
-import { GeoJSONSchema } from "../../src";
+import * as z from "zod";
+import { GeoJSONGenericSchema, GeoJSONPositionSchema, GeoJSONPropertiesSchema, GeoJSONSchema } from "../../src";
 
 /**
  * Tests that the GeoJSON schema is correctly typed
@@ -12,6 +13,28 @@ import { GeoJSONSchema } from "../../src";
 GeoJSONSchema.anything();
 // @ts-expect-error -- THIS SHOULD FAIL: GeoJSONSchema.parse needs a parameter
 GeoJSONSchema.parse();
+
+/**
+ * Tests that invalid geometry schemas are rejected by the generic schema type
+ */
+GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    z.object({ something: "without a type field" }),
+);
+GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    z.object({ type: "not a geometry" }),
+);
+GeoJSONGenericSchema(
+    GeoJSONPositionSchema,
+    GeoJSONPropertiesSchema,
+    // @ts-expect-error -- THIS SHOULD FAIL
+    z.discriminatedUnion("something", [z.object({ something: "without a type field" })]),
+);
 
 /**
  * Test that types are correct after parsing
