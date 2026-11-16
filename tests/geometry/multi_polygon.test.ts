@@ -167,6 +167,19 @@ describe("GeoJSONMultiPolygon", () => {
             ],
         });
     });
+    it("does not allow a multi-polygon with an empty ring", () => {
+        failGeoJSONMultiPolygonTest({
+            type: "MultiPolygon",
+            coordinates: [[[]]],
+        });
+    });
+    it("does not allow a multi-polygon with an empty polygon and bbox", () => {
+        failGeoJSONMultiPolygonTest({
+            type: "MultiPolygon",
+            coordinates: [[]],
+            bbox: [0.0, 0.0, 1.0, 1.0],
+        });
+    });
     it("does not allow a 2D multi-polygon with a non-overlapping bbox", () => {
         // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONMultiPolygonTest({

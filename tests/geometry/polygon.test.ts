@@ -165,6 +165,25 @@ describe("GeoJSONPolygon", () => {
             ],
         });
     });
+    it("does not allow a polygon with an empty ring", () => {
+        failGeoJSONPolygonTest({
+            type: "Polygon",
+            coordinates: [[]],
+        });
+    });
+    it("does not allow a polygon with an empty ring and bbox", () => {
+        failGeoJSONPolygonTest({
+            type: "Polygon",
+            coordinates: [[]],
+            bbox: [0.0, 0.0, 1.0, 1.0],
+        });
+    });
+    it("does not allow a polygon with an empty hole", () => {
+        failGeoJSONPolygonTest({
+            ...geoJsonPolygon2D,
+            coordinates: [...geoJsonPolygon2D.coordinates, []],
+        });
+    });
     it("does not allow a 2D polygon with a non-overlapping bbox", () => {
         // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONPolygonTest({
