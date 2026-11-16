@@ -58,7 +58,11 @@ export function validBBoxForPositionGrid({ bbox, coordinates }: ValidatableGrid)
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
-    const dimension = coordinates[0][0].length;
+    // Inner position lists may be empty, so find the first position to get the dimension
+    const firstPosition = coordinates.flat()[0];
+    if (firstPosition == null) return false;
+
+    const dimension = firstPosition.length;
     if (bbox.length !== 2 * dimension) {
         return false;
     }
@@ -74,7 +78,11 @@ export function validBBoxForPositionGridList({ bbox, coordinates }: ValidatableG
     if (bbox == null) return true;
     if (coordinates == null) return false;
 
-    const dimension = coordinates[0][0][0].length;
+    // Inner position grids may be empty, so find the first position to get the dimension
+    const firstPosition = coordinates.flat(2)[0];
+    if (firstPosition == null) return false;
+
+    const dimension = firstPosition.length;
     if (bbox.length !== 2 * dimension) {
         return false;
     }

@@ -130,6 +130,13 @@ describe("GeoJSONMultiLineString", () => {
             ],
         });
     });
+    it("does not allow a multi-line string with an empty line and bbox", () => {
+        failGeoJSONMultiLineStringTest({
+            type: "MultiLineString",
+            coordinates: [[]],
+            bbox: [0.0, 0.0, 1.0, 1.0],
+        });
+    });
     it("does not allow a 2D multi-line string with a non-overlapping bbox", () => {
         // This bbox is completely outside and somewhere else from the expected bbox
         failGeoJSONMultiLineStringTest({

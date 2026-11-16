@@ -15,6 +15,8 @@ export const getInvalidMultiPolygonLinearRingIssue = (ctx: z.core.ParsePayload):
 });
 
 function validLinearRing(linearRing: number[][]): boolean {
+    // An empty ring is already rejected by the coordinates schema, but checks still run in Zod 4
+    if (!linearRing.length) return false;
     const firstPosition = linearRing[0];
     const lastPosition = linearRing[linearRing.length - 1];
     return firstPosition.every((value, index) => value === lastPosition[index]);
